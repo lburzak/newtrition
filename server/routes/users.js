@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res) {
-  res.send('respond with a resource');
+router.post('/', function(req, res) {
+  if (!req.body.username || !req.body.password)
+    return res.sendStatus(400);
+
+  res.sendStatus(500);
 });
 
 module.exports = router;
