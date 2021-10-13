@@ -322,6 +322,12 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Unauthorized
       description: Provides a fresh token
       requestBody:
         content:
@@ -341,6 +347,12 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Unauthorized
       description: 'Provides a fresh, long-living, refresh token'
       tags:
         - auth
@@ -353,28 +365,37 @@ components:
   schemas:
     Product:
       type: object
+      description: A food product
       properties:
         id:
           $ref: '#/components/schemas/Id'
         name:
           type: string
+          description: Official product name; Often associated with EAN
         commonName:
           type: string
+          description: Common name; Can describe a wider range of products
         ean:
           type: string
           minLength: 7
           maxLength: 13
-        portions:
+          description: EAN-13 code associated with the product
+        nutritionFacts:
+          $ref: '#/components/schemas/NutritionFacts'
+        definedPortions:
           type: array
+          description: Portions that are convenient for this specific product
           items:
             $ref: '#/components/schemas/Portion'
-        private:
+        public:
           type: boolean
-          default: true
+          default: null
+          description: 'Specifies, whether a product is available publicly. Can be ommitted if false.'
+          nullable: true
       required:
         - id
         - name
-        - portions
+        - definedPortions
     User:
       title: User
       type: object
@@ -384,7 +405,7 @@ components:
       required:
         - username
     NutritionFacts:
-      description: ''
+      description: Nutrition facts of a product in a quantity defined by a reference portion
       type: object
       x-examples:
         example-1:
@@ -396,43 +417,45 @@ components:
       properties:
         calories:
           type: number
+          description: Amount of calories per reference portion
         sodium:
           type: number
+          description: Weight of sodium per reference portion. In Grams.
         carbohydrate:
           type: number
+          description: Weight of carbohydrates per reference portion. In Grams.
         fat:
           type: number
+          description: Weight of fat per reference portion. In Grams.
         protein:
           type: number
-    Portion:
-      title: Portion
-      type: object
-      properties:
-        size:
-          $ref: '#/components/schemas/Size'
-        nutritionFacts:
-          $ref: '#/components/schemas/NutritionFacts'
-      required:
-        - size
-        - nutritionFacts
+          description: Weight of protein per reference portion. In Grams.
+        referencePortion:
+          $ref: '#/components/schemas/Portion'
     ValidationError:
       title: ValidationError
       type: object
+      description: An error that occurs when passed data does not conform to validity rules
       properties:
         field:
           type: string
+          description: 'The name of a field, that produced an error'
         message:
           type: string
+          description: Error message
       required:
         - message
-    Size:
-      title: Size
+    Portion:
+      title: Portion
       type: object
+      description: Measurable portion of a product
       properties:
         unit:
           type: string
+          description: Physical unit of portion value
         value:
           type: number
+          description: Value of a portion unit
       required:
         - unit
         - value
@@ -444,10 +467,13 @@ components:
           $ref: '#/components/schemas/Id'
         name:
           type: string
+          description: Recipe name given by an author
         author:
           type: string
+          description: Username of a recipe author
         ingredients:
           type: array
+          description: Dish ingredients
           items:
             $ref: '#/components/schemas/Ingredient'
       required:
@@ -458,17 +484,19 @@ components:
       type: integer
       title: Id
       format: int64
+      description: Resource ID. Unique among resources of the same type.
     Ingredient:
       title: Ingredient
       type: object
+      description: A portion of a specified product
       properties:
         product:
           $ref: '#/components/schemas/Product'
-        size:
-          $ref: '#/components/schemas/Size'
+        portion:
+          $ref: '#/components/schemas/Portion'
       required:
         - product
-        - size
+        - portion
     Token:
       title: Token
       type: string
