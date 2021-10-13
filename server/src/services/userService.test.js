@@ -1,5 +1,5 @@
 const UserService = require("./userService");
-const ResourceError = require("../errors/resourceErrors");
+const ResourceError = require("../results/resourceErrors");
 const db = require("../data/db");
 
 describe('createUser', () => {
@@ -23,7 +23,7 @@ describe('createUser', () => {
         expect(userInDatabase.password).toBe(VALID_PASSWORD);
     });
 
-    it('should return errors when user already exists', async () => {
+    it('should return results when user already exists', async () => {
         await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);
 
         const result = await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);

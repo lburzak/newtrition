@@ -1,6 +1,6 @@
 const express = require('express');
-const UserService = require('../src/services/userService')
-const ResourceError = require("../src/errors/resourceErrors");
+const UserService = require('../services/userService')
+const ResourceError = require("../results/resourceErrors");
 
 const router = express.Router();
 

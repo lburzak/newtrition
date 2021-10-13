@@ -1,5 +1,5 @@
-const ResourceError = require("../errors/resourceErrors");
-const Result = require("../common/result");
+const ResourceError = require("../results/resourceErrors");
+const Result = require("../results/result");
 const db = require("../data/db");
 
 async function createUser(username, password) {
