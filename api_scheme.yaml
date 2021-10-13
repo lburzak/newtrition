@@ -314,6 +314,41 @@ paths:
           description: Unauthorized
       operationId: get-recipes
       description: Retrieves recipes available publicly
+  /auth/token:
+    parameters: []
+    post:
+      summary: Generate token
+      operationId: post-auth-token
+      responses:
+        '200':
+          description: OK
+      description: Provides a fresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/Credentials'
+                - $ref: '#/components/schemas/Token'
+              description: ''
+      tags:
+        - auth
+  /auth/refresh-token:
+    parameters: []
+    post:
+      summary: Generate refresh token
+      operationId: post-auth-refresh-token
+      responses:
+        '200':
+          description: OK
+      description: 'Provides a fresh, long-living, refresh token'
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
 components:
   schemas:
     Product:
@@ -434,10 +469,23 @@ components:
       required:
         - product
         - size
+    Token:
+      title: Token
+      type: string
+      description: Authentication token
+    Credentials:
+      title: Credentials
+      type: object
+      description: User credentials
+      properties:
+        username:
+          type: string
+        password:
+          type: string
   securitySchemes:
-    BasicAuth:
+    TokenAuth:
       type: http
-      scheme: basic
+      scheme: bearer
   responses: {}
 security:
   - BasicAuth: []
