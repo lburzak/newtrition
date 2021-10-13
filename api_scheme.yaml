@@ -1,0 +1,445 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: newtrition
+  description: Newtrition web app API
+  contact:
+    email: lukasz.burzak@pollub.edu.pl
+    name: Łukasz Burzak
+tags:
+  - name: product
+    description: Food product resources
+  - name: auth
+    description: Authentication
+  - name: recipe
+    description: Dish recipe resources
+servers:
+  - url: 'localhost:3000'
+paths:
+  /products:
+    get:
+      summary: Public products
+      tags: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+      operationId: get-products
+      description: Retrieves all public products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'
+        description: ''
+  '/products/{productId}':
+    parameters:
+      - schema:
+          type: string
+        name: productId
+        in: path
+        required: true
+    get:
+      summary: Product
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      operationId: get-products-productId
+      description: Retrieves a product
+    delete:
+      tags:
+        - product
+      summary: Delete product
+      operationId: delete-products-productId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Deletes a product
+    patch:
+      tags:
+        - product
+      summary: Modify product
+      operationId: patch-products-productId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Modifies a product
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: User
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      operationId: get-users-userId
+      description: Get user by ID
+    delete:
+      tags:
+        - auth
+      summary: Terminate account
+      operationId: delete-users-userId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: Delete user
+  '/users/{userId}/products':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: User products
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: Unauthorized
+      operationId: get-users-userId-products
+      description: Retrieves products that were created by a user
+    post:
+      tags:
+        - product
+      summary: Create product
+      operationId: post-users-userId-products
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: Creates a private product with user as an author
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  ean: '0117492487025'
+                  name: Masło roślinne
+                  commonName: margaryna
+                  portions:
+                    - value: 100
+                      unit: gram
+                      nutritionFacts:
+                        calories: 340
+              properties:
+                ean:
+                  type: string
+                  minLength: 1
+                name:
+                  type: string
+                  minLength: 1
+                commonName:
+                  type: string
+                  minLength: 1
+                portions:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      unit:
+                        type: string
+                        minLength: 1
+                      nutritionFacts:
+                        type: object
+                        properties:
+                          calories:
+                            type: number
+                        required:
+                          - calories
+                    required:
+                      - value
+                      - unit
+              required:
+                - ean
+                - name
+                - commonName
+                - portions
+            examples: {}
+      parameters: []
+  '/user/{userId}/recipes':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: User recipes
+      tags: []
+      operationId: get-user-userId-recipes
+      description: Retrieves recipes belonging to a user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        '401':
+          description: Forbidden
+    post:
+      tags:
+        - recipe
+      summary: Create recipe
+      operationId: post-user-userId-recipes
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: 'Creates a private recipe, with user as an author'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                ingredients:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Ingredient'
+        description: Properties of a recipe to be created
+  /users:
+    post:
+      tags:
+        - auth
+      summary: Create user
+      operationId: post-users
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: User already exists
+      description: Register a new account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      security: []
+  /recipes:
+    get:
+      summary: Public recipes
+      tags:
+        - recipe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        '401':
+          description: Unauthorized
+      operationId: get-recipes
+      description: Retrieves recipes available publicly
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        commonName:
+          type: string
+        ean:
+          type: string
+          minLength: 7
+          maxLength: 13
+        portions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Portion'
+        private:
+          type: boolean
+          default: true
+      required:
+        - id
+        - name
+        - portions
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        username:
+          type: string
+      required:
+        - id
+        - username
+    NutritionFacts:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          calories: 340
+          sodium: 0.586
+          carbohydrate: 80.1
+          fat: 3.4
+          protein: 10.1
+      properties:
+        calories:
+          type: number
+        sodium:
+          type: number
+        carbohydrate:
+          type: number
+        fat:
+          type: number
+        protein:
+          type: number
+    Portion:
+      title: Portion
+      type: object
+      properties:
+        size:
+          $ref: '#/components/schemas/Size'
+        nutritionFacts:
+          $ref: '#/components/schemas/NutritionFacts'
+      required:
+        - size
+        - nutritionFacts
+    ValidationError:
+      title: ValidationError
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - message
+    Size:
+      title: Size
+      type: object
+      properties:
+        unit:
+          type: string
+        value:
+          type: number
+      required:
+        - unit
+        - value
+    Recipe:
+      title: Recipe
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        authorId:
+          $ref: '#/components/schemas/Id'
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+      required:
+        - name
+        - ingredients
+    Id:
+      type: integer
+      title: Id
+      format: int64
+    Ingredient:
+      title: Ingredient
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        size:
+          $ref: '#/components/schemas/Size'
+      required:
+        - product
+        - size
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  responses: {}
+security:
+  - BasicAuth: []
