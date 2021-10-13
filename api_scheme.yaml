@@ -90,11 +90,11 @@ paths:
         '404':
           description: Not Found
       description: Modifies a product
-  '/users/{userId}':
+  '/users/{username}':
     parameters:
       - schema:
           type: string
-        name: userId
+        name: username
         in: path
         required: true
     get:
@@ -126,11 +126,11 @@ paths:
         '404':
           description: Not Found
       description: Delete user
-  '/users/{userId}/products':
+  '/users/{username}/products':
     parameters:
       - schema:
           type: string
-        name: userId
+        name: username
         in: path
         required: true
     get:
@@ -215,11 +215,11 @@ paths:
                 - portions
             examples: {}
       parameters: []
-  '/users/{userId}/recipes':
+  '/users/{username}/recipes':
     parameters:
       - schema:
           type: string
-        name: userId
+        name: username
         in: path
         required: true
     get:
@@ -344,12 +344,9 @@ components:
       title: User
       type: object
       properties:
-        id:
-          $ref: '#/components/schemas/Id'
         username:
           type: string
       required:
-        - id
         - username
     NutritionFacts:
       description: ''
@@ -412,14 +409,15 @@ components:
           $ref: '#/components/schemas/Id'
         name:
           type: string
-        authorId:
-          $ref: '#/components/schemas/Id'
+        author:
+          type: string
         ingredients:
           type: array
           items:
             $ref: '#/components/schemas/Ingredient'
       required:
         - name
+        - author
         - ingredients
     Id:
       type: integer
