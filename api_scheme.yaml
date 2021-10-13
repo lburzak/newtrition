@@ -215,7 +215,7 @@ paths:
                 - portions
             examples: {}
       parameters: []
-  '/user/{userId}/recipes':
+  '/users/{userId}/recipes':
     parameters:
       - schema:
           type: string
