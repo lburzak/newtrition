@@ -1,7 +1,11 @@
 const request = require('supertest')
 const app = require('../app')
+const db = require('../src/data/db');
 
 describe('Create user', () => {
+    beforeAll(db.open);
+    afterAll(db.close);
+
     describe('when no request body', () => {
         it('should respond with 400', async () => {
             const res = await request(app)
