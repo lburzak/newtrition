@@ -19,4 +19,9 @@ router.post('/', async function(req, res) {
   res.sendStatus(500);
 });
 
+router.get('/@me', async function(req, res) {
+  res.status(200)
+      .send({username: res.user.username})
+});
+
 module.exports = router;
