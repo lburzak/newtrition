@@ -271,10 +271,6 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
         '400':
           description: Bad Request
           content:
@@ -288,7 +284,7 @@ paths:
                       $ref: '#/components/schemas/ValidationError'
         '409':
           description: User already exists
-      description: Register a new account
+      description: Registers a new account
       requestBody:
         content:
           application/json:
@@ -329,24 +325,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                type: object
+                properties:
+                  accessToken:
+                    $ref: '#/components/schemas/Token'
         '401':
           description: Unauthorized
-      description: Provides a fresh token
+      description: Provides a fresh access token
       requestBody:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/Credentials'
-                - $ref: '#/components/schemas/Token'
               description: ''
+              type: object
+              properties:
+                refreshToken:
+                  $ref: '#/components/schemas/Token'
       tags:
         - auth
-  /auth/refresh-token:
+  /auth:
     parameters: []
     post:
-      summary: Generate refresh token
+      summary: Generate tokens
       operationId: post-auth-refresh-token
       responses:
         '200':
@@ -354,10 +354,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                type: object
+                properties:
+                  accessToken:
+                    $ref: '#/components/schemas/Token'
+                  refreshToken:
+                    $ref: '#/components/schemas/Token'
         '401':
           description: Unauthorized
-      description: 'Provides a fresh, long-living, refresh token'
+      description: Provides fresh tokens
       tags:
         - auth
       requestBody:
