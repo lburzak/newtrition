@@ -94,9 +94,11 @@ paths:
     parameters:
       - schema:
           type: string
+          pattern: '^([A-Za-z\-]+)|@me'
         name: username
         in: path
         required: true
+        description: Username or "@me"
     get:
       summary: User
       tags: []
@@ -112,7 +114,7 @@ paths:
         '404':
           description: Not Found
       operationId: get-users-userId
-      description: Get user by ID
+      description: 'Get user by username. If "@me" is passed, responds with authenticated user.'
     delete:
       tags:
         - auth
