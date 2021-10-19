@@ -16,8 +16,13 @@ async function close() {
     await db.close();
 }
 
+async function drop() {
+    await db.dropDatabase();
+}
+
 module.exports = {
     collection: (name) => db.collection(name),
     close,
-    open
+    open,
+    drop
 };

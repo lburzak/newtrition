@@ -5,6 +5,7 @@ const db = require('../data/db');
 describe('Create user', () => {
     beforeAll(db.open);
     afterAll(db.close);
+    afterEach(db.drop)
 
     describe('when no request body', () => {
         it('should respond with 400', async () => {
