@@ -1,6 +1,6 @@
 const request = require('supertest')
-const app = require('../../app')
-const db = require('../data/db');
+const app = require('../app')
+const db = require('../util/db');
 
 describe('Generate tokens', () => {
     beforeAll(db.open);

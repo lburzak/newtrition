@@ -1,7 +1,7 @@
 const express = require('express');
-const usersRouter = require('./src/routes/users');
-const authRouter = require('./src/routes/auth');
-const authenticate = require('./src/middleware/aunthenticate');
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
+const authenticate = require('./middleware/aunthenticate');
 
 const app = express();
 

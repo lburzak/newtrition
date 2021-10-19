@@ -1,6 +1,5 @@
-const ResourceError = require("../results/resourceErrors");
-const Result = require("../results/result");
-const db = require("../data/db");
+const {ResourceError, Result} = require("./results");
+const db = require("../util/db");
 
 async function createUser(username, password) {
     const Users = db.collection('users');

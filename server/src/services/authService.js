@@ -1,7 +1,6 @@
-const Result = require('../results/result')
-const AuthError = require("../results/authError");
-const jwt = require('./jwtAuthentication');
-const db = require('../data/db');
+const {Result, AuthError} = require('./results')
+const jwt = require('../util/jwtAuthentication');
+const db = require('../util/db');
 const {serializeUser} = require("../models/user");
 
 function generateAccessToken(user) {

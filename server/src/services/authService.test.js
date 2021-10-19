@@ -1,9 +1,9 @@
 const AuthService = require('./authService');
-const AuthError = require('../results/authError');
-const jwtAuthentication = require('./jwtAuthentication');
-const db = require("../data/db");
+const {AuthError} = require('./results');
+const jwtAuthentication = require('../util/jwtAuthentication');
+const db = require("../util/db");
 
-jest.mock('./jwtAuthentication');
+jest.mock('../util/jwtAuthentication');
 
 const VALID_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNjM0NjUyMjcyfQ.vtPtM8VK7rNf1vfcYJi3EUzQRei-6Ic7Lxv-Dywv4i0";
 

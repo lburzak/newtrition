@@ -1,6 +1,6 @@
 const UserService = require("./userService");
-const ResourceError = require("../results/resourceErrors");
-const db = require("../data/db");
+const {ResourceError} = require("./results");
+const db = require("../util/db");
 
 describe('createUser', () => {
     beforeAll(db.open);
