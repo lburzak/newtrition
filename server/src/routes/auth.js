@@ -1,9 +1,10 @@
 const express = require('express');
 const AuthService = require('../services/authService')
+const {AuthError} = require("../services/results");
 
 const router = express.Router();
 
-router.post('/', async function(req, res) {
+router.post('/', async function (req, res) {
     const {username, password} = req.body
 
     if (!username || !password)
@@ -11,8 +12,12 @@ router.post('/', async function(req, res) {
 
     const result = await AuthService.generateTokens(username, password);
 
-    if (result.error)
-        return res.sendStatus(400);
+    if (result.error === AuthError.INVALID_USERNAME_OR_PASSWORD)
+        return res.status(401).send({
+            error: {
+                message: "Invalid username or password."
+            }
+        });
 
     if (result.data) {
         const {accessToken, refreshToken} = result.data;

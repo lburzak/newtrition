@@ -372,6 +372,13 @@ paths:
           description: Bad Request
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
       description: Provides fresh tokens
       tags:
         - auth
@@ -380,6 +387,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Credentials'
+        description: ''
 components:
   schemas:
     Product:
@@ -529,6 +537,13 @@ components:
           type: string
         password:
           type: string
+    Error:
+      title: Error
+      type: object
+      properties:
+        message:
+          type: string
+      description: ''
   securitySchemes:
     TokenAuth:
       type: http

@@ -32,7 +32,25 @@ describe('Generate tokens', () => {
     });
 
     describe('when user not exists', () => {
+        it('should respond with 401', async () => {
+            const res = await request(app)
+                .post('/api/auth')
+                .send(CREDENTIALS);
 
+            expect(res.status).toBe(401);
+        });
+
+        it('should respond with error message', async () => {
+            const res = await request(app)
+                .post('/api/auth')
+                .send(CREDENTIALS);
+
+            expect(res.body).toStrictEqual({
+                error: {
+                    message: "Invalid username or password."
+                }
+            });
+        });
     });
 
     describe('when credentials are not sent', () => {
