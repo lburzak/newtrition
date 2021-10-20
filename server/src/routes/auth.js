@@ -17,7 +17,7 @@ router.post('/', async function(req, res) {
     // if (result.error === ResourceError.ALREADY_EXISTS)
     //     return res.sendStatus(409)
 
-    const result = AuthService.generateTokens(username, password);
+    const result = await AuthService.generateTokens(username, password);
     const {accessToken, refreshToken} = result.data;
 
     res.status(200).send({accessToken, refreshToken})

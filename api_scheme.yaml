@@ -362,6 +362,8 @@ paths:
                     $ref: '#/components/schemas/Token'
                   refreshToken:
                     $ref: '#/components/schemas/Token'
+        '400':
+          description: Bad Request
         '401':
           description: Unauthorized
       description: Provides fresh tokens
