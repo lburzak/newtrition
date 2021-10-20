@@ -9,6 +9,7 @@ async function open() {
     });
 
     db = await connection.db(process.env.MONGO_DB);
+    await db.collection('users').createIndex({"username": 1}, {unique: true})
 }
 
 async function close() {

@@ -41,7 +41,7 @@ describe('generateTokens', () => {
     beforeAll(db.open);
     afterAll(db.close);
     afterEach(async () => {
-        await db.drop;
+        await db.drop();
         jest.resetAllMocks();
     });
 
