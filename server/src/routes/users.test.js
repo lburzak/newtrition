@@ -63,37 +63,63 @@ describe('Create user', () => {
         });
     });
 
-    it('should respond with 400 when registering with undefined username', async () => {
-        const res = await request(app)
-            .post('/api/users')
-            .send({
-                username: undefined,
-                password: "testpass"
+    describe('when registering with illegal username', () => {
+        it('should respond with 400 and suitable error when its too short', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    username: "I",
+                    password: "testpass"
+                });
+
+            expect(res.status).toBe(400);
+            expect(res.body).toStrictEqual({
+                errors: [
+                    {
+                        field: 'username',
+                        message: 'Too short.'
+                    }
+                ]
             });
+        });
 
-        expect(res.status).toBe(400);
-    });
+        it('should respond with 400 and suitable error when its too long', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    username: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    password: "testpass"
+                });
 
-    it('should respond with 400 when registering with undefined password', async () => {
-        const res = await request(app)
-            .post('/api/users')
-            .send({
-                username: "testuser",
-                password: undefined
+            expect(res.status).toBe(400);
+            expect(res.body).toStrictEqual({
+                errors: [
+                    {
+                        field: 'username',
+                        message: 'Too long.'
+                    }
+                ]
             });
+        });
 
-        expect(res.status).toBe(400);
-    });
+        it('should respond with 400 and suitable error when it contains illegal characters', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    username: "Illegal Username",
+                    password: "testpass"
+                });
 
-    it('should respond with 400 when registering with illegal username', async () => {
-        const res = await request(app)
-            .post('/api/users')
-            .send({
-                username: "Illegal Username",
-                password: "testpass"
+            expect(res.status).toBe(400);
+            expect(res.body).toStrictEqual({
+                errors: [
+                    {
+                        field: 'username',
+                        message: 'Contains illegal characters.'
+                    }
+                ]
             });
-
-        expect(res.status).toBe(400);
+        });
     });
 
     const VALID_BODY = {

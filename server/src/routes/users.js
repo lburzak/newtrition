@@ -1,14 +1,9 @@
 const express = require('express');
-const UserService = require('../services/userService')
+const UserService = require('../services/userService');
+const ValidationService = require('../services/validationService');
 const {ResourceError} = require("../services/results");
 
 const router = express.Router();
-
-function verifyUsername(username) {
-  const matcher = /^([A-Za-z\-]+)$/;
-
-  return matcher.test(username);
-}
 
 router.post('/', async function(req, res) {
   const {username, password} = req.body;
@@ -16,8 +11,12 @@ router.post('/', async function(req, res) {
   if (!req.body.username || !req.body.password)
     return res.sendStatus(400);
 
-  if (!verifyUsername(username))
-      return res.sendStatus(400);
+  const validationErrors =
+      ValidationService.validateUsername(username)
+          .concat(ValidationService.validatePassword(password));
+
+  if (validationErrors.length > 0)
+      return res.status(400).send({errors: validationErrors});
 
   const result = await UserService.createUser(username, password);
 
