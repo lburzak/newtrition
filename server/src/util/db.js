@@ -13,7 +13,6 @@ async function open() {
 
 async function close() {
     await connection.close();
-    await db.close();
 }
 
 async function drop() {

@@ -14,7 +14,7 @@ function authenticate(req, res, next) {
     if (result.error)
         return res.sendStatus(401);
 
-    req.user = result;
+    req.user = result.data;
     next();
 }
 

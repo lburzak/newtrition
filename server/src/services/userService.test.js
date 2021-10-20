@@ -5,10 +5,7 @@ const db = require("../util/db");
 describe('createUser', () => {
     beforeAll(db.open);
     afterAll(db.close);
-
-    afterEach(async () => {
-        db.collection('users').deleteMany({});
-    })
+    afterEach(db.drop);
 
     const VALID_USERNAME = "testuser";
     const VALID_PASSWORD = "testpass";
@@ -16,7 +13,7 @@ describe('createUser', () => {
     it('should save user in the database', async () => {
         await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);
 
-        const users = db.collection('users')
+        const users = db.collection('users');
         const userInDatabase = await users.findOne({username: VALID_USERNAME});
 
         expect(userInDatabase.username).toBe(VALID_USERNAME);

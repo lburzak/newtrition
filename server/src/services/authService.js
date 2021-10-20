@@ -3,25 +3,16 @@ const jwt = require('../util/jwtAuthentication');
 const db = require('../util/db');
 const {serializeUser} = require("../models/user");
 
-function generateAccessToken(user) {
-    return jwt.generateAccessToken(user);
-}
-
-function generateRefreshToken(user) {
-    return "refreshtoken"
-}
-
 async function generateTokens(username, password) {
     const Users = db.collection('users');
     const userEntity = await Users.findOne({username, password});
-
 
     if (userEntity) {
         const user = serializeUser(userEntity);
 
         return Result.withData({
-            accessToken: generateAccessToken(user),
-            refreshToken: generateRefreshToken(user)
+            accessToken: jwt.generateAccessToken(user),
+            refreshToken: "refresh_token"
         });
     }
 
@@ -34,7 +25,7 @@ function authenticate(token) {
     if (!user)
         return Result.withError(AuthError.INVALID_TOKEN);
 
-    return Result.withData(user);
+    return Result.withData(serializeUser(user));
 }
 
 module.exports = {

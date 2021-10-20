@@ -17,22 +17,17 @@ describe('Generate tokens', () => {
     beforeAll(db.open);
     afterAll(db.close);
 
-    const makeRequest = () => request(app)
-        .post('/api/auth');
-
     describe('when user exists', () => {
         beforeAll(createTestUser);
         afterAll(db.drop);
 
         it('should respond with auth tokens', async () => {
-            const res = await makeRequest().send(CREDENTIALS);
+            const res = await request(app)
+                .post('/api/auth')
+                .send(CREDENTIALS);
 
-            const {accessToken, refreshToken} = res.body;
-
-            expect(accessToken).toBeDefined();
-            expect(refreshToken).toBeDefined();
-
-            await verifyTokenAuthenticates(accessToken, CREDENTIALS.username);
+            expect(res.status).toBe(200);
+            await verifyTokenAuthenticates(res.body.accessToken, CREDENTIALS.username);
         });
     });
 
@@ -42,7 +37,8 @@ describe('Generate tokens', () => {
 
     describe('when credentials are not sent', () => {
         it('should respond with 400', async () => {
-            const res = await makeRequest();
+            const res = await request(app)
+                .post('/api/auth');
 
             expect(res.status).toBe(400);
         });

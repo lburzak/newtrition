@@ -295,8 +295,14 @@ paths:
               properties:
                 username:
                   type: string
+                  pattern: '^([A-Za-z\-]+)'
+                  minLength: 2
+                  maxLength: 40
                 password:
                   type: string
+              required:
+                - username
+                - password
       security: []
   /recipes:
     get:

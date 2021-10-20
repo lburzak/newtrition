@@ -6,6 +6,8 @@
     "start": "node ./bin/www",
     "test": "jest"
   },
+  "jest": {
+  },
   "dependencies": {
     "express": "~4.16.1",
     "jsonwebtoken": "^8.5.1",

@@ -6,23 +6,20 @@ const router = express.Router();
 router.post('/', async function(req, res) {
     const {username, password} = req.body
 
-    // if (!username || !password)
-    //     return res.sendStatus(400);
-    //
-    // const result = await UserService.createUser(req.username, req.password);
-    //
-    // if (!result.error)
-    //     return res.sendStatus(200)
-    //
-    // if (result.error === ResourceError.ALREADY_EXISTS)
-    //     return res.sendStatus(409)
+    if (!username || !password)
+        return res.sendStatus(400);
 
     const result = await AuthService.generateTokens(username, password);
-    const {accessToken, refreshToken} = result.data;
 
-    res.status(200).send({accessToken, refreshToken})
+    if (result.error)
+        return res.sendStatus(400);
 
-    // res.sendStatus(500);
+    if (result.data) {
+        const {accessToken, refreshToken} = result.data;
+        return res.status(200).send({accessToken, refreshToken});
+    }
+
+    res.sendStatus(500);
 });
 
 module.exports = router;

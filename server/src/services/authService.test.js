@@ -39,17 +39,20 @@ describe('generateTokens', () => {
     const INVALID_PASSWORD = 'testpassd';
 
     beforeAll(db.open);
-
     afterAll(db.close);
-
-    jwtAuthentication.generateAccessToken.mockReturnValue(VALID_TOKEN);
+    afterEach(async () => {
+        await db.drop;
+        jest.resetAllMocks();
+    });
 
     it('should return tokens when credentials match', async () => {
-        db.collection('users').insertOne({...USER, password: VALID_PASSWORD});
+        jwtAuthentication.generateAccessToken.mockReturnValue(VALID_TOKEN);
+
+        await db.collection('users').insertOne({...USER, password: VALID_PASSWORD});
         const result = await AuthService.generateTokens(USER.username, VALID_PASSWORD);
 
-        expect(jwtAuthentication.generateAccessToken).toBeCalledWith(USER)
         expect(result.data.accessToken).toStrictEqual(VALID_TOKEN);
+        expect(jwtAuthentication.generateAccessToken).toBeCalledWith(USER);
     });
 
     it('should return error when credentials dont match', async () => {
