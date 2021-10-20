@@ -73,13 +73,9 @@ describe('Create user', () => {
                 });
 
             expect(res.status).toBe(400);
-            expect(res.body).toStrictEqual({
-                errors: [
-                    {
-                        field: 'username',
-                        message: 'Too short.'
-                    }
-                ]
+            expect(res.body.errors).toContainEqual({
+                field: 'username',
+                message: 'Too short.'
             });
         });
 
@@ -92,13 +88,9 @@ describe('Create user', () => {
                 });
 
             expect(res.status).toBe(400);
-            expect(res.body).toStrictEqual({
-                errors: [
-                    {
-                        field: 'username',
-                        message: 'Too long.'
-                    }
-                ]
+            expect(res.body.errors).toContainEqual({
+                field: 'username',
+                message: 'Too long.'
             });
         });
 
@@ -111,13 +103,41 @@ describe('Create user', () => {
                 });
 
             expect(res.status).toBe(400);
-            expect(res.body).toStrictEqual({
-                errors: [
-                    {
-                        field: 'username',
-                        message: 'Contains illegal characters.'
-                    }
-                ]
+            expect(res.body.errors).toContainEqual({
+                field: 'username',
+                message: 'Contains illegal characters.'
+            });
+        });
+    });
+
+    describe('when registering with illegal password', () => {
+        it('should respond with 400 and suitable error when its too short', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    username: "testuser",
+                    password: "Ab1#"
+                });
+
+            expect(res.status).toBe(400);
+            expect(res.body.errors).toContainEqual({
+                field: 'password',
+                message: 'Too short.'
+            });
+        });
+
+        it('should respond with 400 and suitable error when its too long', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    username: "testuser",
+                    password: "Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#Ab1#"
+                });
+
+            expect(res.status).toBe(400);
+            expect(res.body.errors).toContainEqual({
+                field: 'password',
+                message: 'Too long.'
             });
         });
     });

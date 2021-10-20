@@ -300,6 +300,8 @@ paths:
                   maxLength: 40
                 password:
                   type: string
+                  minLength: 5
+                  maxLength: 64
               required:
                 - username
                 - password

@@ -17,7 +17,16 @@ function validateUsername(username) {
 }
 
 function validatePassword(password) {
-    return [];
+    const field = 'password';
+    const errors = [];
+
+    if (password.length < 5)
+        errors.push(ValidationError.tooShort(field));
+
+    if (password.length > 64)
+        errors.push(ValidationError.tooLong(field));
+
+    return errors;
 }
 
 module.exports = {
