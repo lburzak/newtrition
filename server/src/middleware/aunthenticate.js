@@ -1,9 +1,6 @@
 const AuthService = require('../services/authService')
 
 function authenticate(req, res, next) {
-    if (req.baseUrl === '/api/users' && req.method === 'POST')
-        return next();
-
     const token = extractToken(req);
 
     if (!token)
