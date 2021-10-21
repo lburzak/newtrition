@@ -527,9 +527,10 @@ components:
         - product
         - portion
     Token:
-      title: Token
       type: string
+      title: Token
       description: Authentication token
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNjM0ODA0MTk4fQ.R8XS2yPy5z0CTPU0EZ2b3QrpXM4OOBlishm6qqnEOTk
     Credentials:
       title: Credentials
       type: object
