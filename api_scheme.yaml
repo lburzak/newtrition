@@ -185,36 +185,10 @@ paths:
                 name:
                   type: string
                   minLength: 1
-                commonName:
+                nutritionFacts:
                   type: string
-                  minLength: 1
-                portions:
-                  type: array
-                  uniqueItems: true
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      value:
-                        type: number
-                      unit:
-                        type: string
-                        minLength: 1
-                      nutritionFacts:
-                        type: object
-                        properties:
-                          calories:
-                            type: number
-                        required:
-                          - calories
-                    required:
-                      - value
-                      - unit
               required:
-                - ean
                 - name
-                - commonName
-                - portions
             examples: {}
       parameters: []
   '/users/{username}/recipes':
@@ -264,48 +238,6 @@ paths:
                   items:
                     $ref: '#/components/schemas/Ingredient'
         description: Properties of a recipe to be created
-  /users:
-    post:
-      tags:
-        - auth
-      summary: Create user
-      operationId: post-users
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ValidationError'
-        '409':
-          description: User already exists
-      description: Registers a new account
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  pattern: '^([A-Za-z\-]+)'
-                  minLength: 2
-                  maxLength: 40
-                password:
-                  type: string
-                  minLength: 5
-                  maxLength: 64
-              required:
-                - username
-                - password
-      security: []
   /recipes:
     get:
       summary: Public recipes
@@ -390,6 +322,48 @@ paths:
             schema:
               $ref: '#/components/schemas/Credentials'
         description: ''
+  /auth/signup:
+    post:
+      summary: Your GET endpoint
+      tags:
+        - auth
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: User already exists
+      operationId: get-auth-signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  pattern: '^([A-Za-z\-]+)'
+                  minLength: 2
+                  maxLength: 40
+                password:
+                  type: string
+                  minLength: 5
+                  maxLength: 64
+              required:
+                - username
+                - password
+      description: Create account
+      security: []
 components:
   schemas:
     Product:
@@ -401,9 +375,6 @@ components:
         name:
           type: string
           description: Official product name; Often associated with EAN
-        commonName:
-          type: string
-          description: Common name; Can describe a wider range of products
         ean:
           type: string
           minLength: 7
@@ -461,6 +432,9 @@ components:
           description: Weight of protein per reference portion. In Grams.
         referencePortion:
           $ref: '#/components/schemas/Portion'
+      required:
+        - calories
+        - referencePortion
     ValidationError:
       title: ValidationError
       type: object
