@@ -16,6 +16,18 @@ async function createUser(username, password) {
     return Result.empty();
 }
 
+async function findUserByUsername(username) {
+    const Users = db.collection('users');
+
+    const user = await Users.findOne({username});
+
+    if (!user)
+        return Result.withError(ResourceError.NOT_EXISTS);
+
+    return Result.withData(user);
+}
+
 module.exports = {
-    createUser
+    createUser,
+    findUserByUsername
 };

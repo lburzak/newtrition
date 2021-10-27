@@ -49,7 +49,7 @@ describe('POST /users/:username/products', () => {
 
         async function createUser() {
             await request(app)
-                .post('/api/users')
+                .post('/api/auth/signup')
                 .send(CREDENTIALS)
         }
 
@@ -63,7 +63,7 @@ describe('POST /users/:username/products', () => {
 
         describe('when body is missing', () => {
             it('should respond with 400', async () => {
-                const res = await makeRequest('@me');
+                const res = await makeRequest("@me");
 
                 expect(res.status).toBe(400);
             });

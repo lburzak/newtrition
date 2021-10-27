@@ -5,6 +5,7 @@ const AuthError = Object.freeze({
 
 const ResourceError = Object.freeze({
     ALREADY_EXISTS: "Resource already exists",
+    NOT_EXISTS: "Resource doesn't exist"
 });
 
 const Result = {

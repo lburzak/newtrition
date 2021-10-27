@@ -1,7 +1,9 @@
 const express = require('express');
 const UserService = require('../services/userService');
-const ValidationService = require('../services/validationService');
+const {createProduct} = require("../services/productService");
 const {ResourceError} = require("../services/results");
+const ValidationError = require("../models/validationError");
+const ValidationService = require('../services/validationService');
 
 const router = express.Router();
 
@@ -10,17 +12,52 @@ router.get('/@me', async function(req, res) {
       .send({username: req.user.username})
 });
 
-function extractUser(req) {
-  const username = req.params.username;
+function convertServiceErrorToStatus(error) {
+  let status;
 
-  if (username === '@me')
-    return req.user;
+  switch (error) {
+    case ResourceError.NOT_EXISTS: status = 404; break;
+    default: status = 500
+  }
 
-  UserService.findUserByUsername(username)
+  return status;
 }
 
-router.post('/:username/products', async function (req, res) {
-  res.sendStatus(500);
+async function extractUserFromPath(req, res, next) {
+  const username = req.params.username;
+
+  if (username === '@me') {
+    req.targetUser = req.user;
+    return next();
+  }
+
+  const result = await UserService.findUserByUsername(username);
+
+  if (result.error) {
+    const status = convertServiceErrorToStatus(result.error);
+    return res.sendStatus(status);
+  }
+
+  req.targetUser = result.data;
+  next();
+}
+
+router.post('/:username/products', extractUserFromPath, async function (req, res) {
+  const product = req.body;
+  const validationResult = ValidationService.validateProduct(product);
+
+  if (validationResult.error) {
+    const error = ValidationError.fromJoiError(validationResult.error);
+    return res.status(400).json(error);
+  }
+
+  const result = await createProduct(req.targetUser.username, req.body);
+
+  if (!result.error) {
+    return res.sendStatus(200);
+  }
+
+  return res.sendStatus(500);
 })
 
 module.exports = router;

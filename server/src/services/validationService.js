@@ -1,4 +1,5 @@
 const ValidationError = require('../models/validationError');
+const Joi = require("joi");
 
 function validateUsername(username) {
     const field = 'username';
@@ -29,7 +30,22 @@ function validatePassword(password) {
     return errors;
 }
 
+const eanSchema = Joi.string()
+    .length(13)
+    .pattern(/^[0-9]+$/);
+
+const productSchema = Joi.object({
+    ean: eanSchema,
+    name: Joi.string().required(),
+    nutritionFacts: Joi.object()
+})
+
+function validateProduct(product) {
+    return productSchema.validate(product);
+}
+
 module.exports = {
     validateUsername,
-    validatePassword
+    validatePassword,
+    validateProduct
 }
