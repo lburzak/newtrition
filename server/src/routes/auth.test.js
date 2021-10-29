@@ -14,9 +14,9 @@ async function createTestUser() {
 }
 
 describe('Create user', () => {
-    beforeAll(db.open);
-    afterAll(db.close);
-    afterEach(db.drop)
+    beforeAll(async () => await db.open());
+    afterAll(async () => await db.close());
+    afterEach(async () => await db.drop());
 
     describe('when no request body', () => {
         it('should respond with 400', async () => {
@@ -48,14 +48,11 @@ describe('Create user', () => {
     });
 
     describe('when registered successfuly', () => {
-        it('should create user and respond with 200', async () => {
+        it('should respond with 200', async () => {
             const res = await request(app)
                 .post('/api/auth/signup')
                 .send(VALID_BODY);
 
-            const user = await db.collection('users').findOne({username: VALID_BODY.username});
-
-            expect(user.password).toBe(VALID_BODY.password);
             expect(res.status).toBe(200);
         });
     });
@@ -168,8 +165,8 @@ describe('Create user', () => {
 })
 
 describe('Generate tokens', () => {
-    beforeAll(db.open);
-    afterAll(db.close);
+    beforeAll(async () => db.open());
+    afterAll(async () => db.close());
 
     describe('when user exists', () => {
         beforeAll(createTestUser);

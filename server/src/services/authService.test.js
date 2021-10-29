@@ -38,8 +38,8 @@ describe('generateTokens', () => {
     const VALID_PASSWORD = 'testpass';
     const INVALID_PASSWORD = 'testpassd';
 
-    beforeAll(db.open);
-    afterAll(db.close);
+    beforeAll(async () => await db.open());
+    afterAll(async () => await db.close());
     afterEach(async () => {
         await db.drop();
         jest.resetAllMocks();

@@ -3,9 +3,9 @@ const {ResourceError} = require("./results");
 const db = require("../util/db");
 
 describe('createUser', () => {
-    beforeAll(db.open);
-    afterAll(db.close);
-    afterEach(db.drop);
+    beforeAll(async () => await db.open());
+    afterAll(async () => await db.close());
+    afterEach(async () => await db.drop());
 
     const VALID_USERNAME = "testuser";
     const VALID_PASSWORD = "testpass";

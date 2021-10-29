@@ -1,6 +1,6 @@
 const express = require('express');
 const UserService = require('../services/userService');
-const {createProduct} = require("../services/productService");
+const {createProduct, findUserProducts} = require("../services/productService");
 const {ResourceError} = require("../services/results");
 const ValidationError = require("../models/validationError");
 const ValidationService = require('../services/validationService');
@@ -42,7 +42,16 @@ async function extractUserFromPath(req, res, next) {
   next();
 }
 
+router.get('/:username/products', extractUserFromPath, async function (req, res) {
+  const products = await findUserProducts(req.targetUser.username);
+
+  res.status(200).json(products);
+});
+
 router.post('/:username/products', extractUserFromPath, async function (req, res) {
+  if (req.targetUser.username !== req.user.username)
+    return res.sendStatus(401);
+
   const product = req.body;
   const validationResult = ValidationService.validateProduct(product);
 

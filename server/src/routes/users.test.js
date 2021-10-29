@@ -4,9 +4,9 @@ const db = require('../util/db');
 const _ = require("lodash");
 
 describe('POST /users/:username/products', () => {
-    beforeAll(db.open);
-    afterAll(db.close);
-    afterEach(db.drop);
+    beforeAll(async () => await db.open());
+    afterAll(async () => await db.close());
+    afterEach(async () => await db.drop());
 
     const VALID_BODY = {
         ean: '7581919399803',
@@ -85,9 +85,10 @@ describe('POST /users/:username/products', () => {
 
                 const res = await request(app)
                     .get('/api/users/@me/products')
+                    .set('Authorization', `Bearer ${token}`)
 
-                const isProductInUserSpace = res.body.any(product => product.name === VALID_BODY.name);
-                expect(isProductInUserSpace).toBe(true);
+                const userProducts = res.body;
+                expect(userProducts[0].name).toBe(VALID_BODY.name);
             });
 
             it('should respond with 200', async () => {
@@ -99,8 +100,21 @@ describe('POST /users/:username/products', () => {
         });
 
         describe('when username belongs to other user', () => {
+            const OTHER_USER_NAME = "otheruser";
+
+            async function addAnotherUser() {
+                await request(app)
+                    .post('/api/auth/signup')
+                    .send({
+                        username: OTHER_USER_NAME,
+                        password: "testpass"
+                    })
+            }
+
+            beforeEach(addAnotherUser);
+
             it('should respond with 401', async () => {
-                const res = await makeRequest('otheruser')
+                const res = await makeRequest(OTHER_USER_NAME)
                     .send(VALID_BODY);
 
                 expect(res.status).toBe(401);
