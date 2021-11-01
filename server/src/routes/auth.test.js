@@ -165,12 +165,12 @@ describe('Create user', () => {
 })
 
 describe('Generate tokens', () => {
-    beforeAll(async () => db.open());
-    afterAll(async () => db.close());
+    beforeAll(async () => await db.open());
+    afterAll(async () => await db.close());
 
     describe('when user exists', () => {
-        beforeAll(createTestUser);
-        afterAll(db.drop);
+        beforeAll(async () => await createTestUser());
+        afterAll(async () => await db.drop());
 
         it('should respond with auth tokens', async () => {
             const res = await request(app)
