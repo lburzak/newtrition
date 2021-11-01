@@ -1,7 +1,7 @@
 const express = require('express');
-const UserService = require('../services/userService');
-const {createProduct, findUserProducts} = require("../services/productService");
-const {ResourceError} = require("../services/results");
+const UserRepository = require('../repositories/userRepository');
+const {create, findByAuthor} = require("../repositories/productRepository");
+const {ResourceError} = require("../common/results");
 const ValidationError = require("../models/validationError");
 const ValidationService = require('../services/validationService');
 
@@ -31,7 +31,7 @@ async function extractUserFromPath(req, res, next) {
     return next();
   }
 
-  const result = await UserService.findUserByUsername(username);
+  const result = await UserRepository.findByUsername(username);
 
   if (result.error) {
     const status = convertServiceErrorToStatus(result.error);
@@ -43,7 +43,7 @@ async function extractUserFromPath(req, res, next) {
 }
 
 router.get('/:username/products', extractUserFromPath, async function (req, res) {
-  const products = await findUserProducts(req.targetUser.username);
+  const products = await findByAuthor(req.targetUser.username);
 
   res.status(200).json(products);
 });
@@ -60,7 +60,7 @@ router.post('/:username/products', extractUserFromPath, async function (req, res
     return res.status(400).json(error);
   }
 
-  const result = await createProduct(req.targetUser.username, req.body);
+  const result = await create(req.targetUser.username, req.body);
 
   if (!result.error) {
     return res.sendStatus(200);

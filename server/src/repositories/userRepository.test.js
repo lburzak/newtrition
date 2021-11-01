@@ -1,5 +1,5 @@
-const UserService = require("./userService");
-const {ResourceError} = require("./results");
+const UserService = require("./userRepository");
+const {ResourceError} = require("../common/results");
 const db = require("../util/db");
 
 describe('createUser', () => {
@@ -11,7 +11,7 @@ describe('createUser', () => {
     const VALID_PASSWORD = "testpass";
 
     it('should save user in the database', async () => {
-        await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);
+        await UserService.create(VALID_USERNAME, VALID_PASSWORD);
 
         const users = db.collection('users');
         const userInDatabase = await users.findOne({username: VALID_USERNAME});
@@ -21,9 +21,9 @@ describe('createUser', () => {
     });
 
     it('should return results when user already exists', async () => {
-        await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);
+        await UserService.create(VALID_USERNAME, VALID_PASSWORD);
 
-        const result = await UserService.createUser(VALID_USERNAME, VALID_PASSWORD);
+        const result = await UserService.create(VALID_USERNAME, VALID_PASSWORD);
 
         expect(result.error).toBe(ResourceError.ALREADY_EXISTS);
     });

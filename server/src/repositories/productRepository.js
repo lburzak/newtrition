@@ -1,7 +1,7 @@
 const db = require('../util/db');
-const {Result} = require('./results');
+const {Result} = require('../common/results');
 
-async function createProduct(ownerUsername, product) {
+async function create(ownerUsername, product) {
     const Products = db.collection('products');
 
     await Products.insertOne({
@@ -14,7 +14,7 @@ async function createProduct(ownerUsername, product) {
     return Result.empty();
 }
 
-async function findUserProducts(username) {
+async function findByAuthor(username) {
     const Products = db.collection('products');
 
     return await Products.find({
@@ -23,6 +23,6 @@ async function findUserProducts(username) {
 }
 
 module.exports = {
-    createProduct,
-    findUserProducts
+    create: create,
+    findByAuthor: findByAuthor
 }

@@ -1,5 +1,5 @@
 const AuthService = require('./authService');
-const {AuthError} = require('./results');
+const {AuthError} = require('../common/results');
 const jwtAuthentication = require('../util/jwtAuthentication');
 const db = require("../util/db");
 

@@ -1,4 +1,4 @@
-const {Result, AuthError} = require('./results')
+const {Result, AuthError} = require('../common/results')
 const jwt = require('../util/jwtAuthentication');
 const db = require('../util/db');
 const {serializeUser} = require("../models/user");

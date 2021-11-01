@@ -1,8 +1,8 @@
 const express = require('express');
 const AuthService = require('../services/authService')
-const {AuthError, ResourceError} = require("../services/results");
+const {AuthError, ResourceError} = require("../common/results");
 const ValidationService = require("../services/validationService");
-const UserService = require("../services/userService");
+const UserRepository = require("../repositories/userRepository");
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.post('/signup', async function(req, res) {
     if (validationErrors.length > 0)
         return res.status(400).send({errors: validationErrors});
 
-    const result = await UserService.createUser(username, password);
+    const result = await UserRepository.create(username, password);
 
     if (!result.error)
         return res.sendStatus(200)

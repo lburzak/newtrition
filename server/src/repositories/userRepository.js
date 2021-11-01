@@ -1,7 +1,7 @@
-const {ResourceError, Result} = require("./results");
+const {ResourceError, Result} = require("../common/results");
 const db = require("../util/db");
 
-async function createUser(username, password) {
+async function create(username, password) {
     const Users = db.collection('users');
     const existingUser = await Users.findOne({username});
 
@@ -16,7 +16,7 @@ async function createUser(username, password) {
     return Result.empty();
 }
 
-async function findUserByUsername(username) {
+async function findByUsername(username) {
     const Users = db.collection('users');
 
     const user = await Users.findOne({username});
@@ -28,6 +28,6 @@ async function findUserByUsername(username) {
 }
 
 module.exports = {
-    createUser,
-    findUserByUsername
+    create: create,
+    findByUsername: findByUsername
 };
