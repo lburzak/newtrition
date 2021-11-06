@@ -83,7 +83,7 @@ describe('Create user', () => {
             expect(res.status).toBe(400);
             expect(res.body.errors).toContainEqual({
                 field: 'username',
-                message: 'Too short.'
+                type: "string.min"
             });
         });
 
@@ -98,7 +98,7 @@ describe('Create user', () => {
             expect(res.status).toBe(400);
             expect(res.body.errors).toContainEqual({
                 field: 'username',
-                message: 'Too long.'
+                type: "string.max"
             });
         });
 
@@ -113,7 +113,7 @@ describe('Create user', () => {
             expect(res.status).toBe(400);
             expect(res.body.errors).toContainEqual({
                 field: 'username',
-                message: 'Contains illegal characters.'
+                type: 'string.pattern.base'
             });
         });
     });
@@ -130,7 +130,7 @@ describe('Create user', () => {
             expect(res.status).toBe(400);
             expect(res.body.errors).toContainEqual({
                 field: 'password',
-                message: 'Too short.'
+                type: 'string.min'
             });
         });
 
@@ -145,7 +145,7 @@ describe('Create user', () => {
             expect(res.status).toBe(400);
             expect(res.body.errors).toContainEqual({
                 field: 'password',
-                message: 'Too long.'
+                type: 'string.max'
             });
         });
     });

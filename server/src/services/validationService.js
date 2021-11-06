@@ -1,13 +1,6 @@
 const Joi = require("joi");
-
-const usernameSchema = Joi.string()
-    .min(2)
-    .max(40)
-    .pattern(/^([A-Za-z\-]+)$/);
-
-const passwordSchema = Joi.string()
-    .min(5)
-    .max(64);
+const ValidationError = require("../models/validationError");
+const {Result} = require("../common/results");
 
 const eanSchema = Joi.string()
     .length(13)
@@ -19,8 +12,28 @@ const productSchema = Joi.object({
     nutritionFacts: Joi.object()
 });
 
+const credentialsSchema = Joi.object({
+    username: Joi.string()
+        .min(2)
+        .max(40)
+        .pattern(/^([A-Za-z\-]+)$/)
+        .required(),
+    password: Joi.string()
+        .min(5)
+        .max(64)
+        .required()
+});
+
+const buildValidator = schema => data => {
+    const error = schema.validate(data).error;
+
+    if (error)
+        return Result.withError(ValidationError.fromJoiError(error))
+
+    return Result.empty();
+}
+
 module.exports = {
-    validateUsername: usernameSchema.validate,
-    validatePassword: passwordSchema.validate,
-    validateProduct: productSchema.validate
+    validateCredentials: buildValidator(credentialsSchema),
+    validateProduct: buildValidator(productSchema)
 }

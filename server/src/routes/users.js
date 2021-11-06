@@ -2,7 +2,6 @@ const express = require('express');
 const UserRepository = require('../repositories/userRepository');
 const {create, findByAuthor} = require("../repositories/productRepository");
 const {ResourceError} = require("../common/results");
-const ValidationError = require("../models/validationError");
 const ValidationService = require('../services/validationService');
 
 const router = express.Router();
@@ -56,8 +55,7 @@ router.post('/:username/products', extractUserFromPath, async function (req, res
   const validationResult = ValidationService.validateProduct(product);
 
   if (validationResult.error) {
-    const error = ValidationError.fromJoiError(validationResult.error);
-    return res.status(400).json(error);
+    return res.status(400).json(validationResult.error);
   }
 
   const result = await create(req.targetUser.username, req.body);

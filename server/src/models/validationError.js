@@ -1,13 +1,16 @@
 class ValidationError {
     field;
-    message;
+    type;
 
-    constructor(field, message) {
+    constructor(field, type) {
         this.field = field;
-        this.message = message;
+        this.type = type;
     }
 }
 
 module.exports = {
-    fromJoiError: (validationError) => new ValidationError(validationError.details[0].path[0], validationError.message)
+    fromJoiError: (validationError) => {
+        const details = validationError.details[0];
+        return new ValidationError(details.context.label, details.type);
+    }
 }

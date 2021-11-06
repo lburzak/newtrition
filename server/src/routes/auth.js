@@ -7,18 +7,14 @@ const UserRepository = require("../repositories/userRepository");
 const router = express.Router();
 
 router.post('/signup', async function(req, res) {
-    const {username, password} = req.body;
+    const credentials = req.body;
 
-    if (!req.body.username || !req.body.password)
-        return res.sendStatus(400);
+    const validationResult = ValidationService.validateCredentials(credentials);
 
-    const validationErrors =
-        ValidationService.validateUsername(username)
-            .concat(ValidationService.validatePassword(password));
+    if (validationResult.error)
+        return res.status(400).send({errors: [validationResult.error]});
 
-    if (validationErrors.length > 0)
-        return res.status(400).send({errors: validationErrors});
-
+    const {username, password} = credentials;
     const result = await UserRepository.create(username, password);
 
     if (!result.error)
