@@ -1,97 +1,99 @@
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
-import {Component} from "react";
+import {useReducer} from "react";
 import {Error, signUp} from "../action/signup";
 import Message from "../content/message";
 
-export class SignUpPage extends Component {
-    state = {
-        usernameError: null,
-        passwordError: null,
-        username: "",
-        password: "",
-        loading: false
-    }
+const initialState = {
+    usernameError: null,
+    passwordError: null,
+    username: "",
+    password: "",
+    loading: false
+}
 
-    render() {
-        return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
-            <Paper elevation={2} style={{padding: 60}}>
-                <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
-                <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
-                <Box>
-                    <form onSubmit={this.submit}>
-                        <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
-                            <Grid item xs={12}>
-                                <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
-                                           error={this.state.usernameError !== null} helperText={this.state.usernameError}
-                                           onChange={this.handleUsernameChange} onSubmit={this.submit}/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField data-testid={"password-field"} fullWidth label={"Password"} variant={"outlined"}
-                                           type={"password"}
-                                           error={this.state.passwordError !== null} helperText={this.state.passwordError}
-                                           onChange={this.handlePasswordChange} onSubmit={this.submit}/>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button data-testid={"signup-button"} fullWidth variant={"contained"} type={"submit"}
-                                        disabled={this.state.loading}>Sign up</Button>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </Box>
-            </Paper>
-        </Container>;
-    }
+export const SignUpPage = () => {
+    const reducerHook = useReducer(reducer, initialState);
+    const [state, dispatch] = reducerHook;
 
-    handlePasswordChange = (event) => {
-        this.setState({
-            ...this.state,
-            password: event.target.value
-        });
-    }
-
-    handleUsernameChange = (event) => {
-        this.setState({
-            ...this.state,
-            username: event.target.value
-        });
-    }
-
-    submit = async (event) => {
+    const submit = async (event) => {
         event.preventDefault();
+        await handleSubmit(state, dispatch);
+    }
 
-        const {username, password} = this.state;
+    return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
+        <Paper elevation={2} style={{padding: 60}}>
+            <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
+            <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
+            <Box>
+                <form onSubmit={submit}>
+                    <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
+                        <Grid item xs={12}>
+                            <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
+                                       error={state.usernameError !== null} helperText={state.usernameError}
+                                       onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField data-testid={"password-field"} fullWidth label={"Password"} variant={"outlined"}
+                                       type={"password"}
+                                       error={state.passwordError !== null} helperText={state.passwordError}
+                                       onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button data-testid={"signup-button"} fullWidth variant={"contained"} type={"submit"}
+                                    disabled={state.loading}>Sign up</Button>
+                        </Grid>
+                    </Grid>
+                </form>
+            </Box>
+        </Paper>
+    </Container>;
+}
 
-        this.setState({
-            ...this.state,
-            loading: true
-        });
+async function handleSubmit(state, dispatch) {
+    const {username, password} = state;
 
-        const result = await signUp(username, password);
+    dispatch('submitted');
 
-        if (result.error === Error.USER_ALREADY_EXISTS) {
-            return this.setState({
-                ...this.state,
+    const result = await signUp(username, password);
+
+    if (result.error === Error.USER_ALREADY_EXISTS)
+        return dispatch({type: 'userAlreadyExists'});
+
+    if (result.validationErrors) {
+        return dispatch({type: 'validationFailed', payload: result.validationErrors});
+    }
+
+    window.location.href = "about:blank";
+}
+
+function reducer(state, event) {
+    console.log(state, event);
+    switch (event.type) {
+        case 'usernameChanged':
+            return {...state, username: event.payload};
+        case 'passwordChanged':
+            return {...state, password: event.payload};
+        case 'submitted':
+            return {...state, loading: true}
+        case 'userAlreadyExists':
+            return {
+                ...state,
                 usernameError: "User with such username already exists.",
                 loading: false
-            });
-        }
+            };
+        case 'validationFailed':
+            const usernameErrors = event.payload.username;
+            const passwordErrors = event.payload.password;
 
-        if (result.validationErrors) {
-            const usernameErrors = result.validationErrors.username;
-            const passwordErrors = result.validationErrors.password;
-
-            this.setState({
-                ...this.state,
+            return {
+                ...state,
                 usernameError: usernameErrors ? Message.fromValidationError(usernameErrors[0]) : null,
                 passwordError: passwordErrors ? Message.fromValidationError(passwordErrors[0]) : null,
                 loading: false
-            });
-
-            return;
-        }
-
-        window.location.href = "about:blank";
+            }
+        default:
+            return {...state}
     }
 }
