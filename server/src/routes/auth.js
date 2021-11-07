@@ -11,8 +11,8 @@ router.post('/signup', async function(req, res) {
 
     const validationResult = ValidationService.validateCredentials(credentials);
 
-    if (validationResult.error)
-        return res.status(400).send({errors: [validationResult.error]});
+    if (!validationResult.data.valid)
+        return res.status(400).send({errors: validationResult.data.errors});
 
     const {username, password} = credentials;
     const result = await UserRepository.create(username, password);

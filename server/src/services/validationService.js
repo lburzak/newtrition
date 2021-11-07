@@ -25,12 +25,18 @@ const credentialsSchema = Joi.object({
 });
 
 const buildValidator = schema => data => {
-    const error = schema.validate(data).error;
+    const error = schema.validate(data, {abortEarly: false}).error;
 
-    if (error)
-        return Result.withError(ValidationError.fromJoiError(error))
+    if (!error)
+        return Result.withData({valid: true});
 
-    return Result.empty();
+    const validationErrors = error.details
+        .map(details => ValidationError.fromJoiErrorDetails(details));
+
+    return Result.withData({
+        valid: false,
+        errors: validationErrors
+    });
 }
 
 module.exports = {

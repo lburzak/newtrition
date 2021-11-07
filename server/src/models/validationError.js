@@ -9,8 +9,7 @@ class ValidationError {
 }
 
 module.exports = {
-    fromJoiError: (validationError) => {
-        const details = validationError.details[0];
-        return new ValidationError(details.context.label, details.type);
+    fromJoiErrorDetails: (joiDetails) => {
+        return new ValidationError(joiDetails.context.label, joiDetails.type);
     }
 }

@@ -54,8 +54,8 @@ router.post('/:username/products', extractUserFromPath, async function (req, res
   const product = req.body;
   const validationResult = ValidationService.validateProduct(product);
 
-  if (validationResult.error) {
-    return res.status(400).json(validationResult.error);
+  if (!validationResult.data.valid) {
+    return res.status(400).json({errors: validationResult.data.errors});
   }
 
   const result = await create(req.targetUser.username, req.body);
