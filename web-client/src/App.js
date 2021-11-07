@@ -1,6 +1,8 @@
 import './App.css';
 import {SignUpPage} from "./page/signup";
+import {DashboardPage} from "./page/dashboard"
 import {createTheme, ThemeProvider} from "@mui/material";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 const theme = createTheme({
     typography: {
@@ -16,7 +18,12 @@ function App() {
   return (
       <ThemeProvider theme={theme}>
           <div className="App">
-              <SignUpPage/>
+              <BrowserRouter>
+                  <Routes>
+                      <Route exact path="/" element={<DashboardPage/>}/>
+                      <Route exact path="/signup" element={<SignUpPage />}/>
+                  </Routes>
+              </BrowserRouter>
           </div>
       </ThemeProvider>
   );

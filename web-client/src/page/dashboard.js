@@ -5,7 +5,7 @@ import {Fastfood, Restaurant} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 import {Divider} from "@mui/material";
 
-export const Dashboard = () => <div>
+export const DashboardPage = () => <div>
     <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         <List>
             <ListItem>
