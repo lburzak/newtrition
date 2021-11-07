@@ -1,9 +1,10 @@
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
-import {useReducer} from "react";
+import {useContext, useReducer} from "react";
 import {Error, signUp} from "../action/signup";
 import Message from "../content/message";
+import {AuthContext} from "../App";
 
 const initialState = {
     usernameError: null,
@@ -16,10 +17,11 @@ const initialState = {
 export const SignUpPage = () => {
     const reducerHook = useReducer(reducer, initialState);
     const [state, dispatch] = reducerHook;
+    const {authDispatch} = useContext(AuthContext);
 
     const submit = async (event) => {
         event.preventDefault();
-        await handleSubmit(state, dispatch);
+        await handleSubmit(state, dispatch, authDispatch);
     }
 
     return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
@@ -51,7 +53,7 @@ export const SignUpPage = () => {
     </Container>;
 }
 
-async function handleSubmit(state, dispatch) {
+async function handleSubmit(state, dispatch, authDispatch) {
     const {username, password} = state;
 
     dispatch('submitted');
@@ -65,11 +67,10 @@ async function handleSubmit(state, dispatch) {
         return dispatch({type: 'validationFailed', payload: result.validationErrors});
     }
 
-    window.location.href = "about:blank";
+    authDispatch({type: 'signedIn', payload: {username, password}});
 }
 
 function reducer(state, event) {
-    console.log(state, event);
     switch (event.type) {
         case 'usernameChanged':
             return {...state, username: event.payload};

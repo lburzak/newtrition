@@ -1,8 +1,12 @@
 import './App.css';
+import {createContext} from "react";
 import {SignUpPage} from "./page/signup";
 import {DashboardPage} from "./page/dashboard"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {useAuthReducer} from "./reducer/auth";
+
+export const AuthContext = createContext();
 
 const theme = createTheme({
     typography: {
@@ -15,16 +19,20 @@ const theme = createTheme({
 })
 
 function App() {
+  const [authState, authDispatch] = useAuthReducer();
+
   return (
       <ThemeProvider theme={theme}>
-          <div className="App">
-              <BrowserRouter>
-                  <Routes>
-                      <Route exact path="/" element={<DashboardPage/>}/>
-                      <Route exact path="/signup" element={<SignUpPage />}/>
-                  </Routes>
-              </BrowserRouter>
-          </div>
+          <AuthContext.Provider value={{authState, authDispatch}}>
+              <div className="App">
+                  <BrowserRouter>
+                      <Routes>
+                          <Route exact path="/" element={<DashboardPage/>}/>
+                          <Route exact path="/signup" element={<SignUpPage />}/>
+                      </Routes>
+                  </BrowserRouter>
+              </div>
+          </AuthContext.Provider>
       </ThemeProvider>
   );
 }
