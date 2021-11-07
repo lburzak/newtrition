@@ -3,37 +3,7 @@ import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {Component} from "react";
 import {Error, signUp} from "../action/signup";
-
-const values = {
-    'username': {
-        'string.min': 2,
-        'string.max': 40,
-    },
-    'password': {
-        'string.min': 5,
-        'string.max': 64
-    }
-};
-
-function buildFieldErrorMessage(error) {
-    const field = error.field.charAt(0).toUpperCase() + error.field.slice(1);
-    const type = error.type;
-    const value = values[error.field][error.type];
-
-    switch (error.type) {
-        case "string.min":
-            return `${field} must be at least ${value} characters long.`;
-        case "string.max":
-            return `${field} must be at most ${value} characters long.`;
-        case "any.required":
-        case "string.empty":
-            return `${field} cannot be empty.`;
-        case "string.pattern.base":
-            return `${field} contains illegal characters.`
-        default:
-            return type
-    }
-}
+import Message from "../content/message";
 
 export class SignUpPage extends Component {
     state = {
@@ -50,23 +20,25 @@ export class SignUpPage extends Component {
                 <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
                 <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
                 <Box>
-                    <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
-                        <Grid item xs={12}>
-                            <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
-                                       error={this.state.usernameError !== null} helperText={this.state.usernameError}
-                                       onChange={this.handleUsernameChange}/>
+                    <form onSubmit={this.submit}>
+                        <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
+                            <Grid item xs={12}>
+                                <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
+                                           error={this.state.usernameError !== null} helperText={this.state.usernameError}
+                                           onChange={this.handleUsernameChange} onSubmit={this.submit}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField data-testid={"password-field"} fullWidth label={"Password"} variant={"outlined"}
+                                           type={"password"}
+                                           error={this.state.passwordError !== null} helperText={this.state.passwordError}
+                                           onChange={this.handlePasswordChange} onSubmit={this.submit}/>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Button data-testid={"signup-button"} fullWidth variant={"contained"} type={"submit"}
+                                        disabled={this.state.loading}>Sign up</Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <TextField data-testid={"password-field"} fullWidth label={"Password"} variant={"outlined"}
-                                       type={"password"}
-                                       error={this.state.passwordError !== null} helperText={this.state.passwordError}
-                                       onChange={this.handlePasswordChange}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button data-testid={"signup-button"} fullWidth variant={"contained"} onClick={this.submit}
-                                    disabled={this.state.loading}>Sign up</Button>
-                        </Grid>
-                    </Grid>
+                    </form>
                 </Box>
             </Paper>
         </Container>;
@@ -86,7 +58,9 @@ export class SignUpPage extends Component {
         });
     }
 
-    submit = async () => {
+    submit = async (event) => {
+        event.preventDefault();
+
         const {username, password} = this.state;
 
         this.setState({
@@ -97,23 +71,24 @@ export class SignUpPage extends Component {
         const result = await signUp(username, password);
 
         if (result.error === Error.USER_ALREADY_EXISTS) {
-            this.state.usernameError = "User with such username already exists.";
-
-            this.setState({...this.state, loading: false});
-            return;
+            return this.setState({
+                ...this.state,
+                usernameError: "User with such username already exists.",
+                loading: false
+            });
         }
 
         if (result.validationErrors) {
             const usernameErrors = result.validationErrors.username;
             const passwordErrors = result.validationErrors.password;
 
-            this.state.usernameError = usernameErrors ?
-                buildFieldErrorMessage(result.validationErrors.username[0]) : null;
+            this.setState({
+                ...this.state,
+                usernameError: usernameErrors ? Message.fromValidationError(usernameErrors[0]) : null,
+                passwordError: passwordErrors ? Message.fromValidationError(passwordErrors[0]) : null,
+                loading: false
+            });
 
-            this.state.passwordError = passwordErrors ?
-                buildFieldErrorMessage(result.validationErrors.password[0]) : null;
-
-            this.setState({...this.state, loading: false});
             return;
         }
 
