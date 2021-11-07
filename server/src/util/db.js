@@ -4,13 +4,13 @@ let db;
 let connection;
 
 async function open() {
-    connection = await MongoClient.connect(global.__MONGO_URI__, {
+    connection = await MongoClient.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
 
     db = await connection.db();
-    // await db.collection('users').createIndex({"username": 1}, {unique: true});
+    await db.collection('users').createIndex({"username": 1}, {unique: true});
 }
 
 async function close() {
