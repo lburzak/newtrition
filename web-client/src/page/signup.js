@@ -1,7 +1,7 @@
 import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
-import {useContext, useReducer} from "react";
+import {useContext, useEffect, useReducer} from "react";
 import {Error, signUp} from "../action/signup";
 import Message from "../content/message";
 import {AuthContext} from "../App";
@@ -17,12 +17,18 @@ const initialState = {
 export const SignUpPage = () => {
     const reducerHook = useReducer(reducer, initialState);
     const [state, dispatch] = reducerHook;
-    const {authDispatch} = useContext(AuthContext);
+    const {authState, authDispatch} = useContext(AuthContext);
 
     const submit = async (event) => {
         event.preventDefault();
         await handleSubmit(state, dispatch, authDispatch);
     }
+
+    useEffect(() => {
+        // TODO: This is unresolved promise
+        if (authState.authenticated)
+            window.location.href = "/";
+    })
 
     return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
         <Paper elevation={2} style={{padding: 60}}>
