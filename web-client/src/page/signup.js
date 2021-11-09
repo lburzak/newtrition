@@ -5,28 +5,28 @@ import {useContext, useEffect, useReducer} from "react";
 import {Error, initiateSignUpFlow} from "../api/auth";
 import Message from "../auth/message";
 import {AuthContext} from "../App";
+import {useNavigate} from "react-router";
 
 const initialState = {
     usernameError: null,
     passwordError: null,
     username: "",
     password: "",
-    loading: false
+    submitted: false
 }
 
 export const SignUpPage = () => {
-    const reducerHook = useReducer(reducer, initialState);
-    const [state, dispatch] = reducerHook;
+    const [state, dispatch] = useReducer(reducer, initialState);
     const {authState, authDispatch} = useContext(AuthContext);
-
-    const submit = async (event) => {
-        event.preventDefault();
-        await handleSubmit(state, dispatch, authDispatch);
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (authState.authenticated)
-            window.location.href = "/";
+            navigate('/');
+
+        if (state.submitted)
+            initiateSignUpFlow(state)
+                .then(buildSignUpResultHandler(dispatch, authDispatch));
     })
 
     return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
@@ -34,7 +34,10 @@ export const SignUpPage = () => {
             <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
             <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
             <Box>
-                <form onSubmit={submit}>
+                <form onSubmit={e => {
+                    e.preventDefault();
+                    dispatch({type: 'submitted'});
+                }}>
                     <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
                         <Grid item xs={12}>
                             <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
@@ -49,7 +52,7 @@ export const SignUpPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Button data-testid={"signup-button"} fullWidth variant={"contained"} type={"submit"}
-                                    disabled={state.loading}>Sign up</Button>
+                                    disabled={state.submitted}>Sign up</Button>
                         </Grid>
                     </Grid>
                 </form>
@@ -58,23 +61,17 @@ export const SignUpPage = () => {
     </Container>;
 }
 
-async function handleSubmit(state, dispatch, authDispatch) {
-    const {username, password} = state;
-
-    dispatch('submitted');
-
-    const flowResult = await initiateSignUpFlow({username, password});
-
-    if (flowResult.isSuccess) {
-        const {accessToken, username} = flowResult.payload;
+const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
+    if (result.isSuccess) {
+        const {accessToken, username} = result.payload;
         return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
     }
 
-    switch (flowResult.error) {
+    switch (result.error) {
         case Error.USER_ALREADY_EXISTS:
             return dispatch({type: 'userAlreadyExists'});
         case Error.VALIDATION_FAILED:
-            return dispatch({type: 'validationFailed', payload: flowResult.payload});
+            return dispatch({type: 'validationFailed', payload: result.payload});
         default:
             return console.error("Something went wrong.");
     }
@@ -87,12 +84,12 @@ function reducer(state, event) {
         case 'passwordChanged':
             return {...state, password: event.payload};
         case 'submitted':
-            return {...state, loading: true}
+            return {...state, submitted: true}
         case 'userAlreadyExists':
             return {
                 ...state,
                 usernameError: "User with such username already exists.",
-                loading: false
+                submitted: false
             };
         case 'validationFailed':
             const usernameErrors = event.payload.username;
@@ -102,7 +99,7 @@ function reducer(state, event) {
                 ...state,
                 usernameError: usernameErrors ? Message.fromValidationError(usernameErrors[0]) : null,
                 passwordError: passwordErrors ? Message.fromValidationError(passwordErrors[0]) : null,
-                loading: false
+                submitted: false
             }
         default:
             return {...state}
