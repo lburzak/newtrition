@@ -2,7 +2,7 @@ import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/m
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {Error, signUp} from "../action/signup";
+import {Error, initiateSignUpFlow} from "../action/api";
 import Message from "../content/message";
 import {AuthContext} from "../App";
 
@@ -25,7 +25,6 @@ export const SignUpPage = () => {
     }
 
     useEffect(() => {
-        // TODO: This is unresolved promise
         if (authState.authenticated)
             window.location.href = "/";
     })
@@ -64,16 +63,21 @@ async function handleSubmit(state, dispatch, authDispatch) {
 
     dispatch('submitted');
 
-    const result = await signUp(username, password);
+    const flowResult = await initiateSignUpFlow({username, password});
 
-    if (result.error === Error.USER_ALREADY_EXISTS)
-        return dispatch({type: 'userAlreadyExists'});
-
-    if (result.validationErrors) {
-        return dispatch({type: 'validationFailed', payload: result.validationErrors});
+    if (flowResult.isSuccess) {
+        const {accessToken, username} = flowResult.payload;
+        return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
     }
 
-    authDispatch({type: 'signedIn', payload: {username, password}});
+    switch (flowResult.error) {
+        case Error.USER_ALREADY_EXISTS:
+            return dispatch({type: 'userAlreadyExists'});
+        case Error.VALIDATION_FAILED:
+            return dispatch({type: 'validationFailed', payload: flowResult.payload});
+        default:
+            return console.error("Something went wrong.");
+    }
 }
 
 function reducer(state, event) {

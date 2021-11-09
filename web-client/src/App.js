@@ -1,10 +1,10 @@
 import './App.css';
-import {createContext} from "react";
+import {createContext, useMemo, useReducer} from "react";
 import {SignUpPage} from "./page/signup";
 import {DashboardPage} from "./page/dashboard"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {useAuthReducer} from "./reducer/auth";
+import {authReducer, loadAuthState} from "./reducer/auth";
 
 export const AuthContext = createContext();
 
@@ -19,11 +19,16 @@ const theme = createTheme({
 })
 
 function App() {
-  const [authState, authDispatch] = useAuthReducer();
+  const [authState, authDispatch] = useReducer(authReducer, loadAuthState());
+
+  const authContextValue = useMemo(() => {
+        return { authState, authDispatch };
+    }, [authState, authDispatch]
+  );
 
   return (
       <ThemeProvider theme={theme}>
-          <AuthContext.Provider value={{authState, authDispatch}}>
+          <AuthContext.Provider value={authContextValue}>
               <div className="App">
                   <BrowserRouter>
                       <Routes>
