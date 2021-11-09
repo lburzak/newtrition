@@ -4,7 +4,7 @@ import {SignUpPage} from "./page/signup";
 import {DashboardPage} from "./page/dashboard"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {authReducer, loadAuthState} from "./reducer/auth";
+import {authReducer, loadAuthState} from "./auth/state";
 
 export const AuthContext = createContext();
 

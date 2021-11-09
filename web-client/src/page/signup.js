@@ -2,8 +2,8 @@ import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/m
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {Error, initiateSignUpFlow} from "../action/api";
-import Message from "../content/message";
+import {Error, initiateSignUpFlow} from "../api/auth";
+import Message from "../auth/message";
 import {AuthContext} from "../App";
 
 const initialState = {
