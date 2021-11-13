@@ -9,6 +9,7 @@ var debug = require('debug')('server:server');
 var http = require('http');
 var db = require('../src/util/db');
 
+global.__MONGO_URI__ = process.env.MONGO_URI;
 db.open().then(() => console.log("Connected to DB"));
 
 /**

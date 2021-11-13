@@ -4,7 +4,7 @@ let db;
 let connection;
 
 async function open() {
-    connection = await MongoClient.connect(process.env.MONGO_URI, {
+    connection = await MongoClient.connect(global.__MONGO_URI__, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
