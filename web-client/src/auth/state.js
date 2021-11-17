@@ -26,5 +26,12 @@ export function authReducer(state, event) {
             accessToken: accessToken,
             username: username
         };
+    } else if (event.type === 'loggedOut') {
+        localStorage.removeItem('username');
+        localStorage.removeItem('accessToken');
+
+        return {
+            authenticated: false
+        }
     }
 }

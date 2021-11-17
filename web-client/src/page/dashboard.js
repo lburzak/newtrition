@@ -1,32 +1,53 @@
 import Box from "@mui/material/Box";
-import {List, ListItem, ListItemIcon} from "@material-ui/core";
+import {Button, List, ListItem, ListItemIcon} from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
-import {Fastfood, Restaurant} from "@mui/icons-material";
+import {AccountCircle, Fastfood, Restaurant} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
-import {Divider} from "@mui/material";
+import {AuthContext} from "../App";
+import {useContext, useEffect} from "react";
+import {useNavigate} from "react-router";
 
-export const DashboardPage = () => <div>
-    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+const ProfileView = () => <AuthContext.Consumer>
+    {({authState, authDispatch}) => <Box>
+        <ListItem>
+            <ListItemIcon>
+                <AccountCircle sx={{fontSize: 38}}/>
+            </ListItemIcon>
+            <ListItemText primary="Profile" secondary={`Logged in as ${authState.authenticated ? authState.username : "Guest"}`}/>
+            <Button variant={"outlined"} onClick={() => authDispatch({type: 'loggedOut'})}>Logout</Button>
+        </ListItem>
+    </Box>}
+</AuthContext.Consumer>
+
+export const DashboardPage = () => {
+    const {authState} = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!authState.authenticated)
+            navigate('/signup');
+    }, [authState, navigate]);
+
+    return <Box sx={{width: '100%', maxWidth: 360, height: '100vh', bgcolor: 'background.paper'}}
+                style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
         <List>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
-                        <Fastfood />
+                        <Fastfood/>
                     </ListItemIcon>
-                    <ListItemText primary="Products" />
+                    <ListItemText primary="Products"/>
                 </ListItemButton>
             </ListItem>
-            <ListItem>
+            <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
-                        <Restaurant />
+                        <Restaurant/>
                     </ListItemIcon>
-                    <ListItemText primary="Recipes" />
+                    <ListItemText primary="Recipes"/>
                 </ListItemButton>
             </ListItem>
         </List>
-    </Box>
-    <Box>
-        <Divider orientation={"vertical"} variant={"middle"}/>
-    </Box>
-</div>
+        <ProfileView/>
+    </Box>;
+}
