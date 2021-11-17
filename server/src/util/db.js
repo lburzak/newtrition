@@ -7,6 +7,7 @@ async function open() {
     connection = await MongoClient.connect(global.__MONGO_URI__, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 2000
     });
 
     db = await connection.db();

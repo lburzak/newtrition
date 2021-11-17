@@ -9,17 +9,17 @@ services:
     ports:
       - "4000:4000"
     links:
-      - mongodb
+      - database
     depends_on:
-      - mongodb
+      - database
     environment:
-      MONGO_URI: mongodb://localhost:27017/newtrition
+      MONGO_URI: mongodb://database:27017/newtrition
       PORT: 4000
-      WAIT_HOSTS: mongodb:27017
+      WAIT_HOSTS: database:27017
     networks:
       - net-newtrition-backend
-  mongodb:
-    container_name: mongodb
+  database:
+    container_name: database
     image: mongo
     volumes:
       - ~/mongo:/data/db
