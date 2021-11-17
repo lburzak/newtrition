@@ -55,7 +55,7 @@ async function fetchToken(username, password) {
         return Result.success(json.accessToken);
     }
 
-    throw Error(`status = ${res.status}`);
+    throw new TypeError(`status = ${res.status}`);
 }
 
 async function fetchAuthenticatedUser(token) {
@@ -81,6 +81,10 @@ export async function initiateSignUpFlow({username, password}) {
     if (signUpResult.isFailure)
         return Result.failure(signUpResult.error, signUpResult.payload)
 
+    return await initiateLoginFlow({username, password});
+}
+
+export async function initiateLoginFlow({username, password}) {
     const tokenResult = await fetchToken(username, password);
 
     if (tokenResult.isSuccess) {

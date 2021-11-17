@@ -5,6 +5,7 @@ import {DashboardPage} from "./page/dashboard"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {authReducer, loadAuthState} from "./auth/state";
+import {LoginPage} from "./page/LoginPage";
 
 export const AuthContext = createContext();
 
@@ -33,6 +34,7 @@ function App() {
                   <BrowserRouter>
                       <Routes>
                           <Route exact path="/" element={<DashboardPage/>}/>
+                          <Route exact path="/login" element={<LoginPage />}/>
                           <Route exact path="/signup" element={<SignUpPage />}/>
                       </Routes>
                   </BrowserRouter>

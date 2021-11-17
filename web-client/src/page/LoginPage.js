@@ -1,9 +1,8 @@
 import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
-import {grey} from "@mui/material/colors";
+import {blue} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {Error, initiateSignUpFlow} from "../api/auth";
-import Message from "../auth/message";
+import {initiateLoginFlow} from "../api/auth";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../component/PaperForm";
@@ -18,11 +17,11 @@ const initialState = {
 }
 
 const Heading = () => <div>
-    <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
-    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
+    <AccountCircle sx={{color: blue[400], fontSize: 160}}/>
+    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign In</Typography>
 </div>
 
-export const SignUpPage = () => {
+export const LoginPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const {authState, authDispatch} = useContext(AuthContext);
     const navigate = useNavigate();
@@ -32,8 +31,8 @@ export const SignUpPage = () => {
             navigate('/');
 
         if (state.submitted)
-            initiateSignUpFlow(state)
-                .then(buildSignUpResultHandler(dispatch, authDispatch));
+            initiateLoginFlow(state)
+                .then(buildLoginResultHandler(dispatch, authDispatch));
     })
 
     // noinspection HtmlUnknownTarget
@@ -47,25 +46,20 @@ export const SignUpPage = () => {
                        error={state.passwordError !== null} helperText={state.passwordError}
                        onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
             <Button fullWidth variant={"contained"} type={"submit"}
-                    disabled={state.submitted}>Sign up</Button>
-            <a href="/login">Already have an account?</a>
+                    disabled={state.submitted}>Sign in</Button>
+            <a href="/signup">Don't have an account yet?</a>
         </Row>
     </PaperForm>;
 }
 
-const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
+const buildLoginResultHandler = (dispatch, authDispatch) => (result) => {
     if (result.isSuccess) {
         const {accessToken, username} = result.payload;
         return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
     }
 
-    switch (result.error) {
-        case Error.USER_ALREADY_EXISTS:
-            return dispatch({type: 'userAlreadyExists'});
-        case Error.VALIDATION_FAILED:
-            return dispatch({type: 'validationFailed', payload: result.payload});
-        default:
-            return console.error("Something went wrong.");
+    if (result.isFailure) {
+        return console.error("Something went wrong.");
     }
 }
 
@@ -77,22 +71,6 @@ function reducer(state, event) {
             return {...state, password: event.payload};
         case 'submitted':
             return {...state, submitted: true}
-        case 'userAlreadyExists':
-            return {
-                ...state,
-                usernameError: "User with such username already exists.",
-                submitted: false
-            };
-        case 'validationFailed':
-            const usernameErrors = event.payload.username;
-            const passwordErrors = event.payload.password;
-
-            return {
-                ...state,
-                usernameError: usernameErrors ? Message.fromValidationError(usernameErrors[0]) : null,
-                passwordError: passwordErrors ? Message.fromValidationError(passwordErrors[0]) : null,
-                submitted: false
-            }
         default:
             return {...state}
     }

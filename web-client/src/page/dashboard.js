@@ -25,7 +25,7 @@ export const DashboardPage = () => {
 
     useEffect(() => {
         if (!authState.authenticated)
-            navigate('/signup');
+            navigate('/login');
     }, [authState, navigate]);
 
     return <Box sx={{width: '100%', maxWidth: 360, height: '100vh', bgcolor: 'background.paper'}}
