@@ -10,6 +10,12 @@ var http = require('http');
 var db = require('../src/util/db');
 
 global.__MONGO_URI__ = process.env.MONGO_URI;
+
+if (global.__MONGO_URI__ === undefined) {
+  console.error("Fatal: Unable to connect to database: MONGO_URI environmental variable is not set!")
+  return;
+}
+
 db.open().then(() => console.log("Connected to DB"));
 
 /**
