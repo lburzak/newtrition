@@ -1,4 +1,4 @@
-import {Box, Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
@@ -6,6 +6,8 @@ import {Error, initiateSignUpFlow} from "../api/auth";
 import Message from "../auth/message";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
+import {PaperForm} from "../component/PaperForm";
+import {Row} from "../component/Row";
 
 const initialState = {
     usernameError: null,
@@ -14,6 +16,11 @@ const initialState = {
     password: "",
     submitted: false
 }
+
+const Heading = () => <div>
+    <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
+    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
+</div>
 
 export const SignUpPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -29,36 +36,19 @@ export const SignUpPage = () => {
                 .then(buildSignUpResultHandler(dispatch, authDispatch));
     })
 
-    return <Container sx={{alignItems: "center", justifyContent: "center", height: "100vh", display: "flex"}}>
-        <Paper elevation={2} style={{padding: 60}}>
-            <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
-            <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
-            <Box>
-                <form onSubmit={e => {
-                    e.preventDefault();
-                    dispatch({type: 'submitted'});
-                }}>
-                    <Grid container spacing={2} maxWidth={300} sx={{border: "1px grey"}}>
-                        <Grid item xs={12}>
-                            <TextField data-testid={"username-field"} fullWidth label={"Username"} variant={"outlined"}
-                                       error={state.usernameError !== null} helperText={state.usernameError}
-                                       onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField data-testid={"password-field"} fullWidth label={"Password"} variant={"outlined"}
-                                       type={"password"}
-                                       error={state.passwordError !== null} helperText={state.passwordError}
-                                       onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button data-testid={"signup-button"} fullWidth variant={"contained"} type={"submit"}
-                                    disabled={state.submitted}>Sign up</Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Box>
-        </Paper>
-    </Container>;
+    return <PaperForm heading={<Heading/>} onSubmit={() => dispatch({type: 'submitted'})}>
+        <Row horizontalSpacing={2} maxWidth={300}>
+            <TextField fullWidth label={"Username"} variant={"outlined"}
+                       error={state.usernameError !== null} helperText={state.usernameError}
+                       onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
+            <TextField fullWidth label={"Password"} variant={"outlined"}
+                       type={"password"}
+                       error={state.passwordError !== null} helperText={state.passwordError}
+                       onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
+            <Button fullWidth variant={"contained"} type={"submit"}
+                    disabled={state.submitted}>Sign up</Button>
+        </Row>
+    </PaperForm>;
 }
 
 const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
