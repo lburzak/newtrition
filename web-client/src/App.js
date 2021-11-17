@@ -1,7 +1,7 @@
 import './App.css';
 import {createContext, useMemo, useReducer} from "react";
-import {SignUpPage} from "./page/signup";
-import {DashboardPage} from "./page/dashboard"
+import {SignUpPage} from "./page/SignUpPage";
+import {DashboardPage} from "./page/DashboardPage"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {authReducer, loadAuthState} from "./auth/state";

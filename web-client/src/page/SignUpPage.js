@@ -19,7 +19,7 @@ const initialState = {
 
 const Heading = () => <div>
     <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
-    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign Up</Typography>
+    <Typography variant={"h3"} style={{marginBottom: 40}}>Create an account</Typography>
 </div>
 
 export const SignUpPage = () => {
@@ -38,7 +38,7 @@ export const SignUpPage = () => {
 
     // noinspection HtmlUnknownTarget
     return <PaperForm heading={<Heading/>} onSubmit={() => dispatch({type: 'submitted'})}>
-        <Row horizontalSpacing={2} maxWidth={300}>
+        <Row horizontalSpacing={2} maxWidth={600}>
             <TextField fullWidth label={"Username"} variant={"outlined"}
                        error={state.usernameError !== null} helperText={state.usernameError}
                        onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
