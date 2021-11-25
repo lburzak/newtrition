@@ -1,3 +1,5 @@
+import AuthStorage from "./storage";
+
 export const initialAuthState = {
     authenticated: false,
     accessToken: null,
@@ -5,11 +7,8 @@ export const initialAuthState = {
 };
 
 export function loadAuthState() {
-    const accessToken = localStorage.getItem('accessToken');
-    const username = localStorage.getItem('username');
-
-    if (accessToken && username)
-        return {authenticated: true, accessToken, username};
+    if (AuthStorage.accessToken && AuthStorage.username)
+        return {authenticated: true, accessToken: AuthStorage.accessToken, username: AuthStorage.username};
 
     return initialAuthState;
 }
@@ -18,8 +17,8 @@ export function authReducer(state, event) {
     if (event.type === 'loggedIn') {
         const {accessToken, username} = event.payload;
 
-        localStorage.setItem('username', username);
-        localStorage.setItem('accessToken', accessToken);
+        AuthStorage.username = username;
+        AuthStorage.accessToken = accessToken;
 
         return {
             authenticated: true,
@@ -27,8 +26,7 @@ export function authReducer(state, event) {
             username: username
         };
     } else if (event.type === 'loggedOut') {
-        localStorage.removeItem('username');
-        localStorage.removeItem('accessToken');
+        AuthStorage.clear();
 
         return {
             authenticated: false

@@ -6,6 +6,9 @@ const values = {
     'password': {
         'string.min': 5,
         'string.max': 64
+    },
+    'ean': {
+        'string.length': 13
     }
 };
 
@@ -24,6 +27,8 @@ export function fromValidationError(error) {
             return `${field} cannot be empty.`;
         case "string.pattern.base":
             return `${field} contains illegal characters.`
+        case "string.length":
+            return `${field} should be exactly ${value} characters long.`
         default:
             return type
     }
