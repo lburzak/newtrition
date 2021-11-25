@@ -2,12 +2,12 @@ import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {Error, initiateSignUpFlow} from "../api/auth";
 import Message from "../auth/message";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../component/PaperForm";
 import {Row} from "../component/Row";
+import {AuthApi} from "../api";
 
 const initialState = {
     usernameError: null,
@@ -32,7 +32,7 @@ export const SignUpPage = () => {
             navigate('/');
 
         if (state.submitted)
-            initiateSignUpFlow(state)
+            AuthApi.Endpoint.initiateSignUpFlow(state)
                 .then(buildSignUpResultHandler(dispatch, authDispatch));
     })
 
@@ -60,9 +60,9 @@ const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
     }
 
     switch (result.error) {
-        case Error.USER_ALREADY_EXISTS:
+        case AuthApi.Error.USER_ALREADY_EXISTS:
             return dispatch({type: 'userAlreadyExists'});
-        case Error.VALIDATION_FAILED:
+        case AuthApi.Error.VALIDATION_FAILED:
             return dispatch({type: 'validationFailed', payload: result.payload});
         default:
             return console.error("Something went wrong.");

@@ -2,11 +2,11 @@ import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {blue} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {initiateLoginFlow} from "../api/auth";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../component/PaperForm";
 import {Row} from "../component/Row";
+import {AuthApi} from "../api";
 
 const initialState = {
     usernameError: null,
@@ -31,7 +31,7 @@ export const LoginPage = () => {
             navigate('/');
 
         if (state.submitted)
-            initiateLoginFlow(state)
+            AuthApi.Endpoint.initiateLoginFlow(state)
                 .then(buildLoginResultHandler(dispatch, authDispatch));
     })
 

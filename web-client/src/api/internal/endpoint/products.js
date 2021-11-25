@@ -1,10 +1,5 @@
-import {apiAuthenticated} from "./internal";
-import Result from "./result";
-
-export const Error = Object.freeze({
-    SERVER_ERROR: 0,
-    VALIDATION_FAILED: 1
-});
+import {apiAuthenticated} from "../api";
+import Result from "../result";
 
 export async function createProduct({name, ean, calories, carbohydrate, fat, protein}) {
     const res = await apiAuthenticated('users/@me/products', {

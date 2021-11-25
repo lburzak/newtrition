@@ -8,8 +8,7 @@ import {
     OutlinedInput
 } from "@mui/material";
 import {useEffect, useReducer} from "react";
-import {ProductsEndpoint} from "../api/index";
-import {Error} from "../api/products";
+import {ProductsApi} from "../api/index";
 import Message from "../auth/message"
 
 const initialState = {
@@ -47,7 +46,7 @@ export function CreateProductPage() {
 
     useEffect(() => {
         if (state.submitted) {
-            ProductsEndpoint.createProduct({
+            ProductsApi.Endpoint.createProduct({
                 name: state.fields.name,
                 ean: state.fields.ean,
                 calories: state.fields.calories,
@@ -56,11 +55,8 @@ export function CreateProductPage() {
                 protein: state.fields.protein
             }).then(result => {
                 dispatch({type: 'submitFinished'})
-                if (result.error === Error.VALIDATION_FAILED)
+                if (result.error === ProductsApi.Error.VALIDATION_FAILED)
                     dispatch({type: 'showValidationErrors', payload: result.payload.validationErrors})
-
-                // if (result.isSuccess)
-
             })
         }
     });
