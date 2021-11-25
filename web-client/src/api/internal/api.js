@@ -1,4 +1,4 @@
-import AuthStorage from '../../auth/storage'
+import AuthStorage from '../../auth/internal/storage'
 
 const URL = '/api';
 

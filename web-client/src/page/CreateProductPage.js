@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import {useEffect, useReducer} from "react";
 import {ProductsApi} from "../api/index";
-import Message from "../auth/message"
+import Message from "../form/message"
 
 const initialState = {
     fields: {

@@ -1,5 +1,6 @@
 import {apiAuthenticated} from "../api";
 import Result from "../result";
+import {ProductsApi} from "../../index";
 
 export async function createProduct({name, ean, calories, carbohydrate, fat, protein}) {
     const res = await apiAuthenticated('users/@me/products', {
@@ -24,9 +25,9 @@ export async function createProduct({name, ean, calories, carbohydrate, fat, pro
         const json = await res.json();
 
         if (!json.errors)
-            return Result.failure(Error.SERVER_ERROR);
+            return Result.failure(ProductsApi.Error.SERVER_ERROR);
 
-        return Result.failure(Error.VALIDATION_FAILED, {
+        return Result.failure(ProductsApi.Error.VALIDATION_FAILED, {
             validationErrors: json.errors
         });
     }

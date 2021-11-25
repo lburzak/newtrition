@@ -2,7 +2,7 @@ import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import Message from "../auth/message";
+import Message from "../form/message";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../component/PaperForm";
