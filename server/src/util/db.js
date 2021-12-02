@@ -1,30 +1,32 @@
 const {MongoClient} = require("mongodb");
 
-let db;
 let connection;
 
-async function open() {
-    connection = await MongoClient.connect(global.__MONGO_URI__, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 2000
-    });
+const client = new MongoClient(global.__MONGO_URI__);
 
-    db = await connection.db();
-    await db.collection('users').createIndex({"username": 1}, {unique: true});
+async function getConnection() {
+    if (!connection)
+        connection = await client.connect();
+
+    return connection;
 }
 
-async function close() {
-    await connection.close();
+async function getDatabase() {
+    const conn = await getConnection();
+    return conn.db();
 }
 
-async function drop() {
+async function dropDatabase() {
+    const db = await getDatabase();
     await db.dropDatabase();
 }
 
+async function getCollection(collection) {
+    const db = await getDatabase();
+    return db.collection(collection);
+}
+
 module.exports = {
-    collection: (name) => db.collection(name),
-    close,
-    open,
-    drop
-};
+    dropDatabase,
+    getCollection,
+}

@@ -1,12 +1,10 @@
 const request = require('supertest')
 const app = require('../app')
-const db = require('../util/db');
 const _ = require("lodash");
+const {dropDatabase} = require("../util/db");
 
 describe('POST /users/:username/products', () => {
-    beforeAll(async () => await db.open());
-    afterAll(async () => await db.close());
-    afterEach(async () => await db.drop());
+    afterEach(async () => await dropDatabase());
 
     const VALID_BODY = {
         ean: '7581919399803',

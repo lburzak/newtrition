@@ -1,7 +1,7 @@
 const AuthService = require('./authService');
 const {AuthError} = require('../common/results');
 const jwtAuthentication = require('../util/jwtAuthentication');
-const db = require("../util/db");
+const {dropDatabase, getCollection} = require("../util/db");
 
 jest.mock('../util/jwtAuthentication');
 
@@ -38,17 +38,16 @@ describe('generateTokens', () => {
     const VALID_PASSWORD = 'testpass';
     const INVALID_PASSWORD = 'testpassd';
 
-    beforeAll(async () => await db.open());
-    afterAll(async () => await db.close());
     afterEach(async () => {
-        await db.drop();
+        await dropDatabase();
         jest.resetAllMocks();
     });
 
     it('should return tokens when credentials match', async () => {
         jwtAuthentication.generateAccessToken.mockReturnValue(VALID_TOKEN);
 
-        await db.collection('users').insertOne({...USER, password: VALID_PASSWORD});
+        const Users = await getCollection('users');
+        await Users.insertOne({...USER, password: VALID_PASSWORD});
         const result = await AuthService.generateTokens(USER.username, VALID_PASSWORD);
 
         expect(result.data.accessToken).toStrictEqual(VALID_TOKEN);
@@ -56,7 +55,8 @@ describe('generateTokens', () => {
     });
 
     it('should return error when credentials dont match', async () => {
-        db.collection('users').insertOne({...USER, password: VALID_PASSWORD});
+        const Users = await getCollection('users');
+        await Users.insertOne({...USER, password: VALID_PASSWORD});
         const result = await AuthService.generateTokens(USER.username, INVALID_PASSWORD);
 
         expect(result.error).toBe(AuthError.INVALID_USERNAME_OR_PASSWORD);

@@ -1,11 +1,9 @@
 const UserService = require("./userRepository");
 const {ResourceError} = require("../common/results");
-const db = require("../util/db");
+const {getCollection, dropDatabase} = require("../util/db");
 
 describe('createUser', () => {
-    beforeAll(async () => await db.open());
-    afterAll(async () => await db.close());
-    afterEach(async () => await db.drop());
+    afterEach(async () => await dropDatabase());
 
     const VALID_USERNAME = "testuser";
     const VALID_PASSWORD = "testpass";
@@ -13,8 +11,8 @@ describe('createUser', () => {
     it('should save user in the database', async () => {
         await UserService.create(VALID_USERNAME, VALID_PASSWORD);
 
-        const users = db.collection('users');
-        const userInDatabase = await users.findOne({username: VALID_USERNAME});
+        const Users = await getCollection('users');
+        const userInDatabase = await Users.findOne({username: VALID_USERNAME});
 
         expect(userInDatabase.username).toBe(VALID_USERNAME);
         expect(userInDatabase.password).toBe(VALID_PASSWORD);

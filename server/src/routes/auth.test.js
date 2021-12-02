@@ -1,6 +1,6 @@
 const request = require('supertest')
 const app = require('../app')
-const db = require('../util/db');
+const {dropDatabase} = require("../util/db");
 
 const CREDENTIALS = Object.freeze({
     'username': 'testuser',
@@ -14,9 +14,7 @@ async function createTestUser() {
 }
 
 describe('Create user', () => {
-    beforeAll(async () => await db.open());
-    afterAll(async () => await db.close());
-    afterEach(async () => await db.drop());
+    afterEach(async () => await dropDatabase());
 
     describe('when no request body', () => {
         it('should respond with 400', async () => {
@@ -165,12 +163,9 @@ describe('Create user', () => {
 })
 
 describe('Generate tokens', () => {
-    beforeAll(async () => await db.open());
-    afterAll(async () => await db.close());
-
     describe('when user exists', () => {
         beforeAll(async () => await createTestUser());
-        afterAll(async () => await db.drop());
+        afterAll(async () => await dropDatabase());
 
         it('should respond with auth tokens', async () => {
             const res = await request(app)

@@ -1,10 +1,10 @@
 const {Result, AuthError} = require('../common/results')
 const jwt = require('../util/jwtAuthentication');
-const db = require('../util/db');
 const {serializeUser} = require("../models/user");
+const {getCollection} = require("../util/db");
 
 async function generateTokens(username, password) {
-    const Users = db.collection('users');
+    const Users = await getCollection('users');
     const userEntity = await Users.findOne({username, password});
 
     if (userEntity) {

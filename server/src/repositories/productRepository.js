@@ -1,8 +1,8 @@
-const db = require('../util/db');
 const {Result} = require('../common/results');
+const {getCollection} = require("../util/db");
 
 async function create(ownerUsername, product) {
-    const Products = db.collection('products');
+    const Products = await getCollection('products');
 
     await Products.insertOne({
         name: product.name,
@@ -15,7 +15,7 @@ async function create(ownerUsername, product) {
 }
 
 async function findByAuthor(username) {
-    const Products = db.collection('products');
+    const Products = await getCollection('products');
 
     return await Products.find({
         owner: username
