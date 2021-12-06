@@ -9,20 +9,6 @@ var debug = require('debug')('server:server');
 var http = require('http');
 var db = require('../src/util/db');
 
-global.__MONGO_URI__ = process.env.MONGO_URI;
-
-if (global.__MONGO_URI__ === undefined) {
-    console.error("Fatal: Unable to connect to database: MONGO_URI environmental variable is not set!")
-    return;
-}
-
-db.open()
-    .catch(error => {
-        console.error(`Unable to connect to DB: ${error.message}`);
-        process.exit(1)
-    })
-    .then(() => console.log("Connected to DB"));
-
 /**
  * Get port from environment and store in Express.
  */
