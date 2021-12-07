@@ -16,6 +16,7 @@ import {AuthContext} from "../App";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {CreateProductPage} from "./CreateProductPage";
+import {ProductsApi} from "../api";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -62,12 +63,18 @@ const BottomSheet = ({title, visible, onDismiss, children}) =>
 
 export const DashboardPage = () => {
     const [productCreatorOpened, setProductCreatorOpened] = useState(false);
+    const [productsList, setProductsList] = useState([]);
     const {authState} = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!authState.authenticated)
             navigate('/login');
+
+        ProductsApi.Endpoint.getUserProducts().then(result => {
+            if (result.isSuccess)
+                setProductsList(result.payload)
+        })
     }, [authState, navigate]);
 
     return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
@@ -94,16 +101,19 @@ export const DashboardPage = () => {
             <ProfileView/>
         </Box>
         <Divider variant={'fullWidth'} orientation={'vertical'}/>
-        <Box style={{overflowY: 'scroll', height: '100%'}}>
+        <Box style={{overflowY: 'scroll', height: '100%', width: '100%'}}>
             <div style={{padding: 20}}>
                 <EvenGrid>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942} imageSrc={'https://www.sadowniczy.pl/pol_pl_Kasza-Gryczana-PRAZONA-2-5kg-ciemna-160292_1.jpg'}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
-                    <ProductCard name={'Kasza gryczana'} calories={300} proteins={200} carbohydrates={100} ean={8271847273942}/>
+                    {productsList
+                        .map((product, index) => <ProductCard
+                            key={`product-${index}`}
+                            name={product.name}
+                            calories={product.nutritionFacts.calories}
+                            proteins={product.nutritionFacts.protein}
+                            carbohydrates={product.nutritionFacts.carbohydrate}
+                            ean={product.ean}
+                        />)
+                    }
                 </EvenGrid>
             </div>
         </Box>

@@ -35,5 +35,18 @@ export async function createProduct({name, ean, calories, carbohydrate, fat, pro
     if (res.status === 200)
         return Result.success();
 
-    throw new TypeError(`status = ${res.status}`);
+    throw new TypeError(`Unexpected status = ${res.status}`);
+}
+
+export async function getUserProducts() {
+    const res = await apiAuthenticated('users/@me/products', {
+        method: 'GET'
+    });
+
+    if (res.status === 200) {
+        const products = await res.json();
+        return Result.success(products);
+    }
+
+    throw new TypeError(`Unexpected status = ${res.status}`);
 }
