@@ -95,32 +95,34 @@ export const DashboardPage = () => {
             <ProfileView/>
         </Box>
         <Divider variant={'fullWidth'} orientation={'vertical'}/>
-        <Box style={{overflowY: 'scroll', height: '100%', width: '100%'}}>
-            <div style={{padding: 20}}>
-                <EvenGrid>
-                    {
-                        productsState.products.map((product, index) => <ProductCard
-                            key={`product-${index}`}
-                            name={product.name}
-                            calories={product.nutritionFacts.calories}
-                            proteins={product.nutritionFacts.protein}
-                            carbohydrates={product.nutritionFacts.carbohydrate}
-                            ean={product.ean}
-                        />)
-                    }
-                </EvenGrid>
+        <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
+            <div style={{overflowY: 'scroll', height: '100%', flex: 1}}>
+                <div style={{padding: 20}}>
+                    <EvenGrid>
+                        {
+                            productsState.products.map((product, index) => <ProductCard
+                                key={`product-${index}`}
+                                name={product.name}
+                                calories={product.nutritionFacts.calories}
+                                proteins={product.nutritionFacts.protein}
+                                carbohydrates={product.nutritionFacts.carbohydrate}
+                                ean={product.ean}
+                            />)
+                        }
+                    </EvenGrid>
+                </div>
             </div>
-        </Box>
-        <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flex: 1, position: 'absolute'}}>
-            <BottomSheet title="New product" visible={productCreatorOpened}
-                         onDismiss={() => setProductCreatorOpened(false)}>
-                <CreateProductPage/>
-            </BottomSheet>
-        </Box>
-        <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
-             style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => setProductCreatorOpened(true)}>
-            <Add/> New product
-        </Fab>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flex: 1, position: 'absolute', bottom: 0}}>
+                <BottomSheet title="New product" visible={productCreatorOpened}
+                             onDismiss={() => setProductCreatorOpened(false)}>
+                    <CreateProductPage/>
+                </BottomSheet>
+            </div>
+            <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
+                 style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => setProductCreatorOpened(true)}>
+                <Add/> New product
+            </Fab>
+        </div>
     </div>;
 }
 
