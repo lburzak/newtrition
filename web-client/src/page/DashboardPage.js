@@ -12,11 +12,10 @@ import {
 import ListItemButton from "@mui/material/ListItemButton";
 import {AccountCircle, Fastfood, Add, Restaurant, Close} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
-import {AuthContext} from "../App";
+import {AuthContext, ProductsContext} from "../App";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {CreateProductPage} from "./CreateProductPage";
-import {ProductsApi} from "../api";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -63,18 +62,13 @@ const BottomSheet = ({title, visible, onDismiss, children}) =>
 
 export const DashboardPage = () => {
     const [productCreatorOpened, setProductCreatorOpened] = useState(false);
-    const [productsList, setProductsList] = useState([]);
     const {authState} = useContext(AuthContext);
+    const {productsState} = useContext(ProductsContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!authState.authenticated)
             navigate('/login');
-
-        ProductsApi.Endpoint.getUserProducts().then(result => {
-            if (result.isSuccess)
-                setProductsList(result.payload)
-        })
     }, [authState, navigate]);
 
     return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
@@ -104,8 +98,8 @@ export const DashboardPage = () => {
         <Box style={{overflowY: 'scroll', height: '100%', width: '100%'}}>
             <div style={{padding: 20}}>
                 <EvenGrid>
-                    {productsList
-                        .map((product, index) => <ProductCard
+                    {
+                        productsState.products.map((product, index) => <ProductCard
                             key={`product-${index}`}
                             name={product.name}
                             calories={product.nutritionFacts.calories}
@@ -134,14 +128,16 @@ const EvenGrid = ({children}) => <Grid container spacing={2}>
     {children.map(child => <Grid item xs={12} sm={6} md={4} lg={3}>{child}</Grid>)}
 </Grid>
 
-const ProductSpecRow = ({name, value}) => <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+const ProductSpecRow = ({name, value}) => <div
+    style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
     <Typography variant={'body1'} style={{color: 'hsl(0, 0%, 70%)'}}>{name}</Typography>
     <Typography variant={'body1'}>{value}</Typography>
 </div>
 
 const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc}) => <Card>
     <div style={{height: 120, width: '100%', backgroundColor: 'gray'}}>
-        {imageSrc ? <img style={{objectFit: 'cover', width: '100%', height: '100%'}} src={imageSrc} alt={`${name}`}/> : <div/>}
+        {imageSrc ? <img style={{objectFit: 'cover', width: '100%', height: '100%'}} src={imageSrc} alt={`${name}`}/> :
+            <div/>}
     </div>
     <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
         <Typography variant={'h6'} fontWeight={'bold'}>{name}</Typography>
