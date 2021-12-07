@@ -1,11 +1,8 @@
 import './App.css';
 import {createContext, useEffect, useMemo, useReducer} from "react";
-import {SignUpPage} from "./page/SignUpPage";
-import {DashboardPage} from "./page/DashboardPage"
+import {MainPage} from "./page/MainPage"
 import {createTheme, ThemeProvider} from "@mui/material";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {authReducer, loadAuthState} from "./auth";
-import {LoginPage} from "./page/LoginPage";
 import {initialProductsState, productsReducer} from "./repository/productsReducer";
 import {ProductsApi} from "./api";
 
@@ -48,15 +45,9 @@ function App() {
       <ThemeProvider theme={theme}>
           <AuthContext.Provider value={authContextValue}>
               <ProductsContext.Provider value={productsContextValue}>
-                  <div className="App">
-                      <BrowserRouter>
-                          <Routes>
-                              <Route exact path="/" element={<DashboardPage/>}/>
-                              <Route exact path="/login" element={<LoginPage />}/>
-                              <Route exact path="/signup" element={<SignUpPage />}/>
-                          </Routes>
-                      </BrowserRouter>
-                  </div>
+                  <MainPage className="App">
+
+                  </MainPage>
               </ProductsContext.Provider>
           </AuthContext.Provider>
       </ThemeProvider>
