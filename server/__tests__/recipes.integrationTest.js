@@ -11,16 +11,17 @@ describe('POST /users/:username/recipes', () => {
         {name: "Flour"}
     ]
 
+    /**
+     * Ingredients are supplemented with `productId`s by `prepareData` function
+     */
     const VALID_BODY = {
         name: "Ravioli",
         ingredients: [
             {
-                productId: 0,
                 unit: "g",
                 value: 200
             },
             {
-                productId: 1,
                 unit: "g",
                 value: 50
             }
@@ -29,15 +30,19 @@ describe('POST /users/:username/recipes', () => {
 
     let token;
 
-    beforeEach(async () => {
-        token = await retrieveTestToken();
+    async function prepareData() {
         for (const product in EXISTING_PRODUCTS)
             await ProductRepository.create(TEST_CREDENTIALS.username, product);
 
         const userProducts = await ProductRepository.findByAuthor(TEST_CREDENTIALS.username);
 
         for (let i = 0; i < VALID_BODY.ingredients.length; i++)
-            VALID_BODY.ingredients[i].productId = userProducts[VALID_BODY.ingredients[i].productId]._id;
+            VALID_BODY.ingredients[i].productId = userProducts[i]._id;
+    }
+
+    beforeEach(async () => {
+        await prepareData();
+        token = await retrieveTestToken();
     })
 
     afterEach(async () => {await dropDatabase();})
