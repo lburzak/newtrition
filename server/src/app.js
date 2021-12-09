@@ -4,6 +4,9 @@ const {provideUserFromPath} = require("./requestHandlers/middleware/path");
 const {getUserProducts, createProduct} = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
+const {createRecipe} = require("./requestHandlers/recipes");
+const ValidationService = require("./services/validationService");
+const {buildValidationMiddleware} = require("./requestHandlers/middleware/validation");
 
 const app = express();
 app.use(express.json());
@@ -17,9 +20,10 @@ app.use('/api/auth', authRouter)
 
 usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);
-usersRouter.post('/:username/products', provideUserFromPath, createProduct);
+usersRouter.post('/:username/products', provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
+usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
 
-authRouter.post('/signup', signUp);
+authRouter.post('/signup', buildValidationMiddleware(ValidationService.validateCredentials), signUp);
 authRouter.post('/', getToken);
 
 module.exports = app;

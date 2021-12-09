@@ -1,15 +1,9 @@
 const AuthService = require('../services/authService')
 const {AuthError, ResourceError} = require("../common/results");
-const ValidationService = require("../services/validationService");
 const UserRepository = require("../repositories/userRepository");
 
 async function signUp(req, res) {
     const credentials = req.body;
-
-    const validationResult = ValidationService.validateCredentials(credentials);
-
-    if (!validationResult.data.valid)
-        return res.status(400).send({errors: validationResult.data.errors});
 
     const {username, password} = credentials;
     const result = await UserRepository.create(username, password);
