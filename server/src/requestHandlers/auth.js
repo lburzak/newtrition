@@ -1,12 +1,9 @@
-const express = require('express');
 const AuthService = require('../services/authService')
 const {AuthError, ResourceError} = require("../common/results");
 const ValidationService = require("../services/validationService");
 const UserRepository = require("../repositories/userRepository");
 
-const router = express.Router();
-
-router.post('/signup', async function(req, res) {
+async function signUp(req, res) {
     const credentials = req.body;
 
     const validationResult = ValidationService.validateCredentials(credentials);
@@ -24,9 +21,9 @@ router.post('/signup', async function(req, res) {
         return res.sendStatus(409)
 
     res.sendStatus(500);
-});
+}
 
-router.post('/', async function (req, res) {
+async function getToken(req, res) {
     const {username, password} = req.body
 
     if (!username || !password)
@@ -47,6 +44,9 @@ router.post('/', async function (req, res) {
     }
 
     res.sendStatus(500);
-});
+}
 
-module.exports = router;
+module.exports = {
+    signUp,
+    getToken
+}

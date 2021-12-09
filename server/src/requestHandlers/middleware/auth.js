@@ -1,6 +1,6 @@
-const AuthService = require('../services/authService')
+const AuthService = require('../../services/authService')
 
-function authenticate(req, res, next) {
+function provideAuthenticatedUser(req, res, next) {
     const token = extractToken(req);
 
     if (!token)
@@ -29,4 +29,6 @@ function extractToken(req) {
     return token;
 }
 
-module.exports = authenticate;
+module.exports = {
+    provideAuthenticatedUser
+};

@@ -1,8 +1,8 @@
 const request = require('supertest')
-const app = require('../app')
+const app = require('../src/app')
 const _ = require("lodash");
-const {dropDatabase} = require("../util/db");
-const {retrieveTestToken} = require("../util/testUtil");
+const {dropDatabase} = require("../src/util/db");
+const {retrieveTestToken} = require("../src/util/testUtil");
 
 describe('POST /users/:username/products', () => {
     afterEach(async () => await dropDatabase());
