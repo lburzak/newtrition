@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../app");
 
-const CREDENTIALS = {
+const TEST_CREDENTIALS = {
     username: 'testuser',
     password: 'testpass'
 };
@@ -9,13 +9,13 @@ const CREDENTIALS = {
 async function createUser() {
     await request(app)
         .post('/api/auth/signup')
-        .send(CREDENTIALS)
+        .send(TEST_CREDENTIALS)
 }
 
 async function authenticate() {
     const res = await request(app)
         .post('/api/auth')
-        .send(CREDENTIALS);
+        .send(TEST_CREDENTIALS);
 
     return res.body.accessToken;
 }
@@ -26,5 +26,6 @@ async function retrieveTestToken() {
 }
 
 module.exports = {
-    retrieveTestToken
+    retrieveTestToken,
+    TEST_CREDENTIALS
 }
