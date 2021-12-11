@@ -10,7 +10,7 @@ async function create(ownerUsername, recipe) {
         owner: ownerUsername
     });
 
-    return Result.empty();
+    return Result.success();
 }
 
 module.exports = {

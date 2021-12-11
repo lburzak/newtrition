@@ -37,12 +37,12 @@ const buildValidator = schema => data => {
     const error = schema.validate(data, {abortEarly: false}).error;
 
     if (!error)
-        return Result.withData({valid: true});
+        return Result.success({valid: true});
 
     const validationErrors = error.details
         .map(details => ValidationError.fromJoiErrorDetails(details));
 
-    return Result.withData({
+    return Result.success({
         valid: false,
         errors: validationErrors
     });

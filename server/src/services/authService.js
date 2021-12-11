@@ -10,22 +10,22 @@ async function generateTokens(username, password) {
     if (userEntity) {
         const user = serializeUser(userEntity);
 
-        return Result.withData({
+        return Result.success({
             accessToken: jwt.generateAccessToken(user),
             refreshToken: "refresh_token"
         });
     }
 
-    return Result.withError(AuthError.INVALID_USERNAME_OR_PASSWORD);
+    return Result.failure(AuthError.INVALID_USERNAME_OR_PASSWORD);
 }
 
 function authenticate(token) {
     const user = jwt.verifyToken(token);
 
     if (!user)
-        return Result.withError(AuthError.INVALID_TOKEN);
+        return Result.failure(AuthError.INVALID_TOKEN);
 
-    return Result.withData(serializeUser(user));
+    return Result.success(serializeUser(user));
 }
 
 module.exports = {

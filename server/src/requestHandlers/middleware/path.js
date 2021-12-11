@@ -11,12 +11,12 @@ async function provideUserFromPath(req, res, next) {
 
     const result = await UserRepository.findByUsername(username);
 
-    if (result.error) {
+    if (result.isFailure) {
         const status = convertServiceErrorToStatus(result.error);
         return res.sendStatus(status);
     }
 
-    req.targetUser = result.data;
+    req.targetUser = result.payload;
     next();
 }
 

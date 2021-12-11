@@ -11,7 +11,7 @@ async function create(ownerUsername, product) {
         owner: ownerUsername
     });
 
-    return Result.empty();
+    return Result.success();
 }
 
 async function findByAuthor(username) {

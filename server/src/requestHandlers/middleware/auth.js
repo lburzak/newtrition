@@ -8,10 +8,10 @@ function provideAuthenticatedUser(req, res, next) {
 
     const result = AuthService.authenticate(token);
 
-    if (result.error)
+    if (result.isFailure)
         return res.sendStatus(401);
 
-    req.user = result.data;
+    req.user = result.payload;
     next();
 }
 

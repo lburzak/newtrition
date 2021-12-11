@@ -8,7 +8,7 @@ async function signUp(req, res) {
     const {username, password} = credentials;
     const result = await UserRepository.create(username, password);
 
-    if (!result.error)
+    if (result.isSuccess)
         return res.sendStatus(200)
 
     if (result.error === ResourceError.ALREADY_EXISTS)
@@ -32,8 +32,8 @@ async function getToken(req, res) {
             }
         });
 
-    if (result.data) {
-        const {accessToken, refreshToken} = result.data;
+    if (result.isSuccess) {
+        const {accessToken, refreshToken} = result.payload;
         return res.status(200).send({accessToken, refreshToken});
     }
 

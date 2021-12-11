@@ -26,7 +26,7 @@ describe('authenticate', () => {
         const result = AuthService.authenticate(VALID_TOKEN);
 
         expect(jwtAuthentication.verifyToken).toBeCalledWith(VALID_TOKEN)
-        expect(result.data).toStrictEqual({username: USERNAME});
+        expect(result.payload).toStrictEqual({username: USERNAME});
     });
 });
 
@@ -50,7 +50,7 @@ describe('generateTokens', () => {
         await Users.insertOne({...USER, password: VALID_PASSWORD});
         const result = await AuthService.generateTokens(USER.username, VALID_PASSWORD);
 
-        expect(result.data.accessToken).toStrictEqual(VALID_TOKEN);
+        expect(result.payload.accessToken).toStrictEqual(VALID_TOKEN);
         expect(jwtAuthentication.generateAccessToken).toBeCalledWith(USER);
     });
 
