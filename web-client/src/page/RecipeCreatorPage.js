@@ -11,20 +11,100 @@ import {
     Typography
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
+import {useEffect, useReducer, useState} from "react";
+
+const initialState = {
+    name: '',
+    steps: ["Heat the oven to 180 degrees.", "Put cheese on top.", "Fry the onion.", "Enjoy the dish."],
+    ingredients: [
+        {name: 'Mleko', amount: 300, unit: 'ml'},
+        {name: 'Ser', amount: 200, unit: 'g'}
+    ]
+};
+
+function reducer(state, action) {
+    switch (action.type) {
+        case 'updateStep':
+            return {
+                ...state,
+                steps: state.steps.map(
+                    (content, index) => index === action.payload.index ? action.payload.content : content
+                )
+            }
+        case 'deleteStep':
+            return {
+                ...state,
+                steps: state.steps.filter((step, index) => index !== action.payload)
+            }
+        case 'addStep':
+            const steps = state.steps;
+            steps.push("")
+
+            return {
+                ...state,
+                steps
+            }
+        case 'changeName':
+            return {
+                ...state,
+                name: action.payload
+            }
+        case 'addIngredient':
+            const ingredients = state.ingredients;
+
+            ingredients.push({
+                name: action.payload.name,
+                amount: action.payload.amount,
+                unit: action.payload.unit
+            })
+
+            return {
+                ...state,
+                ingredients
+            }
+        case 'deleteIngredient':
+            return {
+                ...state,
+                ingredients: state.ingredients.filter((ingredient, index) => index !== action.payload)
+            }
+        default:
+            return state;
+        case 'submit':
+            return {
+                ...state,
+                submitted: true
+            }
+        case 'submitted':
+            return {
+                ...state,
+                submitted: false
+            }
+    }
+}
 
 export function RecipeCreatorPage() {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    useEffect(() => {
+        if (state.submitted) {
+            console.log("submitting", state);
+            dispatch({type: 'submitted'});
+        }
+    }, [state, dispatch])
+
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
-            <TextField style={{flex: 1}} label={"Recipe name"} fullWidth/>
-            <Button variant={'contained'} startIcon={<Done/>}>Save recipe</Button>
+            <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
+                       onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
+            <Button variant={'contained'} onClick={() => dispatch({type: 'submit'})} startIcon={<Done/>}>Save recipe</Button>
         </div>
         <Grid container height={'100%'}>
             <Grid item md={6} sm={12} lg={8}>
                 <PhotosSection/>
-                <StepsSection/>
+                <StepsSection steps={state.steps} dispatch={dispatch}/>
             </Grid>
             <Grid item md={6} xs={12} lg={4}>
-                <IngredientsSection/>
+                <IngredientsSection ingredients={state.ingredients} dispatch={dispatch}/>
             </Grid>
         </Grid>
     </div>
@@ -46,81 +126,108 @@ function PhotosSection() {
     </FormSection>
 }
 
-function StepsSection() {
+function StepsSection({steps, dispatch}) {
     return <FormSection label={"Steps"}>
         <List>
-            <StepItem position={1} content={"Heat the oven to 180 degrees."}/>
-            <StepItem position={2} content={"Put cheese on top."}/>
-            <StepItem position={3} content={"Fry the onion."}/>
-            <StepItem position={4} editMode content={"Enjoy the dish."}/>
-            <Button variant={"outlined"} fullWidth>
+            {steps.map((step, index) => <StepItem position={index + 1} content={step}
+                                                  onContentChanged={(content) => dispatch({
+                                                      type: 'updateStep',
+                                                      payload: {index, content}
+                                                  })}
+                                                  onDelete={() => dispatch({type: 'deleteStep', payload: index})}/>)}
+            <Button onClick={() => dispatch({type: 'addStep'})} variant={"outlined"} fullWidth>
                 <Add/>
             </Button>
         </List>
     </FormSection>
 }
 
-function IngredientsSection() {
+function IngredientForm({onCreateIngredient}) {
+    const [name, setName] = useState('');
+    const [amount, setAmount] = useState('');
+    const [unit, setUnit] = useState('grams');
+    const cannotProceed = typeof name !== 'string' || name.length < 1;
+
+    const submit = () => onCreateIngredient({name, amount, unit});
+
+    return <Grid container spacing={1}>
+        <Grid item xs={12}>
+            <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={['Masło', 'Ser', 'Mleko']}
+                onChange={(e, value) => setName(value)}
+                renderInput={(params) => <TextField {...params} label="Ingredient"/>}
+            />
+        </Grid>
+        <Grid item xs={4}>
+            <TextField onChange={(e) => setAmount(e.target.value)} label={"Amount"} disabled={cannotProceed}/>
+        </Grid>
+        <Grid item xs={4}>
+            <FormControl fullWidth disabled={cannotProceed}>
+                <InputLabel id="demo-simple-select-label">Unit</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    value={unit}
+                    onChange={e => setUnit(e.target.value)}
+                    label="Unit">
+                    <MenuItem value={'grams'}>grams</MenuItem>
+                    <MenuItem value={'litres'}>litres</MenuItem>
+                </Select>
+            </FormControl>
+        </Grid>
+        <Grid item xs={4} style={{overflow: 'hidden'}}>
+            <Button onClick={() => submit()} style={{width: '100%', height: '100%'}} color={'primary'}
+                    variant={"contained"}
+                    disabled={cannotProceed}>
+                Add
+            </Button>
+        </Grid>
+    </Grid>
+}
+
+function IngredientsSection({ingredients, dispatch}) {
     return <div style={{display: 'flex', flexDirection: 'row', height: '100%'}}>
         <Divider style={{marginLeft: 20, marginRight: 20, marginTop: 20}} orientation={"vertical"}/>
         <FormSection label={"Ingredients"} style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
             <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <div style={{flex: 1}}>
                     <List>
-                        <IngredientItem/>
-                        <IngredientItem/>
-                        <IngredientItem/>
-                        <IngredientItem/>
+                        {ingredients.map((ingredient, index) => <IngredientItem name={ingredient.name}
+                                                                                unit={ingredient.unit}
+                                                                                amount={ingredient.amount}
+                                                                                onDelete={() => dispatch({
+                                                                                    type: 'deleteIngredient',
+                                                                                    payload: index
+                                                                                })}/>)}
                     </List>
                 </div>
-                <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={['Masło', 'Ser', 'Mleko']}
-                            renderInput={(params) => <TextField {...params} label="Ingredient"/>}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <TextField label={"Amount"} disabled/>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormControl fullWidth disabled>
-                            <InputLabel id="demo-simple-select-label">Unit</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                value={10}
-                                label="Unit">
-                                <MenuItem value={10}>grams</MenuItem>
-                                <MenuItem value={20}>litres</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={4} style={{overflow: 'hidden'}}>
-                        <Button style={{width: '100%', height: '100%'}} color={'primary'} variant={"contained"}
-                                disabled>
-                            Add
-                        </Button>
-                    </Grid>
-                </Grid>
+                <IngredientForm
+                    onCreateIngredient={(ingredient) => dispatch({type: 'addIngredient', payload: ingredient})}/>
             </div>
         </FormSection>
     </div>
 }
 
-function IngredientItem() {
+function IngredientItem({name, amount, unit, onDelete}) {
     return <ListItem>
-        <ListItemText primary={"Mleko"} secondary={"300 ml"}/>
+        <ListItemText primary={name} secondary={`${amount} ${unit}`}/>
         <ListItemIcon style={{display: 'flex', justifyContent: 'center'}}>
             <IconButton>
-                <Delete/>
+                <Delete onClick={() => onDelete()}/>
             </IconButton>
         </ListItemIcon>
     </ListItem>
 }
 
-function StepItem({editMode, position, content}) {
+function StepItem({position, content, onContentChanged, onDelete}) {
+    const [editMode, setEditMode] = useState(false);
+
+    useEffect(() => {
+        if (content.length === 0)
+            setEditMode(true);
+    }, [setEditMode, content])
+
     return <ListItem>
         <ListItemAvatar>
             <Box>
@@ -128,16 +235,18 @@ function StepItem({editMode, position, content}) {
             </Box>
         </ListItemAvatar>
         <ListItemText>
-            {editMode ? <TextField variant={'standard'} value={content}/> : <Typography>{content}</Typography>}
+            {editMode ?
+                <TextField onChange={(e) => onContentChanged(e.target.value)} variant={'standard'} value={content}/> :
+                <Typography>{content}</Typography>}
         </ListItemText>
         <ListItemIcon>
             <IconButton>
-                {editMode ? <Done/> : <Edit/>}
+                {editMode ? <Done onClick={() => setEditMode(false)}/> : <Edit onClick={() => setEditMode(true)}/>}
             </IconButton>
         </ListItemIcon>
         <ListItemSecondaryAction>
             <IconButton>
-                <Delete/>
+                <Delete onClick={() => onDelete()}/>
             </IconButton>
         </ListItemSecondaryAction>
     </ListItem>
