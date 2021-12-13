@@ -11,7 +11,8 @@ import {
     Typography
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
-import {useEffect, useReducer, useState} from "react";
+import {useContext, useEffect, useReducer, useState} from "react";
+import {ProductsContext} from "../App";
 
 const initialState = {
     name: '',
@@ -143,20 +144,23 @@ function StepsSection({steps, dispatch}) {
 }
 
 function IngredientForm({onCreateIngredient}) {
-    const [name, setName] = useState('');
+    const [product, setProduct] = useState(null);
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('grams');
-    const cannotProceed = typeof name !== 'string' || name.length < 1;
+    const cannotProceed = !product;
+    const {productsState} = useContext(ProductsContext);
 
-    const submit = () => onCreateIngredient({name, amount, unit});
+    const submit = () => onCreateIngredient({name: product.name, amount, unit});
 
     return <Grid container spacing={1}>
         <Grid item xs={12}>
             <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                options={['Masło', 'Ser', 'Mleko']}
-                onChange={(e, value) => setName(value)}
+                isOptionEqualToValue={(option, value) => option._id === value._id}
+                options={productsState.products}
+                getOptionLabel={option => option.name}
+                onChange={(e, value) => setProduct(value)}
                 renderInput={(params) => <TextField {...params} label="Ingredient"/>}
             />
         </Grid>
