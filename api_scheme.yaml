@@ -382,20 +382,20 @@ components:
           description: EAN-13 code associated with the product
         nutritionFacts:
           $ref: '#/components/schemas/NutritionFacts'
-        definedPortions:
-          type: array
-          description: Portions that are convenient for this specific product
-          items:
-            $ref: '#/components/schemas/Portion'
         public:
           type: boolean
           default: null
           description: 'Specifies, whether a product is available publicly. Can be ommitted if false.'
           nullable: true
+        classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductClass'
       required:
         - id
         - name
-        - definedPortions
+        - classes
+      x-examples: {}
     User:
       title: User
       type: object
@@ -405,7 +405,7 @@ components:
       required:
         - username
     NutritionFacts:
-      description: Nutrition facts of a product in a quantity defined by a reference portion
+      description: Nutrition facts of a product per 100g.
       type: object
       x-examples:
         example-1:
@@ -430,11 +430,8 @@ components:
         protein:
           type: number
           description: Weight of protein per reference portion. In Grams.
-        referencePortion:
-          $ref: '#/components/schemas/Portion'
       required:
         - calories
-        - referencePortion
     ValidationError:
       title: ValidationError
       type: object
@@ -454,14 +451,13 @@ components:
       description: Measurable portion of a product
       properties:
         unit:
-          type: string
-          description: Physical unit of portion value
-        value:
+          $ref: '#/components/schemas/Unit'
+        amount:
           type: number
           description: Value of a portion unit
       required:
         - unit
-        - value
+        - amount
     Recipe:
       title: Recipe
       type: object
@@ -493,13 +489,14 @@ components:
       type: object
       description: A portion of a specified product
       properties:
-        product:
-          $ref: '#/components/schemas/Product'
+        productClass:
+          $ref: '#/components/schemas/ProductClass'
         portion:
           $ref: '#/components/schemas/Portion'
       required:
-        - product
+        - productClass
         - portion
+      x-examples: {}
     Token:
       type: string
       title: Token
@@ -521,6 +518,35 @@ components:
         message:
           type: string
       description: ''
+    ProductClass:
+      title: ProductClass
+      type: object
+      description: Products superset. Used in recipes to allow for replacements.
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        measurementUnits:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Unit'
+      required:
+        - id
+        - name
+        - measurementUnits
+    Unit:
+      title: Unit
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        representation:
+          type: string
+      required:
+        - id
+        - representation
   securitySchemes:
     TokenAuth:
       type: http
