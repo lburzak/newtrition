@@ -3,22 +3,26 @@ import Result from "../result";
 import {ProductsApi} from "../../index";
 
 export async function createProduct({name, ean, calories, carbohydrate, fat, protein}) {
+    const body = {
+        name,
+        nutritionFacts: {
+            calories,
+            carbohydrate,
+            fat,
+            protein,
+            referencePortion: {
+                value: 100,
+                unit: 'g'
+            }
+        }
+    };
+
+    if (ean.length > 0)
+        body.ean = ean
+
     const res = await apiAuthenticated('users/@me/products', {
         method: 'POST',
-        body: JSON.stringify({
-            ean,
-            name,
-            nutritionFacts: {
-                calories,
-                carbohydrate,
-                fat,
-                protein,
-                referencePortion: {
-                    value: 100,
-                    unit: 'g'
-                }
-            }
-        })
+        body: JSON.stringify(body)
     });
 
     if (res.status === 400) {
