@@ -5,7 +5,7 @@ import {
     Grid,
     InputAdornment,
     TextField,
-    OutlinedInput
+    OutlinedInput, Autocomplete
 } from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
 import {ProductsApi} from "../api/index";
@@ -55,7 +55,8 @@ export function CreateProductPage() {
                 calories: state.fields.calories,
                 carbohydrate: state.fields.carbohydrate,
                 fat: state.fields.fat,
-                protein: state.fields.protein
+                protein: state.fields.protein,
+                classes: state.fields.classes
             }).then(result => {
                 dispatch({type: 'submitFinished'})
                 if (result.error === ProductsApi.Error.VALIDATION_FAILED)
@@ -71,7 +72,7 @@ export function CreateProductPage() {
                      dispatch({type: 'submit'});
                  }}>
 
-        <Grid container spacing={2} separator>
+        <Grid container spacing={2}>
             <Grid item xs={6} md={8}>
                 <TextField fullWidth label={"Product name"} variant={"outlined"}
                            onChange={buildFieldChangeHandler('name')}/>
@@ -92,6 +93,20 @@ export function CreateProductPage() {
             </Grid>
             <Grid item xs={3}>
                 <DetailInput name="Fat per 100g" unit="grams" onChange={buildFieldChangeHandler('fat')}/>
+            </Grid>
+            <Grid item xs={12}>
+                <Autocomplete
+                    multiple
+                    freeSolo
+                    options={['masło', 'orzechy']}
+                    onChange={(event, value) => dispatch({type: 'updateField', payload: {field: 'classes', content: value}})}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Product classes"
+                        />
+                    )}
+                />
             </Grid>
         </Grid>
 
@@ -121,6 +136,8 @@ function reducer(state, action) {
             };
 
             newState.fields[action.payload.field] = action.payload.content;
+
+            console.log(newState)
 
             return newState;
         case 'showValidationErrors':

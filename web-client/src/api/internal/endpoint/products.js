@@ -2,19 +2,16 @@ import {apiAuthenticated} from "../api";
 import Result from "../result";
 import {ProductsApi} from "../../index";
 
-export async function createProduct({name, ean, calories, carbohydrate, fat, protein}) {
+export async function createProduct({name, ean, calories, carbohydrate, fat, protein, classes}) {
     const body = {
         name,
         nutritionFacts: {
             calories,
             carbohydrate,
             fat,
-            protein,
-            referencePortion: {
-                value: 100,
-                unit: 'g'
-            }
-        }
+            protein
+        },
+        classes
     };
 
     if (ean.length > 0)
