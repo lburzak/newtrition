@@ -11,12 +11,9 @@ describe('POST /users/:username/products', () => {
         ean: '7581919399803',
         name: 'Masło roślinne',
         nutritionFacts: {
-            calories: 300,
-            referencePortion: {
-                value: 40,
-                unit: 'g'
-            }
-        }
+            calories: 300
+        },
+        classes: ['margaryna', 'tłuszcz roślinny']
     };
 
     describe('when not authenticated', () => {
@@ -68,6 +65,8 @@ describe('POST /users/:username/products', () => {
 
                 const userProducts = res.body;
                 expect(userProducts[0].name).toBe(VALID_BODY.name);
+                expect(userProducts[0].classes).toContainEqual('margaryna')
+                expect(userProducts[0].classes).toContainEqual('tłuszcz roślinny')
             });
 
             it('should respond with 200', async () => {

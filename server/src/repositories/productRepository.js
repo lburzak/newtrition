@@ -8,7 +8,8 @@ async function create(ownerUsername, product) {
         name: product.name,
         ean: product.ean,
         nutritionFacts: product.nutritionFacts,
-        owner: ownerUsername
+        owner: ownerUsername,
+        classes: product.classes
     });
 
     return Result.success();

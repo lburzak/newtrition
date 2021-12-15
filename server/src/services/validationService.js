@@ -9,7 +9,8 @@ const eanSchema = Joi.string()
 const productSchema = Joi.object({
     ean: eanSchema,
     name: Joi.string().required(),
-    nutritionFacts: Joi.object()
+    nutritionFacts: Joi.object(),
+    classes: Joi.array().items(Joi.string())
 });
 
 const credentialsSchema = Joi.object({
