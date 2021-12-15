@@ -368,6 +368,24 @@ paths:
                 - password
       description: Create account
       security: []
+  /products/classes:
+    get:
+      summary: Get products classes
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductClass'
+              examples: {}
+        '401':
+          description: Unauthorized
+      operationId: get-products-classes
+      description: Returns classes of all products available to authenticated user
 components:
   schemas:
     Product:
