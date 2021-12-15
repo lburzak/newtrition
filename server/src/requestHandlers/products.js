@@ -1,4 +1,4 @@
-const {findByAuthor, create} = require("../repositories/productRepository");
+const {findByAuthor, create, findAllClasses} = require("../repositories/productRepository");
 
 async function getUserProducts(req, res) {
     const products = await findByAuthor(req.targetUser.username);
@@ -19,7 +19,17 @@ async function createProduct (req, res) {
     return res.sendStatus(500);
 }
 
+async function getAvailableClasses(req, res) {
+    const result = await findAllClasses();
+
+    if (result.isSuccess)
+        return res.status(200).send(result.payload);
+
+    return res.sendStatus(500);
+}
+
 module.exports = {
     getUserProducts,
-    createProduct
+    createProduct,
+    getAvailableClasses
 }
