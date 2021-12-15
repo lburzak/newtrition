@@ -1,32 +1,23 @@
-const express = require('express');
 const AuthService = require('../services/authService')
 const {AuthError, ResourceError} = require("../common/results");
-const ValidationService = require("../services/validationService");
 const UserRepository = require("../repositories/userRepository");
 
-const router = express.Router();
-
-router.post('/signup', async function(req, res) {
+async function signUp(req, res) {
     const credentials = req.body;
-
-    const validationResult = ValidationService.validateCredentials(credentials);
-
-    if (!validationResult.data.valid)
-        return res.status(400).send({errors: validationResult.data.errors});
 
     const {username, password} = credentials;
     const result = await UserRepository.create(username, password);
 
-    if (!result.error)
+    if (result.isSuccess)
         return res.sendStatus(200)
 
     if (result.error === ResourceError.ALREADY_EXISTS)
         return res.sendStatus(409)
 
     res.sendStatus(500);
-});
+}
 
-router.post('/', async function (req, res) {
+async function getToken(req, res) {
     const {username, password} = req.body
 
     if (!username || !password)
@@ -41,12 +32,15 @@ router.post('/', async function (req, res) {
             }
         });
 
-    if (result.data) {
-        const {accessToken, refreshToken} = result.data;
+    if (result.isSuccess) {
+        const {accessToken, refreshToken} = result.payload;
         return res.status(200).send({accessToken, refreshToken});
     }
 
     res.sendStatus(500);
-});
+}
 
-module.exports = router;
+module.exports = {
+    signUp,
+    getToken
+}

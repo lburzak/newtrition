@@ -6,14 +6,14 @@ async function create(username, password) {
     const existingUser = await Users.findOne({username});
 
     if (existingUser)
-        return Result.withError(ResourceError.ALREADY_EXISTS);
+        return Result.failure(ResourceError.ALREADY_EXISTS);
 
     await Users.insertOne({
         username,
         password
     });
 
-    return Result.empty();
+    return Result.success();
 }
 
 async function findByUsername(username) {
@@ -22,9 +22,9 @@ async function findByUsername(username) {
     const user = await Users.findOne({username});
 
     if (!user)
-        return Result.withError(ResourceError.NOT_EXISTS);
+        return Result.failure(ResourceError.NOT_EXISTS);
 
-    return Result.withData(user);
+    return Result.success(user);
 }
 
 module.exports = {

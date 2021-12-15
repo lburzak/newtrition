@@ -1,6 +1,6 @@
 const request = require('supertest')
-const app = require('../app')
-const {dropDatabase} = require("../util/db");
+const app = require('../src/app')
+const {dropDatabase} = require("../src/util/db");
 
 const CREDENTIALS = Object.freeze({
     'username': 'testuser',

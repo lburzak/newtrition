@@ -24,16 +24,25 @@ const credentialsSchema = Joi.object({
         .required()
 });
 
+const recipeSchema = Joi.object({
+    name: Joi.string().required(),
+    ingredients: Joi.array().items(Joi.object({
+        productId: Joi.string().required(),
+        unit: Joi.string().required(),
+        value: Joi.number().required()
+    }))
+})
+
 const buildValidator = schema => data => {
     const error = schema.validate(data, {abortEarly: false}).error;
 
     if (!error)
-        return Result.withData({valid: true});
+        return Result.success({valid: true});
 
     const validationErrors = error.details
         .map(details => ValidationError.fromJoiErrorDetails(details));
 
-    return Result.withData({
+    return Result.success({
         valid: false,
         errors: validationErrors
     });
@@ -41,5 +50,6 @@ const buildValidator = schema => data => {
 
 module.exports = {
     validateCredentials: buildValidator(credentialsSchema),
-    validateProduct: buildValidator(productSchema)
+    validateProduct: buildValidator(productSchema),
+    validateRecipe: buildValidator(recipeSchema)
 }

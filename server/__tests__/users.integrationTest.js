@@ -1,7 +1,8 @@
 const request = require('supertest')
-const app = require('../app')
+const app = require('../src/app')
 const _ = require("lodash");
-const {dropDatabase} = require("../util/db");
+const {dropDatabase} = require("../src/util/db");
+const {retrieveTestToken} = require("../src/util/testUtil");
 
 describe('POST /users/:username/products', () => {
     afterEach(async () => await dropDatabase());
@@ -31,33 +32,13 @@ describe('POST /users/:username/products', () => {
     describe('when authenticated', () => {
         let token;
 
+        beforeEach(async () => {
+            token = await retrieveTestToken();
+        });
+
         const makeRequest = (username) => request(app)
             .post(`/api/users/${username}/products`)
             .set('Authorization', `Bearer ${token}`);
-
-        beforeEach(async () => {
-            await createUser();
-            await authenticate();
-        });
-
-        const CREDENTIALS = {
-            username: 'testuser',
-            password: 'testpass'
-        };
-
-        async function createUser() {
-            await request(app)
-                .post('/api/auth/signup')
-                .send(CREDENTIALS)
-        }
-
-        async function authenticate() {
-            const res = await request(app)
-                .post('/api/auth')
-                .send(CREDENTIALS);
-
-            token = res.body.accessToken;
-        }
 
         describe('when body is missing', () => {
             it('should respond with 400', async () => {
