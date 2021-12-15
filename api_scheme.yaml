@@ -187,6 +187,10 @@ paths:
                   minLength: 1
                 nutritionFacts:
                   $ref: '#/components/schemas/NutritionFacts'
+                classes:
+                  type: array
+                  items:
+                    type: string
               required:
                 - name
             examples: {}
@@ -369,6 +373,7 @@ components:
     Product:
       type: object
       description: A food product
+      x-examples: {}
       properties:
         id:
           $ref: '#/components/schemas/Id'
@@ -390,12 +395,11 @@ components:
         classes:
           type: array
           items:
-            $ref: '#/components/schemas/ProductClass'
+            type: string
       required:
         - id
         - name
         - classes
-      x-examples: {}
     User:
       title: User
       type: object
@@ -528,8 +532,6 @@ components:
       type: object
       description: Products superset. Used in recipes to allow for replacements.
       properties:
-        id:
-          $ref: '#/components/schemas/Id'
         name:
           type: string
         measurementUnits:
@@ -538,20 +540,11 @@ components:
           items:
             $ref: '#/components/schemas/Unit'
       required:
-        - id
         - name
         - measurementUnits
     Unit:
       title: Unit
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/Id'
-        representation:
-          type: string
-      required:
-        - id
-        - representation
+      type: string
   securitySchemes:
     TokenAuth:
       type: http
