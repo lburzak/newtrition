@@ -4,7 +4,7 @@ const {provideUserFromPath} = require("./requestHandlers/middleware/path");
 const {getUserProducts, createProduct, getAvailableClasses} = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
-const {createRecipe} = require("./requestHandlers/recipes");
+const {createRecipe, getUserRecipes} = require("./requestHandlers/recipes");
 const ValidationService = require("./services/validationService");
 const {buildValidationMiddleware} = require("./requestHandlers/middleware/validation");
 
@@ -23,6 +23,7 @@ usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);
 usersRouter.post('/:username/products', provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
 usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
+usersRouter.get('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), getUserRecipes);
 
 authRouter.post('/signup', buildValidationMiddleware(ValidationService.validateCredentials), signUp);
 authRouter.post('/', getToken);

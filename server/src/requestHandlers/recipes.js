@@ -8,6 +8,11 @@ async function createRecipe(req, res) {
     res.sendStatus(500);
 }
 
+async function getUserRecipes(req, res) {
+    res.sendStatus(500);
+}
+
 module.exports = {
-    createRecipe
+    createRecipe,
+    getUserRecipes
 }
