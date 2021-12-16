@@ -146,20 +146,17 @@ function StepsSection({steps, dispatch}) {
 function IngredientForm({onCreateIngredient}) {
     const [product, setProduct] = useState(null);
     const [amount, setAmount] = useState('');
-    const [unit, setUnit] = useState('grams');
+    const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
     const {productsState} = useContext(ProductsContext);
 
-    const submit = () => onCreateIngredient({name: product.name, amount, unit});
+    const submit = () => onCreateIngredient({name: product, amount, unit});
 
     return <Grid container spacing={1}>
         <Grid item xs={12}>
             <Autocomplete
                 disablePortal
-                id="combo-box-demo"
-                isOptionEqualToValue={(option, value) => option._id === value._id}
-                options={productsState.products}
-                getOptionLabel={option => option.name}
+                options={productsState.classes.map(product => product.slice(0, 1).toUpperCase() + product.slice(1))}
                 onChange={(e, value) => setProduct(value)}
                 renderInput={(params) => <TextField {...params} label="Ingredient"/>}
             />
@@ -175,8 +172,7 @@ function IngredientForm({onCreateIngredient}) {
                     value={unit}
                     onChange={e => setUnit(e.target.value)}
                     label="Unit">
-                    <MenuItem value={'grams'}>grams</MenuItem>
-                    <MenuItem value={'litres'}>litres</MenuItem>
+                    <MenuItem value={'g'}>grams</MenuItem>
                 </Select>
             </FormControl>
         </Grid>
