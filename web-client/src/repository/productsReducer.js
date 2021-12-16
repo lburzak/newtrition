@@ -1,6 +1,7 @@
 export const initialProductsState = {
     invalidated: true,
-    products: []
+    products: [],
+    classes: []
 }
 
 export function productsReducer(state, action) {
@@ -9,6 +10,8 @@ export function productsReducer(state, action) {
             return {...state, invalidated: true};
         case "updateProducts":
             return {...state, products: action.payload};
+        case "updateClasses":
+            return {...state, classes: action.payload}
         default:
             return state;
     }

@@ -51,3 +51,16 @@ export async function getUserProducts() {
 
     throw new TypeError(`Unexpected status = ${res.status}`);
 }
+
+export async function getProductsClasses() {
+    const res = await apiAuthenticated('/products/classes', {
+        method: 'GET'
+    });
+
+    if (res.status === 200) {
+        const classes = await res.json();
+        return Result.success(classes);
+    }
+
+    throw new TypeError(`Unexpected status = ${res.status}`);
+}

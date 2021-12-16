@@ -28,6 +28,11 @@ function App() {
          ProductsApi.Endpoint.getUserProducts().then(result => {
              if (result.isSuccess)
                  productsDispatch({type: 'updateProducts', payload: result.payload})
+         });
+
+         ProductsApi.Endpoint.getProductsClasses().then(result => {
+             if (result.isSuccess)
+                 productsDispatch({type: 'updateClasses', payload: result.payload});
          })
      }
   }, [productsState, productsDispatch, authState]);

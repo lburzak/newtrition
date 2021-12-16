@@ -1,11 +1,12 @@
-import {createProduct, getUserProducts} from "./internal/endpoint/products"
+import {createProduct, getUserProducts, getProductsClasses} from "./internal/endpoint/products"
 import {initiateLoginFlow, initiateSignUpFlow} from "./internal/endpoint/auth";
 export {default as Result} from "./internal/result"
 
 export const ProductsApi = {
     Endpoint: {
         createProduct,
-        getUserProducts
+        getUserProducts,
+        getProductsClasses
     },
     Error: Object.freeze({
         SERVER_ERROR: 0,
