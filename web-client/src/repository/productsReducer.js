@@ -9,9 +9,9 @@ export function productsReducer(state, action) {
         case "invalidate":
             return {...state, invalidated: true};
         case "updateProducts":
-            return {...state, products: action.payload};
+            return {...state, products: action.payload, invalidated: false};
         case "updateClasses":
-            return {...state, classes: action.payload}
+            return {...state, classes: action.payload, invalidated: false};
         default:
             return state;
     }
