@@ -1,47 +1,33 @@
 const request = require("supertest");
 const app = require("../src/app");
 const _ = require("lodash");
-const {retrieveTestToken, TEST_CREDENTIALS} = require("../src/util/testUtil");
-const ProductRepository = require("../src/repositories/productRepository")
+const {retrieveTestToken} = require("../src/util/testUtil");
 const {dropDatabase} = require("../src/util/db");
 
 describe('POST /users/:username/recipes', () => {
-    const EXISTING_PRODUCTS = [
-        {name: "Cheese"},
-        {name: "Flour"}
-    ]
-
-    /**
-     * Ingredients are supplemented with `productId`s by `prepareData` function
-     */
     const VALID_BODY = {
-        name: "Ravioli",
-        ingredients: [
+        "name": "Ravioli",
+        "steps": [
+            "Mound the flour and salt together and form a well.",
+            "Beat the eggs in a bowl."
+        ],
+        "ingredients": [
             {
-                unit: "g",
-                value: 200
+                "class": "flour",
+                "amount": 120,
+                "unit": "g"
             },
             {
-                unit: "g",
-                value: 50
+                "class": "egg",
+                "amount": 36,
+                "unit": "g"
             }
         ]
     }
 
     let token;
 
-    async function prepareData() {
-        for (const product in EXISTING_PRODUCTS)
-            await ProductRepository.create(TEST_CREDENTIALS.username, product);
-
-        const userProducts = await ProductRepository.findByAuthor(TEST_CREDENTIALS.username);
-
-        for (let i = 0; i < VALID_BODY.ingredients.length; i++)
-            VALID_BODY.ingredients[i].productId = userProducts[i]._id;
-    }
-
     beforeEach(async () => {
-        await prepareData();
         token = await retrieveTestToken();
     })
 
@@ -74,6 +60,18 @@ describe('POST /users/:username/recipes', () => {
                 .send(VALID_BODY)
 
             expect(res.status).toBe(200);
+        });
+
+        it('should return insert recipe to user recipes', async () => {
+            await makeRequest("@me")
+                .send(VALID_BODY)
+
+            const res = await request(app)
+                .get(`/api/users/@me/recipes`)
+                .set('Authorization', `Bearer ${token}`);
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual(expect.arrayContaining([VALID_BODY]));
         });
     })
 });

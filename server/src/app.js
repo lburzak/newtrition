@@ -23,7 +23,7 @@ usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);
 usersRouter.post('/:username/products', provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
 usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
-usersRouter.get('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), getUserRecipes);
+usersRouter.get('/:username/recipes', provideUserFromPath, getUserRecipes);
 
 authRouter.post('/signup', buildValidationMiddleware(ValidationService.validateCredentials), signUp);
 authRouter.post('/', getToken);

@@ -27,10 +27,11 @@ const credentialsSchema = Joi.object({
 
 const recipeSchema = Joi.object({
     name: Joi.string().required(),
+    steps: Joi.array().items(Joi.string()),
     ingredients: Joi.array().items(Joi.object({
-        productId: Joi.string().required(),
-        unit: Joi.string().required(),
-        value: Joi.number().required()
+        class: Joi.string().required(),
+        unit: Joi.string(),
+        amount: Joi.number().required()
     }))
 })
 

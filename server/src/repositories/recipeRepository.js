@@ -7,12 +7,22 @@ async function create(ownerUsername, recipe) {
     await Recipes.insertOne({
         name: recipe.name,
         ingredients: recipe.ingredients,
+        steps: recipe.steps,
         owner: ownerUsername
     });
 
     return Result.success();
 }
 
+async function findUserRecipes(username) {
+    const Recipes = await getCollection('recipe');
+
+    const recipes = await Recipes.find({owner: username}).toArray();
+
+    return Result.success(recipes);
+}
+
 module.exports = {
-    create
+    create,
+    findUserRecipes
 }
