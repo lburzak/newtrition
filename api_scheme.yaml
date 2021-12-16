@@ -237,10 +237,29 @@ paths:
               properties:
                 name:
                   type: string
+                steps:
+                  type: array
+                  items:
+                    type: string
                 ingredients:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Ingredient'
+                    type: object
+                    properties:
+                      class:
+                        type: string
+                      amount:
+                        type: integer
+                      unit:
+                        type: string
+                        default: g
+                    required:
+                      - class
+                      - amount
+              required:
+                - name
+                - steps
+                - ingredients
         description: Properties of a recipe to be created
   /recipes:
     get:
