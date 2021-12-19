@@ -13,13 +13,14 @@ import {
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
 import {ProductsContext} from "../App";
+import {RecipesApi} from "../api";
 
 const initialState = {
     name: '',
     steps: ["Heat the oven to 180 degrees.", "Put cheese on top.", "Fry the onion.", "Enjoy the dish."],
     ingredients: [
-        {name: 'Mleko', amount: 300, unit: 'ml'},
-        {name: 'Ser', amount: 200, unit: 'g'}
+        {class: 'Mleko', amount: 300, unit: 'ml'},
+        {class: 'Ser', amount: 200, unit: 'g'}
     ]
 };
 
@@ -54,7 +55,7 @@ function reducer(state, action) {
             const ingredients = state.ingredients;
 
             ingredients.push({
-                name: action.payload.name,
+                class: action.payload.name,
                 amount: action.payload.amount,
                 unit: action.payload.unit
             })
@@ -89,6 +90,11 @@ export function RecipeCreatorPage() {
     useEffect(() => {
         if (state.submitted) {
             console.log("submitting", state);
+            RecipesApi.Endpoint.createRecipe({
+                name: state.name,
+                steps: state.steps,
+                ingredients: state.ingredients
+            })
             dispatch({type: 'submitted'});
         }
     }, [state, dispatch])
@@ -97,7 +103,7 @@ export function RecipeCreatorPage() {
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
             <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
                        onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
-            <Button variant={'contained'} onClick={() => dispatch({type: 'submit'})} startIcon={<Done/>}>Save recipe</Button>
+            <Button disabled={state.submitted} variant={'contained'} onClick={() => dispatch({type: 'submit'})} startIcon={<Done/>}>Save recipe</Button>
         </div>
         <Grid container height={'100%'}>
             <Grid item md={6} sm={12} lg={8}>
@@ -193,7 +199,7 @@ function IngredientsSection({ingredients, dispatch}) {
             <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>
                 <div style={{flex: 1}}>
                     <List>
-                        {ingredients.map((ingredient, index) => <IngredientItem name={ingredient.name}
+                        {ingredients.map((ingredient, index) => <IngredientItem name={ingredient.class}
                                                                                 unit={ingredient.unit}
                                                                                 amount={ingredient.amount}
                                                                                 onDelete={() => dispatch({
