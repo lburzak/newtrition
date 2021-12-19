@@ -260,6 +260,18 @@ paths:
                 - name
                 - steps
                 - ingredients
+            examples:
+              Ravioli recipe:
+                value:
+                  name: Ravioli
+                  steps:
+                    - Mound the flour and salt together and form a well.
+                    - Beat the eggs in a bowl.
+                  ingredients:
+                    - class: flour
+                      amount: 120
+                    - class: egg
+                      amount: 36
         description: Properties of a recipe to be created
   /recipes:
     get:
