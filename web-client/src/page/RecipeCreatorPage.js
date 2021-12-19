@@ -14,6 +14,7 @@ import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
 import {ProductsContext} from "../App";
 import {RecipesApi} from "../api";
+import {useNavigate} from "react-router";
 
 const initialState = {
     name: '',
@@ -21,7 +22,9 @@ const initialState = {
     ingredients: [
         {class: 'Mleko', amount: 300, unit: 'ml'},
         {class: 'Ser', amount: 200, unit: 'g'}
-    ]
+    ],
+    submitted: false,
+    finished: false
 };
 
 function reducer(state, action) {
@@ -76,34 +79,45 @@ function reducer(state, action) {
                 ...state,
                 submitted: true
             }
-        case 'submitted':
+        case 'finishSubmission':
+            console.log(action)
             return {
                 ...state,
-                submitted: false
+                submitted: false,
+                finished: action.payload.success
             }
     }
 }
 
 export function RecipeCreatorPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (state.submitted) {
             console.log("submitting", state);
+
             RecipesApi.Endpoint.createRecipe({
                 name: state.name,
                 steps: state.steps,
                 ingredients: state.ingredients
-            })
-            dispatch({type: 'submitted'});
+            }).then(result => {
+                dispatch({type: 'finishSubmission', payload: {success: result.isSuccess}});
+            });
         }
     }, [state, dispatch])
+
+    useEffect(() => {
+        if (state.finished)
+            navigate('/recipes');
+    }, [state, navigate])
 
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
             <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
                        onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
-            <Button disabled={state.submitted} variant={'contained'} onClick={() => dispatch({type: 'submit'})} startIcon={<Done/>}>Save recipe</Button>
+            <Button disabled={state.submitted} variant={'contained'} onClick={() => dispatch({type: 'submit'})}
+                    startIcon={<Done/>}>Save recipe</Button>
         </div>
         <Grid container height={'100%'}>
             <Grid item md={6} sm={12} lg={8}>
