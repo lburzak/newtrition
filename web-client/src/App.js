@@ -1,13 +1,12 @@
 import './App.css';
-import {createContext, useEffect, useMemo, useReducer} from "react";
+import {createContext, useEffect, useMemo, useReducer, useState} from "react";
 import {MainPage} from "./page/MainPage"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {authReducer, loadAuthState} from "./auth";
-import {initialProductsState, productsReducer} from "./repository/productsReducer";
 import {ProductsApi} from "./api";
 
 export const AuthContext = createContext();
-export const ProductsContext = createContext();
+export const DataContext = createContext();
 
 const theme = createTheme({
     typography: {
@@ -19,41 +18,53 @@ const theme = createTheme({
     }
 })
 
+function useRemoteData(fetch, shouldUpdate) {
+    const [data, setData] = useState([]);
+    const [invalidated, setInvalidated] = useState(true);
+
+    useEffect(() => {
+        if (!invalidated || !shouldUpdate())
+            return;
+
+        fetch().then(result => {
+            if (result.isSuccess)
+                setData(result.payload)
+        });
+
+        setInvalidated(false);
+    }, [invalidated, setInvalidated, data, setData, fetch, shouldUpdate])
+
+    const invalidate = () => setInvalidated(true);
+
+    const memoizedData = useMemo(() => data, [data])
+
+    return [memoizedData, invalidate]
+}
+
 function App() {
   const [authState, authDispatch] = useReducer(authReducer, loadAuthState());
-  const [productsState, productsDispatch] = useReducer(productsReducer, initialProductsState);
 
-  useEffect(() => {
-     if (productsState.invalidated && authState.authenticated) {
-         ProductsApi.Endpoint.getUserProducts().then(result => {
-             if (result.isSuccess)
-                 productsDispatch({type: 'updateProducts', payload: result.payload})
-         });
+  const shouldFetchData = () => authState.authenticated;
 
-         ProductsApi.Endpoint.getProductsClasses().then(result => {
-             if (result.isSuccess)
-                 productsDispatch({type: 'updateClasses', payload: result.payload});
-         })
-     }
-  }, [productsState, productsDispatch, authState]);
+  const productsData = useRemoteData(ProductsApi.Endpoint.getUserProducts, shouldFetchData)
+  const classesData = useRemoteData(ProductsApi.Endpoint.getProductsClasses, shouldFetchData)
 
   const authContextValue = useMemo(() => {
         return { authState, authDispatch };
     }, [authState, authDispatch]
   );
 
-  const productsContextValue = useMemo(() => {
-      return {productsState, productsDispatch};
-  }, [productsState, productsDispatch])
-
   return (
       <ThemeProvider theme={theme}>
           <AuthContext.Provider value={authContextValue}>
-              <ProductsContext.Provider value={productsContextValue}>
+              <DataContext.Provider value={{
+                  products: productsData,
+                  classes: classesData
+              }}>
                   <MainPage className="App">
 
                   </MainPage>
-              </ProductsContext.Provider>
+              </DataContext.Provider>
           </AuthContext.Provider>
       </ThemeProvider>
   );

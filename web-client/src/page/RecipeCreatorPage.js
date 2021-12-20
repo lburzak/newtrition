@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
-import {ProductsContext} from "../App";
+import {DataContext} from "../App";
 import {RecipesApi} from "../api";
 import {useNavigate} from "react-router";
 
@@ -168,7 +168,7 @@ function IngredientForm({onCreateIngredient}) {
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
-    const {productsState} = useContext(ProductsContext);
+    const [classes] = useContext(DataContext).classes;
 
     const submit = () => onCreateIngredient({name: product, amount, unit});
 
@@ -176,7 +176,7 @@ function IngredientForm({onCreateIngredient}) {
         <Grid item xs={12}>
             <Autocomplete
                 disablePortal
-                options={productsState.classes.map(product => product.slice(0, 1).toUpperCase() + product.slice(1))}
+                options={classes.map(product => product.slice(0, 1).toUpperCase() + product.slice(1))}
                 onChange={(e, value) => setProduct(value)}
                 renderInput={(params) => <TextField {...params} label="Ingredient"/>}
             />

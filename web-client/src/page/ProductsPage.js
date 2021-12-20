@@ -1,30 +1,27 @@
 import {CreateProductPage} from "./CreateProductPage";
-import {Card, Divider, Fab, Grid, IconButton, Paper, Typography} from "@mui/material";
+import {Card, Divider, Fab, IconButton, Paper, Typography} from "@mui/material";
 import {Add, Close} from "@mui/icons-material";
 import {useContext, useState} from "react";
-import {ProductsContext} from "../App";
+import {DataContext} from "../App";
+import CardsList from "../component/CardsList";
 
 export function ProductsPage() {
     const [productCreatorOpened, setProductCreatorOpened] = useState(false);
-    const {productsState} = useContext(ProductsContext);
+    const [products] = useContext(DataContext).products;
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
-        <div style={{overflowY: 'scroll', height: '100%', flex: 1}}>
-            <div style={{padding: 20}}>
-                <EvenGrid>
-                    {
-                        productsState.products.map((product, index) => <ProductCard
-                            key={`product-${index}`}
-                            name={product.name}
-                            calories={product.nutritionFacts.calories}
-                            proteins={product.nutritionFacts.protein}
-                            carbohydrates={product.nutritionFacts.carbohydrate}
-                            ean={product.ean}
-                        />)
-                    }
-                </EvenGrid>
-            </div>
-        </div>
+        <CardsList>
+            {
+                products.map((product, index) => <ProductCard
+                    key={`product-${index}`}
+                    name={product.name}
+                    calories={product.nutritionFacts.calories}
+                    proteins={product.nutritionFacts.protein}
+                    carbohydrates={product.nutritionFacts.carbohydrate}
+                    ean={product.ean}
+                />)
+            }
+        </CardsList>
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end', flex: 1, position: 'absolute', bottom: 0}}>
             <BottomSheet title="New product" visible={productCreatorOpened}
                          onDismiss={() => setProductCreatorOpened(false)}>
@@ -37,10 +34,6 @@ export function ProductsPage() {
         </Fab>
     </div>
 }
-
-const EvenGrid = ({children}) => <Grid container spacing={2}>
-    {children.map(child => <Grid item xs={12} sm={6} md={4} lg={3}>{child}</Grid>)}
-</Grid>
 
 const ProductSpecRow = ({name, value}) => <div
     style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>

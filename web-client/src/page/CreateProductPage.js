@@ -10,7 +10,7 @@ import {
 import {useContext, useEffect, useReducer} from "react";
 import {ProductsApi} from "../api/index";
 import Message from "../form/message"
-import {ProductsContext} from "../App";
+import {DataContext} from "../App";
 
 const initialState = {
     fields: {
@@ -37,7 +37,9 @@ const DetailInput = ({name, unit, onChange}) => <FormControl variant="outlined">
 
 export function CreateProductPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {productsDispatch} = useContext(ProductsContext);
+    const data = useContext(DataContext);
+    const [, invalidateProducts] = data.products;
+    const [classes, invalidateClasses] = data.classes;
 
     const buildFieldChangeHandler = (fieldName) => event => dispatch({
         type: 'updateField',
@@ -61,10 +63,11 @@ export function CreateProductPage() {
                 dispatch({type: 'submitFinished'})
                 if (result.error === ProductsApi.Error.VALIDATION_FAILED)
                     dispatch({type: 'showValidationErrors', payload: result.payload.validationErrors})
-                productsDispatch({type: 'invalidated'})
+                invalidateProducts()
+                invalidateClasses()
             })
         }
-    }, [dispatch, productsDispatch, state]);
+    }, [dispatch, invalidateProducts, state, invalidateClasses]);
 
     return <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}
                  onSubmit={e => {
@@ -98,7 +101,7 @@ export function CreateProductPage() {
                 <Autocomplete
                     multiple
                     freeSolo
-                    options={['masło', 'orzechy']}
+                    options={classes}
                     onChange={(event, value) => dispatch({type: 'updateField', payload: {field: 'classes', content: value}})}
                     renderInput={(params) => (
                         <TextField
