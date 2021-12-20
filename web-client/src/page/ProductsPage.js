@@ -41,7 +41,7 @@ const ProductSpecRow = ({name, value}) => <div
     <Typography variant={'body1'}>{value}</Typography>
 </div>
 
-const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc}) => <Card>
+export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc}) => <Card>
     <div style={{height: 120, width: '100%', backgroundColor: 'gray'}}>
         {imageSrc ? <img style={{objectFit: 'cover', width: '100%', height: '100%'}} src={imageSrc} alt={`${name}`}/> :
             <div/>}

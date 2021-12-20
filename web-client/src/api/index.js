@@ -1,6 +1,6 @@
 import {createProduct, getUserProducts, getProductsClasses} from "./internal/endpoint/products"
 import {initiateLoginFlow, initiateSignUpFlow} from "./internal/endpoint/auth";
-import {createRecipe} from "./internal/endpoint/recipe";
+import {createRecipe, getUserRecipes} from "./internal/endpoint/recipe";
 export {default as Result} from "./internal/result"
 
 export const ProductsApi = {
@@ -29,7 +29,8 @@ export const AuthApi = {
 
 export const RecipesApi = {
     Endpoint: {
-        createRecipe
+        createRecipe,
+        getUserRecipes
     },
     Error: Object.freeze({
         SERVER_ERROR: 0,

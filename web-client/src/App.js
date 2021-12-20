@@ -3,7 +3,7 @@ import {createContext, useEffect, useMemo, useReducer, useState} from "react";
 import {MainPage} from "./page/MainPage"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {authReducer, loadAuthState} from "./auth";
-import {ProductsApi} from "./api";
+import {ProductsApi, RecipesApi} from "./api";
 
 export const AuthContext = createContext();
 export const DataContext = createContext();
@@ -46,8 +46,9 @@ function App() {
 
   const shouldFetchData = () => authState.authenticated;
 
-  const productsData = useRemoteData(ProductsApi.Endpoint.getUserProducts, shouldFetchData)
-  const classesData = useRemoteData(ProductsApi.Endpoint.getProductsClasses, shouldFetchData)
+  const productsData = useRemoteData(ProductsApi.Endpoint.getUserProducts, shouldFetchData);
+  const classesData = useRemoteData(ProductsApi.Endpoint.getProductsClasses, shouldFetchData);
+  const recipesData = useRemoteData(RecipesApi.Endpoint.getUserRecipes, shouldFetchData);
 
   const authContextValue = useMemo(() => {
         return { authState, authDispatch };
@@ -59,7 +60,8 @@ function App() {
           <AuthContext.Provider value={authContextValue}>
               <DataContext.Provider value={{
                   products: productsData,
-                  classes: classesData
+                  classes: classesData,
+                  recipes: recipesData
               }}>
                   <MainPage className="App">
 

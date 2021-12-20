@@ -30,3 +30,16 @@ export async function createRecipe({name, steps, ingredients}) {
 
     throw new TypeError(`Unexpected status = ${res.status}`);
 }
+
+export async function getUserRecipes() {
+    const res = await apiAuthenticated('users/@me/recipes', {
+        method: 'GET'
+    });
+
+    if (res.status === 200) {
+        const recipes = await res.json();
+        return Result.success(recipes);
+    }
+
+    throw new TypeError(`Unexpected status = ${res.status}`);
+}
