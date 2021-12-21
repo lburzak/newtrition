@@ -1,4 +1,4 @@
-const {retrieveTestToken, TEST_CREDENTIALS} = require("../src/util/testUtil");
+const {retrieveTestToken, TEST_CREDENTIALS, switchToNewUser} = require("../src/util/testUtil");
 const {dropDatabase} = require("../src/util/db");
 const request = require("supertest");
 const app = require("../src/app");
@@ -63,7 +63,7 @@ describe('DELETE /products/:productId', () => {
     it('should return 401 when deleting product of another user', async () => {
         await client.users.self.products.create(EXISTING_PRODUCT);
         const firstProductId = await getIdOfFirstOwnedProductId();
-        await switchToNewUser({username: 'newuser', password: 'newpassword'});
+        await switchToNewUser(client, {username: 'newuser', password: 'newpassword'});
 
         const result = await client.products.byId(firstProductId).delete();
 
@@ -92,12 +92,6 @@ describe('DELETE /products/:productId', () => {
     async function getIdOfFirstOwnedProductId() {
         const res = await client.users.self.products.get();
         return res.data[0]._id;
-    }
-
-    async function switchToNewUser(credentials) {
-        await client.logout(credentials);
-        await client.signup(credentials);
-        await client.login(credentials);
     }
 });
 

@@ -25,7 +25,14 @@ async function retrieveTestToken() {
     return await authenticate();
 }
 
+async function switchToNewUser(client, credentials) {
+    await client.logout(credentials);
+    await client.signup(credentials);
+    await client.login(credentials);
+}
+
 module.exports = {
     retrieveTestToken,
-    TEST_CREDENTIALS
+    TEST_CREDENTIALS,
+    switchToNewUser
 }

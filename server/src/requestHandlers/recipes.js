@@ -10,6 +10,7 @@ async function createRecipe(req, res) {
 
 function serializeRecipeRecord(record) {
     return {
+        id: record._id,
         name: record.name,
         steps: record.steps,
         ingredients: record.ingredients
@@ -25,7 +26,24 @@ async function getUserRecipes(req, res) {
     res.sendStatus(500);
 }
 
+async function deleteRecipe(req, res) {
+    const recipeId = req.params.id;
+
+    const recipe = await RecipeRepository.getRecipeById(recipeId);
+
+    if (!recipe)
+        return res.sendStatus(404);
+
+    if (recipe.owner !== req.user.username)
+        return res.sendStatus(401);
+
+    await RecipeRepository.deleteRecipeById(recipeId);
+
+    res.sendStatus(200);
+}
+
 module.exports = {
     createRecipe,
-    getUserRecipes
+    getUserRecipes,
+    deleteRecipe
 }
