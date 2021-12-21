@@ -1,4 +1,4 @@
-const {findByAuthor, create, findAllClasses} = require("../repositories/productRepository");
+const {findByAuthor, create, findAllClasses, findProductById, deleteProductById} = require("../repositories/productRepository");
 
 async function getUserProducts(req, res) {
     const products = await findByAuthor(req.targetUser.username);
@@ -19,6 +19,22 @@ async function createProduct (req, res) {
     return res.sendStatus(500);
 }
 
+async function deleteProduct(req, res) {
+    const productId = req.params.id;
+
+    const product = await findProductById(productId);
+
+    if (!product)
+        return res.sendStatus(404);
+
+    if (product.owner !== req.user.username)
+        return res.sendStatus(401);
+
+    await deleteProductById(productId);
+
+    res.sendStatus(200);
+}
+
 async function getAvailableClasses(req, res) {
     const result = await findAllClasses();
 
@@ -31,5 +47,6 @@ async function getAvailableClasses(req, res) {
 module.exports = {
     getUserProducts,
     createProduct,
-    getAvailableClasses
+    getAvailableClasses,
+    deleteProduct
 }

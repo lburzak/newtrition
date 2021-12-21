@@ -1,7 +1,8 @@
-const {retrieveTestToken} = require("../src/util/testUtil");
+const {retrieveTestToken, TEST_CREDENTIALS} = require("../src/util/testUtil");
 const {dropDatabase} = require("../src/util/db");
 const request = require("supertest");
 const app = require("../src/app");
+const {buildTestClient} = require("../src/util/testClient");
 
 describe('GET /products/classes', () => {
     const PRODUCTS = [
@@ -15,7 +16,9 @@ describe('GET /products/classes', () => {
         token = await retrieveTestToken();
     })
 
-    afterEach(async () => {await dropDatabase();})
+    afterEach(async () => {
+        await dropDatabase();
+    })
 
     const makeRequest = () => request(app)
         .get(`/api/products/classes`)
@@ -35,6 +38,67 @@ describe('GET /products/classes', () => {
 
         expect(res.body).toEqual(expect.arrayContaining(['margaryna', 'ser żółty', 'ser gouda']));
     });
+});
+
+describe('DELETE /products/:productId', () => {
+    const EXISTING_PRODUCT = {name: "Masło roślinne", classes: ['margaryna']};
+    let client;
+
+    beforeEach(async () => {
+        client = buildTestClient();
+        await client.signup(TEST_CREDENTIALS);
+        await client.login(TEST_CREDENTIALS);
+    });
+
+    afterEach(async () => {
+        await dropDatabase();
+    })
+
+    it('should return 404 when such product doesn\'t exist', async () => {
+        const res = await client.products.byId("507f1f77bcf86cd799439011").delete();
+
+        expect(res.status).toBe(404);
+    });
+
+    it('should return 401 when deleting product of another user', async () => {
+        await client.users.self.products.create(EXISTING_PRODUCT);
+        const firstProductId = await getIdOfFirstOwnedProductId();
+        await switchToNewUser({username: 'newuser', password: 'newpassword'});
+
+        const result = await client.products.byId(firstProductId).delete();
+
+        expect(result.status).toBe(401);
+    });
+
+    it('should return 200 when product can be deleted', async () => {
+        await client.users.self.products.create(EXISTING_PRODUCT);
+        const firstProductId = await getIdOfFirstOwnedProductId();
+
+        const result = await client.products.byId(firstProductId).delete();
+
+        expect(result.status).toBe(200);
+    })
+
+    it('should delete product', async () => {
+        await client.users.self.products.create(EXISTING_PRODUCT);
+        const firstProductId = await getIdOfFirstOwnedProductId();
+
+        await client.products.byId(firstProductId).delete();
+
+        const res = await client.users.self.products.get();
+        expect(res.data.length).toBe(0);
+    });
+
+    async function getIdOfFirstOwnedProductId() {
+        const res = await client.users.self.products.get();
+        return res.data[0]._id;
+    }
+
+    async function switchToNewUser(credentials) {
+        await client.logout(credentials);
+        await client.signup(credentials);
+        await client.login(credentials);
+    }
 });
 
 async function createProduct(product, token) {

@@ -1,5 +1,6 @@
 const {Result} = require('../common/results');
 const {getCollection} = require("../util/db");
+const {ObjectId} = require("mongodb");
 
 async function create(ownerUsername, product) {
     const Products = await getCollection('products');
@@ -38,8 +39,22 @@ async function findAllClasses() {
     return Result.success(classes);
 }
 
+async function findProductById(productId) {
+    const Products = await getCollection('products');
+
+    return await Products.findOne({_id: ObjectId(productId)});
+}
+
+async function deleteProductById(productId) {
+    const Products = await getCollection('products');
+
+    await Products.deleteOne({_id: ObjectId(productId)});
+}
+
 module.exports = {
     create: create,
     findByAuthor: findByAuthor,
-    findAllClasses
+    findAllClasses,
+    findProductById,
+    deleteProductById
 }
