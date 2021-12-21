@@ -44,8 +44,18 @@ class NewtritionClient {
             products: {
                 get: async () => await this.httpClient.get('/users/@me/products'),
                 create: async (product) => await this.httpClient.post('/users/@me/products', product)
+            },
+            recipes: {
+                get: async () => await this.httpClient.get('/users/@me/recipes'),
+                create: async (recipe) => await this.httpClient.post('/users/@me/recipes', recipe)
             }
         }
+    }
+
+    recipes = {
+        byId: (recipeId) => ({
+            delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`)
+        })
     }
 }
 
