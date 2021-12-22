@@ -8,5 +8,6 @@
   "main": "lib/index.js",
   "author": "polydome",
   "private": true,
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "yalcSig": "d113f370aa8340a459e98fc53d47d74d"
 }

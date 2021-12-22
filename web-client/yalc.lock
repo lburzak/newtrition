@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "js-client": {
+      "signature": "d113f370aa8340a459e98fc53d47d74d",
+      "file": true
+    }
+  }
+}

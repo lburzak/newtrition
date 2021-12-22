@@ -5,6 +5,7 @@ WORKDIR /app
 COPY src ./src
 COPY bin ./bin
 COPY package.json .
+COPY ./.yalc ./.yalc
 
 RUN yarn install --frozen-lockfile --production
 
