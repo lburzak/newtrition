@@ -4,9 +4,11 @@ import {MainPage} from "./page/MainPage"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {authReducer, loadAuthState} from "./auth";
 import {ProductsApi, RecipesApi} from "./api";
+import NewtritionClient from "js-client";
 
 export const AuthContext = createContext();
 export const DataContext = createContext();
+export const NewtritionClientContext = createContext();
 
 const theme = createTheme({
     typography: {
@@ -44,7 +46,13 @@ function useRemoteData(fetch, shouldUpdate) {
 function App() {
   const [authState, authDispatch] = useReducer(authReducer, loadAuthState());
 
-  const shouldFetchData = () => authState.authenticated;
+    const newtritionClient = useMemo(() => {
+        const client = new NewtritionClient('');
+        client.authenticate(authState.accessToken);
+        return client;
+    }, [authState]);
+
+  const shouldFetchData = () => newtritionClient.isAuthenticated;
 
   const productsData = useRemoteData(ProductsApi.Endpoint.getUserProducts, shouldFetchData);
   const classesData = useRemoteData(ProductsApi.Endpoint.getProductsClasses, shouldFetchData);
@@ -63,9 +71,9 @@ function App() {
                   classes: classesData,
                   recipes: recipesData
               }}>
-                  <MainPage className="App">
-
-                  </MainPage>
+                  <NewtritionClientContext.Provider value={newtritionClient}>
+                      <MainPage className="App"/>
+                  </NewtritionClientContext.Provider>
               </DataContext.Provider>
           </AuthContext.Provider>
       </ThemeProvider>
