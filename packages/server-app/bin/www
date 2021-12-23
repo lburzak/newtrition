@@ -5,7 +5,7 @@
  */
 
 var app = require('../src/app');
-var debug = require('debug')('server:server');
+var debug = require('debug')('server-app:server-app');
 var http = require('http');
 var db = require('../src/util/db');
 
@@ -17,7 +17,7 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTP server-app.
  */
 
 var server = http.createServer(app);
@@ -51,7 +51,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for HTTP server "results" event.
+ * Event listener for HTTP server-app "results" event.
  */
 
 function onError(error) {
@@ -79,7 +79,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTP server-app "listening" event.
  */
 
 function onListening() {

@@ -1,0 +1,13 @@
+{
+  "name": "newtrition",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:polydome/newtrition.git",
+  "author": "Łukasz Burzak <lukasz.burzak@pollub.edu.pl>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.1.1"
+}

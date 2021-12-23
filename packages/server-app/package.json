@@ -1,9 +1,9 @@
 {
-  "name": "newtrition-server",
+  "name": "@newtrition/server-app",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node bin/www",
     "test": "jest"
   },
   "jest": {
@@ -11,6 +11,7 @@
     "preset": "@shelf/jest-mongodb"
   },
   "dependencies": {
+    "@newtrition/rest-client": "workspace:*",
     "debug": "^4.3.2",
     "express": "~4.16.1",
     "joi": "^17.4.2",
@@ -19,9 +20,8 @@
     "mongodb": "^4.1.3"
   },
   "devDependencies": {
-    "@shelf/jest-mongodb": "^2.1.0",
-    "jest": "^27.2.5",
-    "js-client": "file:.yalc/js-client",
+    "@shelf/jest-mongodb": "^2.1.1",
+    "jest": "^27.4.5",
     "supertest": "^6.1.6"
   }
 }

@@ -4,7 +4,7 @@ import {MainPage} from "./page/MainPage"
 import {createTheme, ThemeProvider} from "@mui/material";
 import {authReducer, loadAuthState} from "./auth";
 import {ProductsApi, RecipesApi} from "./api";
-import NewtritionClient from "js-client";
+import NewtritionClient from "@newtrition/rest-client";
 
 export const AuthContext = createContext();
 export const DataContext = createContext();

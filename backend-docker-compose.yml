@@ -1,10 +1,10 @@
 version: "3"
 services:
   server:
-    container_name: newtrition-server
+    container_name: newtrition-server-app
     restart: always
     build:
-      context: server
+      context: packages/server-app
       dockerfile: Dockerfile
     ports:
       - "4000:4000"
@@ -19,7 +19,7 @@ services:
     networks:
       - net-newtrition-backend
   database:
-    container_name: database
+    container_name: newtrition-database
     image: mongo
     volumes:
       - ~/mongo:/data/db

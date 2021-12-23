@@ -1,6 +1,6 @@
 const https = require("https");
 const newtritionApp = require("../app");
-const NewtritionClient = require("js-client")
+const NewtritionClient = require("@newtrition/rest-client")
 const http = require("http");
 
 function getAddress(server, path) {

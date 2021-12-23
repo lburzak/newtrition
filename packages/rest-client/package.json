@@ -4,10 +4,9 @@
     "auto-bind": "^5.0.1",
     "axios": "^0.24.0"
   },
-  "name": "js-client",
+  "name": "@newtrition/rest-client",
   "version": "1.0.4",
   "main": "lib/index.js",
   "author": "polydome",
-  "private": true,
-  "packageManager": "yarn@3.1.1"
+  "private": true
 }

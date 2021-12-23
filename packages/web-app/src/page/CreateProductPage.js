@@ -8,7 +8,7 @@ import {
     OutlinedInput, Autocomplete
 } from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
-import {ProductsApi} from "../api/index";
+import {ProductsApi} from "../api";
 import Message from "../form/message"
 import {DataContext} from "../App";
 
