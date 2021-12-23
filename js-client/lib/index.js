@@ -29,8 +29,6 @@ class NewtritionClient {
         const res = await this.httpClient.post('/auth', {username, password});
         const token = res.data['accessToken'];
         this.authenticate(token);
-
-        return token;
     }
 
     async logout() {
@@ -39,6 +37,13 @@ class NewtritionClient {
 
     async signup({username, password}) {
         return await this.httpClient.post('/auth/signup', {username, password})
+    }
+
+    get token() {
+        return {
+            regenerate: async ({username, password}) =>
+                await this.httpClient.post('/auth', {username, password})
+        }
     }
 
     get products() {
