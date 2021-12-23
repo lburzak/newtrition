@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios');
+const autoBind = require('auto-bind');
 
 class NewtritionClient {
     constructor(url, axiosConfig) {
@@ -11,16 +12,25 @@ class NewtritionClient {
             headers: {
                 "Content-Type": "application/json",
             }
-        })
+        });
+
+        autoBind(this);
     }
 
     get isAuthenticated() {
         return this.httpClient.defaults.headers.common['Authorization'] !== null;
     }
 
+    authenticate(token) {
+        this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+
     async login({username, password}) {
-        const res = await this.httpClient.post('/auth', {username, password})
-        this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${res.data['accessToken']}`;
+        const res = await this.httpClient.post('/auth', {username, password});
+        const token = res.data['accessToken'];
+        this.authenticate(token);
+
+        return token;
     }
 
     async logout() {
