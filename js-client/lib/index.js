@@ -3,8 +3,6 @@
 const axios = require('axios');
 
 class NewtritionClient {
-    httpClient;
-
     constructor(url, axiosConfig) {
         this.httpClient = axios.create({
             ...axiosConfig,
@@ -20,42 +18,50 @@ class NewtritionClient {
         return this.httpClient.defaults.headers.common['Authorization'] !== null;
     }
 
-    login = async ({username, password}) => {
+    async login({username, password}) {
         const res = await this.httpClient.post('/auth', {username, password})
         this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${res.data['accessToken']}`;
     }
 
-    logout = async () => {
+    async logout() {
         this.httpClient.defaults.headers.common['Authorization'] = null;
     }
 
-    signup = async ({username, password}) => await this.httpClient.post('/auth/signup', {username, password})
-
-    products = {
-        byId: (productId) => ({
-            get: async () => await this.httpClient.get(`/products/${productId}`),
-            delete: async () => await this.httpClient.delete(`/products/${productId}`)
-        })
+    async signup({username, password}) {
+        return await this.httpClient.post('/auth/signup', {username, password})
     }
 
-    users = {
-        self: {
-            profile: async () => await this.httpClient.get('/users/@me'),
-            products: {
-                get: async () => await this.httpClient.get('/users/@me/products'),
-                create: async (product) => await this.httpClient.post('/users/@me/products', product)
-            },
-            recipes: {
-                get: async () => await this.httpClient.get('/users/@me/recipes'),
-                create: async (recipe) => await this.httpClient.post('/users/@me/recipes', recipe)
+    get products() {
+        return {
+            byId: (productId) => ({
+                get: async () => await this.httpClient.get(`/products/${productId}`),
+                delete: async () => await this.httpClient.delete(`/products/${productId}`)
+            })
+        }
+    }
+
+    get users() {
+        return {
+            self: {
+                profile: async () => await this.httpClient.get('/users/@me'),
+                products: {
+                    get: async () => await this.httpClient.get('/users/@me/products'),
+                    create: async (product) => await this.httpClient.post('/users/@me/products', product)
+                },
+                recipes: {
+                    get: async () => await this.httpClient.get('/users/@me/recipes'),
+                    create: async (recipe) => await this.httpClient.post('/users/@me/recipes', recipe)
+                }
             }
         }
     }
 
-    recipes = {
-        byId: (recipeId) => ({
-            delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`)
-        })
+    get recipes() {
+        return {
+            byId: (recipeId) => ({
+                delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`)
+            })
+        }
     }
 }
 
