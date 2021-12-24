@@ -1,7 +1,6 @@
 'use strict'
 
 const axios = require('axios');
-const autoBind = require('auto-bind');
 
 class NewtritionClient {
     constructor(url, axiosConfig) {
@@ -13,36 +12,25 @@ class NewtritionClient {
                 "Content-Type": "application/json",
             }
         });
-
-        autoBind(this);
     }
 
     get isAuthenticated() {
         return this.httpClient.defaults.headers.common['Authorization'] !== null;
     }
 
-    authenticate(token) {
-        this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    set token(value) {
+        if (value)
+            this.httpClient.defaults.headers.common['Authorization'] = `Bearer ${value}`;
+        else
+            this.httpClient.defaults.headers.common['Authorization'] = null;
     }
 
-    async login({username, password}) {
-        const res = await this.httpClient.post('/auth', {username, password});
-        const token = res.data['accessToken'];
-        this.authenticate(token);
-    }
-
-    async logout() {
-        this.httpClient.defaults.headers.common['Authorization'] = null;
-    }
-
-    async signup({username, password}) {
-        return await this.httpClient.post('/auth/signup', {username, password})
-    }
-
-    get token() {
+    get auth() {
         return {
-            regenerate: async ({username, password}) =>
-                await this.httpClient.post('/auth', {username, password})
+            get: async ({username, password}) =>
+                await this.httpClient.post('/auth', {username, password}),
+            signup: async ({username, password}) =>
+                await this.httpClient.post('/auth/signup', {username, password})
         }
     }
 
