@@ -1,9 +1,9 @@
 const request = require("supertest");
 const app = require("../src/app");
 const _ = require("lodash");
-const {retrieveTestToken, TEST_CREDENTIALS, switchToNewUser} = require("../src/util/testUtil");
+const {retrieveTestToken} = require("../src/util/testUtil");
 const {dropDatabase} = require("../src/util/db");
-const {buildTestClient} = require("../src/util/testClient");
+const {asNewUser} = require("../src/util/testClient");
 
 const VALID_RECIPE = {
     "name": "Ravioli",
@@ -80,52 +80,49 @@ describe('POST /users/:username/recipes', () => {
 });
 
 describe('DELETE /recipes/:recipeId', () => {
-    let client;
-
-    beforeEach(async () => {
-        client = buildTestClient();
-        await client.signup(TEST_CREDENTIALS);
-        await client.login(TEST_CREDENTIALS);
-    });
-
     afterEach(async () => {
         await dropDatabase();
     })
 
     it('should return 404 when such recipe doesn\'t exist', async () => {
-        const res = await client.recipes.byId("507f1f77bcf86cd799439011").delete();
+        const res = await asNewUser(async client =>
+            await client.recipes.byId("507f1f77bcf86cd799439011").delete());
 
         expect(res.status).toBe(404)
     });
 
     it('should return 401 when recipe belongs to another user', async () => {
-        await client.users.self.recipes.create(VALID_RECIPE);
-        const firstProductId = await getIdOfFirstOwnedRecipeId();
-        await switchToNewUser(client, {username: 'newuser', password: 'newpassword'});
+        const productId = await asNewUser(createRecipeAndGetId);
 
-        const result = await client.recipes.byId(firstProductId).delete();
+        const result = await asNewUser(async client => {
+            return await client.recipes.byId(productId).delete();
+        }, {username: 'newuser', password: 'newpassword'})
 
         expect(result.status).toBe(401);
     });
 
     it('should delete recipe', async () => {
-        await client.users.self.recipes.create(VALID_RECIPE);
-        const firstProductId = await getIdOfFirstOwnedRecipeId();
+        const result = await asNewUser(async client => {
+            const recipeId = await createRecipeAndGetId(client);
+            await client.recipes.byId(recipeId).delete();
+            return await client.users.self.recipes.get();
+        });
 
-        await client.recipes.byId(firstProductId).delete();
-        const res = await client.users.self.recipes.get();
-        expect(res.data.length).toBe(0);
+        expect(result.data.length).toBe(0);
     });
 
     it('should should return 200 when recipe could be deleted', async () => {
-        await client.users.self.recipes.create(VALID_RECIPE);
-        const firstProductId = await getIdOfFirstOwnedRecipeId();
+        const res = await asNewUser(async client => {
+            await client.users.self.recipes.create(VALID_RECIPE);
+            const productId = await createRecipeAndGetId(client)
+            return await client.recipes.byId(productId).delete();
+        });
 
-        const res = await client.recipes.byId(firstProductId).delete();
         expect(res.status).toBe(200);
     });
 
-    async function getIdOfFirstOwnedRecipeId() {
+    async function createRecipeAndGetId(client) {
+        await client.users.self.recipes.create(VALID_RECIPE);
         const res = await client.users.self.recipes.get();
         return res.data[0].id;
     }

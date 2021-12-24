@@ -2,6 +2,7 @@ const https = require("https");
 const newtritionApp = require("../app");
 const NewtritionClient = require("@newtrition/rest-client")
 const http = require("http");
+const {TEST_CREDENTIALS} = require("./testUtil");
 
 function getAddress(server, path) {
     const address = server.address();
@@ -21,6 +22,19 @@ function buildTestClient() {
     });
 }
 
+async function asNewUser(handler, credentials) {
+    credentials = credentials || TEST_CREDENTIALS;
+
+    const client = buildTestClient();
+
+    await client.auth.signup(credentials)
+    const res = await client.auth.get(credentials);
+    client.token = res.data['accessToken'];
+
+    return await handler(client);
+}
+
 module.exports = {
-    buildTestClient
+    buildTestClient,
+    asNewUser
 }
