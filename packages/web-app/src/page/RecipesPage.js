@@ -13,7 +13,7 @@ export function RecipesPage() {
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
             {
-                recipes.map(recipe => <ProductCard name={recipe.name}/>)
+                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} name={recipe.name}/>)
             }
         </CardsList>
         <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
