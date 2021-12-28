@@ -15,6 +15,7 @@ import {useContext, useEffect, useReducer, useState} from "react";
 import {DataContext} from "../App";
 import {RecipesApi} from "../api";
 import {useNavigate} from "react-router";
+import PhotosSlider from "../component/PhotosSlider";
 
 const initialState = {
     name: '',
@@ -133,17 +134,7 @@ export function RecipeCreatorPage() {
 
 function PhotosSection() {
     return <FormSection label={"Photos"}>
-        <IconButton style={{
-            borderRadius: 8,
-            backgroundColor: 'hsl(0, 0%, 90%)',
-            width: 120,
-            height: 120,
-            display: 'flex',
-            justifyContent: 'center',
-            alightItems: 'center'
-        }}>
-            <Add style={{color: 'hsl(0, 0%, 70%)'}} sx={{fontSize: 42}}/>
-        </IconButton>
+        <PhotosSlider/>
     </FormSection>
 }
 

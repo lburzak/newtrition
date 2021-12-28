@@ -11,6 +11,7 @@ import {useContext, useEffect, useReducer} from "react";
 import {ProductsApi} from "../api";
 import Message from "../form/message"
 import {DataContext} from "../App";
+import PhotosSlider from "../component/PhotosSlider";
 
 const initialState = {
     fields: {
@@ -74,6 +75,10 @@ export function CreateProductPage() {
                      e.preventDefault();
                      dispatch({type: 'submit'});
                  }}>
+
+        <div style={{paddingBottom: 16}}>
+            <PhotosSlider/>
+        </div>
 
         <Grid container spacing={2}>
             <Grid item xs={6} md={8}>
