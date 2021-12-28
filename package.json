@@ -9,5 +9,10 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "scripts": {
+    "buildBackend": "docker-compose -f backend-docker-compose.yml build",
+    "launchBackend": "docker-compose -f backend-docker-compose.yml up",
+    "runWeb": "yarn workspace @newtrition/web-app start"
+  }
 }
