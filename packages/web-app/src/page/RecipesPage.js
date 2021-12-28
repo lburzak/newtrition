@@ -3,17 +3,21 @@ import {Fab} from "@mui/material";
 import {useNavigate} from "react-router";
 import CardsList from "../component/CardsList";
 import {useContext} from "react";
-import {DataContext} from "../App";
+import {DataContext, NewtritionClientContext} from "../App";
 import {ProductCard} from "./ProductsPage";
 
 export function RecipesPage() {
     const navigate = useNavigate();
-    const [recipes] = useContext(DataContext).recipes;
+    const client = useContext(NewtritionClientContext)
+    const [recipes, invalidateRecipes] = useContext(DataContext).recipes;
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
             {
-                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} name={recipe.name}/>)
+                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} name={recipe.name} onDelete={() => {
+                    client.recipes.byId(recipe.id).delete()
+                        .then(() => invalidateRecipes())
+                }}/>)
             }
         </CardsList>
         <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
