@@ -33,6 +33,10 @@ export function ProductsPage() {
                     ean={product.ean}
                     onDelete={() => {
                         client.products.byId(product._id).delete()
+                            .catch(error => {
+                                if (error.response.status === 404)
+                                    console.error(`Attempted to delete non-existing product ${product._id}`)
+                            })
                             .then(() => invalidateProducts());
                     }}
                 />)

@@ -47,8 +47,8 @@ function App() {
   const [authState, authDispatch] = useReducer(authReducer, loadAuthState());
 
     const newtritionClient = useMemo(() => {
-        const client = new NewtritionClient('');
-        client.authenticate(authState.accessToken);
+        const client = new NewtritionClient('/api');
+        client.token = authState.accessToken;
         return client;
     }, [authState]);
 
