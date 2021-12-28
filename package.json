@@ -13,6 +13,7 @@
   "scripts": {
     "buildBackend": "docker-compose -f backend-docker-compose.yml build",
     "launchBackend": "docker-compose -f backend-docker-compose.yml up",
-    "runWeb": "yarn workspace @newtrition/web-app start"
+    "runWeb": "yarn workspace @newtrition/web-app start",
+    "runServer": "yarn workspace @newtrition/server-app start"
   }
 }
