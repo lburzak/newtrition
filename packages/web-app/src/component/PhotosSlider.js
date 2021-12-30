@@ -3,22 +3,31 @@ import {IconButton} from "@mui/material";
 import {useState} from "react";
 import {styled} from "@mui/material/styles";
 
-export default function PhotosSlider() {
+function readFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            resolve(reader.result)
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+export default function PhotosSlider({onPhotosChanged}) {
     const [photos, setPhotos] = useState([
-        "https://foodwithfeeling.com/wp-content/uploads/2016/06/Pea-Mushroom-Risotto-6.jpg",
         null
     ])
 
-    const updatePhoto = (index, src) => {
-        let fReader = new FileReader();
-        fReader.readAsDataURL(src);
-        fReader.onloadend = function(event){
+    const updatePhoto = (index, file) => {
+        readFile(file).then(blob => {
             const newPhotos = [...photos]
-            newPhotos[index] = event.target.result
+            newPhotos[index] = blob
             if (index === newPhotos.length - 1)
                 newPhotos.push(null)
             setPhotos(newPhotos)
-        }
+            onPhotosChanged(newPhotos)
+        })
     }
 
     return <div style={{display: "flex", flexDirection: "row"}}>
