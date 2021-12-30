@@ -10,7 +10,7 @@ import {
 import {useContext, useEffect, useReducer} from "react";
 import {ProductsApi} from "../api";
 import Message from "../form/message"
-import {DataContext} from "../App";
+import {DataContext, NewtritionClientContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
 
 const initialState = {
@@ -22,6 +22,7 @@ const initialState = {
         carbohydrate: '',
         fat: ''
     },
+    photos: [],
     errors: {},
     submitted: false
 }
@@ -41,6 +42,7 @@ export function CreateProductPage() {
     const data = useContext(DataContext);
     const [, invalidateProducts] = data.products;
     const [classes, invalidateClasses] = data.classes;
+    const client = useContext(NewtritionClientContext);
 
     const buildFieldChangeHandler = (fieldName) => event => dispatch({
         type: 'updateField',
@@ -52,14 +54,15 @@ export function CreateProductPage() {
 
     useEffect(() => {
         if (state.submitted) {
-            ProductsApi.Endpoint.createProduct({
+            client.users.self.products.create({
                 name: state.fields.name,
                 ean: state.fields.ean,
                 calories: state.fields.calories,
                 carbohydrate: state.fields.carbohydrate,
                 fat: state.fields.fat,
                 protein: state.fields.protein,
-                classes: state.fields.classes
+                classes: state.fields.classes,
+                photos: state.photos
             }).then(result => {
                 dispatch({type: 'submitFinished'})
                 if (result.error === ProductsApi.Error.VALIDATION_FAILED)
@@ -77,7 +80,7 @@ export function CreateProductPage() {
                  }}>
 
         <div style={{paddingBottom: 16}}>
-            <PhotosSlider/>
+            <PhotosSlider onPhotosChanged={(photos) => dispatch({type: 'changePhotos', payload: photos})}/>
         </div>
 
         <Grid container spacing={2}>
@@ -156,6 +159,11 @@ function reducer(state, action) {
             return {
                 ...state,
                 errors
+            }
+        case 'changePhotos':
+            return {
+                ...state,
+                photos: action.payload
             }
         default:
             return state;
