@@ -49,7 +49,11 @@ class NewtritionClient {
                 profile: async () => await this.httpClient.get('/users/@me'),
                 products: {
                     get: async () => await this.httpClient.get('/users/@me/products'),
-                    create: async (product) => await this.httpClient.post('/users/@me/products', product)
+                    create: async (product) => await this.httpClient.post('/users/@me/products', convertJsonToFormData(product), {
+                        headers: {
+                            "ContentType": "multipart/form-data"
+                        }
+                    })
                 },
                 recipes: {
                     get: async () => await this.httpClient.get('/users/@me/recipes'),
@@ -66,6 +70,16 @@ class NewtritionClient {
             })
         }
     }
+}
+
+function convertJsonToFormData(obj) {
+    const data = new FormData()
+
+    for (const key in obj) {
+        data.append(key, obj[key])
+    }
+
+    return data
 }
 
 module.exports = NewtritionClient;
