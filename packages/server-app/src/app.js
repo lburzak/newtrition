@@ -7,6 +7,9 @@ const {signUp, getToken} = require("./requestHandlers/auth");
 const {createRecipe, getUserRecipes, deleteRecipe} = require("./requestHandlers/recipes");
 const ValidationService = require("./services/validationService");
 const {buildValidationMiddleware} = require("./requestHandlers/middleware/validation");
+const multer = require("multer");
+
+const upload = multer({ dest: 'uploads/' })
 
 const app = express();
 app.use(express.json());
@@ -23,7 +26,7 @@ app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);
 
 usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);
-usersRouter.post('/:username/products', provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
+usersRouter.post('/:username/products', upload.array('photos', 10), provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
 usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
 usersRouter.get('/:username/recipes', provideUserFromPath, getUserRecipes);
 
