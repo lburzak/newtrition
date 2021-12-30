@@ -24,7 +24,8 @@ const initialState = {
     },
     photos: [],
     errors: {},
-    submitted: false,
+    // 'initial' | 'submitted' | 'waiting'
+    status: 'initial',
     classes: []
 }
 
@@ -87,26 +88,30 @@ export function CreateProductPage() {
         }
     });
 
-    const products = client.users.self.products
-
     useEffect(() => {
-        if (state.submitted) {
-            const product = readProductFromInput(state)
-            products.create(product).then(() => {
-                dispatch({type: 'submitFinished'})
-                invalidateProducts()
-                invalidateClasses()
-            })
-                .catch(error => {
-                    dispatch({type: 'submitFinished'})
-                    if (error.response && error.response.status === 400) {
-                        dispatch({type: 'showValidationErrors', payload: error.response.data.errors})
-                    } else {
-                        console.error("Server did not respond")
-                    }
-                })
+        if (state.status === 'submitted')
+            processSubmission()
+
+        function processSubmission() {
+            dispatch({type: 'submitStarted'})
+            client.users.self.products.create(readProductFromInput(state)).then(invalidateData)
+                .catch(handleFailure)
+                .finally(() => dispatch({type: 'submitFinished'}))
         }
-    }, [dispatch, invalidateProducts, state, invalidateClasses, products]);
+
+        function handleFailure(error) {
+            if (error.response && error.response.status === 400) {
+                dispatch({type: 'showValidationErrors', payload: error.response.data.errors})
+            } else {
+                console.error("Server did not respond")
+            }
+        }
+
+        function invalidateData() {
+            invalidateProducts()
+            invalidateClasses()
+        }
+    }, [dispatch, invalidateProducts, state, invalidateClasses, client]);
 
     return <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}
                  onSubmit={e => {
@@ -170,12 +175,17 @@ function reducer(state, action) {
             return {
                 ...state,
                 errors: {},
-                submitted: true
+                status: 'submitted'
             }
         case 'submitFinished':
             return {
                 ...state,
-                submitted: false
+                status: 'initial'
+            }
+        case 'submitStarted':
+            return {
+                ...state,
+                status: 'waiting'
             }
         case 'updateField':
             const newState = {
