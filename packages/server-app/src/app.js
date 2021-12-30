@@ -26,7 +26,11 @@ app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);
 
 usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);
-usersRouter.post('/:username/products', upload.array('photos', 10), provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
+usersRouter.post('/:username/products', upload.array('photos', 10), (req, res, next) => {
+   req.body.nutritionFacts = JSON.parse(req.body.nutritionFacts);
+   req.body.classes = JSON.parse(req.body.classes);
+   next();
+}, provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
 usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
 usersRouter.get('/:username/recipes', provideUserFromPath, getUserRecipes);
 

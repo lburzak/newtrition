@@ -24,7 +24,8 @@ const initialState = {
     },
     photos: [],
     errors: {},
-    submitted: false
+    submitted: false,
+    classes: []
 }
 
 const DetailInput = ({name, unit, onChange}) => <FormControl variant="outlined">
@@ -48,17 +49,21 @@ function convertJsonToFormData(obj) {
 }
 
 function readProductFromInput(state) {
+    const {name, calories, carbohydrate, fat, protein, ean, classes} = state.fields;
+
     const product = {
-        name: state.fields.name,
-        calories: state.fields.calories ?? 0,
-        carbohydrate: state.fields.carbohydrate ?? 0,
-        fat: state.fields.fat ?? 0,
-        protein: state.fields.protein ?? 0,
-        classes: state.fields.classes
+        name,
+        nutritionFacts: JSON.stringify({
+            calories,
+            carbohydrate,
+            fat,
+            protein
+        }),
+        classes: JSON.stringify(classes)
     };
 
-    if (state.fields.ean.length > 0)
-        product.ean = state.fields.ean;
+    if (ean.length > 0)
+        product.ean = ean
 
     const data = convertJsonToFormData(product);
 
@@ -82,23 +87,26 @@ export function CreateProductPage() {
         }
     });
 
+    const products = client.users.self.products
+
     useEffect(() => {
         if (state.submitted) {
             const product = readProductFromInput(state)
-            client.users.self.products.create(product).then(() => {
+            products.create(product).then(() => {
+                dispatch({type: 'submitFinished'})
                 invalidateProducts()
                 invalidateClasses()
             })
                 .catch(error => {
+                    dispatch({type: 'submitFinished'})
                     if (error.response && error.response.status === 400) {
                         dispatch({type: 'showValidationErrors', payload: error.response.data.errors})
                     } else {
                         console.error("Server did not respond")
                     }
                 })
-                .finally(() => dispatch({type: 'submitFinished'}))
         }
-    }, [dispatch, invalidateProducts, state, invalidateClasses, client]);
+    }, [dispatch, invalidateProducts, state, invalidateClasses, products]);
 
     return <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}
                  onSubmit={e => {
