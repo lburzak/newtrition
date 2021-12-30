@@ -1,14 +1,14 @@
 import {
+    Autocomplete,
     Button,
     FormControl,
     FormHelperText,
     Grid,
     InputAdornment,
-    TextField,
-    OutlinedInput, Autocomplete
+    OutlinedInput,
+    TextField
 } from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
-import {ProductsApi} from "../api";
 import Message from "../form/message"
 import {DataContext, NewtritionClientContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
@@ -37,6 +37,36 @@ const DetailInput = ({name, unit, onChange}) => <FormControl variant="outlined">
     />
 </FormControl>
 
+function convertJsonToFormData(obj) {
+    const data = new FormData()
+
+    for (const key in obj) {
+        data.append(key, obj[key])
+    }
+
+    return data
+}
+
+function readProductFromInput(state) {
+    const product = {
+        name: state.fields.name,
+        calories: state.fields.calories ?? 0,
+        carbohydrate: state.fields.carbohydrate ?? 0,
+        fat: state.fields.fat ?? 0,
+        protein: state.fields.protein ?? 0,
+        classes: state.fields.classes
+    };
+
+    if (state.fields.ean.length > 0)
+        product.ean = state.fields.ean;
+
+    const data = convertJsonToFormData(product);
+
+    state.photos.forEach(photo => data.append('photos', photo))
+
+    return data;
+}
+
 export function CreateProductPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const data = useContext(DataContext);
@@ -54,24 +84,21 @@ export function CreateProductPage() {
 
     useEffect(() => {
         if (state.submitted) {
-            client.users.self.products.create({
-                name: state.fields.name,
-                ean: state.fields.ean,
-                calories: state.fields.calories,
-                carbohydrate: state.fields.carbohydrate,
-                fat: state.fields.fat,
-                protein: state.fields.protein,
-                classes: state.fields.classes,
-                photos: state.photos
-            }).then(result => {
-                dispatch({type: 'submitFinished'})
-                if (result.error === ProductsApi.Error.VALIDATION_FAILED)
-                    dispatch({type: 'showValidationErrors', payload: result.payload.validationErrors})
+            const product = readProductFromInput(state)
+            client.users.self.products.create(product).then(() => {
                 invalidateProducts()
                 invalidateClasses()
             })
+                .catch(error => {
+                    if (error.response && error.response.status === 400) {
+                        dispatch({type: 'showValidationErrors', payload: error.response.data.errors})
+                    } else {
+                        console.error("Server did not respond")
+                    }
+                })
+                .finally(() => dispatch({type: 'submitFinished'}))
         }
-    }, [dispatch, invalidateProducts, state, invalidateClasses]);
+    }, [dispatch, invalidateProducts, state, invalidateClasses, client]);
 
     return <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}
                  onSubmit={e => {
@@ -80,7 +107,8 @@ export function CreateProductPage() {
                  }}>
 
         <div style={{paddingBottom: 16}}>
-            <PhotosSlider onPhotosChanged={(photos) => dispatch({type: 'changePhotos', payload: photos})}/>
+            <PhotosSlider onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
+                          onPhotoChanged={(index, file) => dispatch({type: 'changePhoto', payload: {index, file}})}/>
         </div>
 
         <Grid container spacing={2}>
@@ -110,7 +138,10 @@ export function CreateProductPage() {
                     multiple
                     freeSolo
                     options={classes}
-                    onChange={(event, value) => dispatch({type: 'updateField', payload: {field: 'classes', content: value}})}
+                    onChange={(event, value) => dispatch({
+                        type: 'updateField',
+                        payload: {field: 'classes', content: value}
+                    })}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -160,10 +191,18 @@ function reducer(state, action) {
                 ...state,
                 errors
             }
-        case 'changePhotos':
+        case 'addPhoto':
             return {
                 ...state,
-                photos: action.payload
+                photos: [...state.photos, action.payload.file]
+            }
+        case 'changePhoto':
+            const photos = [...state.photos];
+
+            photos[action.payload.index] = action.payload.file
+            return {
+                ...state,
+                photos
             }
         default:
             return state;

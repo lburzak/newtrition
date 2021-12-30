@@ -9,13 +9,20 @@ const values = {
     },
     'ean': {
         'string.length': 13
-    }
+    },
+    'classes': {}
 };
 
 export function fromValidationError(error) {
     const field = error.field.charAt(0).toUpperCase() + error.field.slice(1);
     const type = error.type;
-    const value = values[error.field][error.type];
+    const fieldErrors = values[field];
+
+    let value = undefined;
+
+    if (fieldErrors) {
+        value = fieldErrors[error.type];
+    }
 
     switch (error.type) {
         case "string.min":

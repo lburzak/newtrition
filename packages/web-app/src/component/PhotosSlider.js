@@ -14,19 +14,23 @@ function readFile(file) {
     });
 }
 
-export default function PhotosSlider({onPhotosChanged}) {
+export default function PhotosSlider({onPhotoAdded, onPhotoChanged}) {
     const [photos, setPhotos] = useState([
         null
     ])
 
     const updatePhoto = (index, file) => {
+        if (index === photos.length - 1)
+            onPhotoAdded(file)
+        else
+            onPhotoChanged(index, file)
+
         readFile(file).then(blob => {
             const newPhotos = [...photos]
             newPhotos[index] = blob
             if (index === newPhotos.length - 1)
                 newPhotos.push(null)
             setPhotos(newPhotos)
-            onPhotosChanged(newPhotos)
         })
     }
 
