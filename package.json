@@ -15,5 +15,8 @@
     "launchBackend": "docker-compose -f backend-docker-compose.yml up",
     "runWeb": "yarn workspace @newtrition/web-app start",
     "runServer": "yarn workspace @newtrition/server-app start"
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
   }
 }
