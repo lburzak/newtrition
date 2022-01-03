@@ -12,7 +12,10 @@ async function createProduct (req, res) {
     if (req.targetUser.username !== req.user.username)
         return res.sendStatus(401);
 
-    const result = await create(req.targetUser.username, req.body);
+    const product = req.body;
+    product.photosCount = req.files.length;
+
+    const result = await create(req.targetUser.username, product);
 
     if (!result.error) {
         for (const [i, file] of req.files.entries()) {
