@@ -1,7 +1,7 @@
 const express = require('express');
 const {provideAuthenticatedUser} = require('./requestHandlers/middleware/auth');
 const {provideUserFromPath} = require("./requestHandlers/middleware/path");
-const {getUserProducts, createProduct, getAvailableClasses, deleteProduct} = require("./requestHandlers/products");
+const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto} = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
 const {createRecipe, getUserRecipes, deleteRecipe} = require("./requestHandlers/recipes");
@@ -20,9 +20,10 @@ const usersRouter = express.Router();
 
 app.use('/api/users', provideAuthenticatedUser, usersRouter);
 app.use('/api/auth', authRouter)
-app.use('/api/products/classes', getAvailableClasses);
-app.use('/api/products/:id', provideAuthenticatedUser, deleteProduct);
+app.get('/api/products/classes', getAvailableClasses);
+app.delete('/api/products/:id', provideAuthenticatedUser, deleteProduct);
 app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);
+app.get('/api/products/:id/photos/:photoId', provideAuthenticatedUser, getProductPhoto);
 
 usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);

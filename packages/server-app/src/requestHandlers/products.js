@@ -52,9 +52,25 @@ async function getAvailableClasses(req, res) {
     return res.sendStatus(500);
 }
 
+async function getProductPhoto(req, res) {
+    const productId = req.params.id;
+    const photoId = req.params.photoId;
+
+    const product = await findProductById(productId);
+
+    if (!product)
+        return res.status(404).send({error: "No such product"});
+
+    if (product.owner !== req.user.username)
+        return res.sendStatus(401);
+
+    res.sendFile(`uploads/products/${productId}/${photoId}.png`, {root: '.'})
+}
+
 module.exports = {
     getUserProducts,
     createProduct,
     getAvailableClasses,
-    deleteProduct
+    deleteProduct,
+    getProductPhoto
 }
