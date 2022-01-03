@@ -1,4 +1,6 @@
 const {findByAuthor, create, findAllClasses, findProductById, deleteProductById} = require("../repositories/productRepository");
+const fs = require("fs/promises");
+const mime = require("mime-types")
 
 async function getUserProducts(req, res) {
     const products = await findByAuthor(req.targetUser.username);
@@ -13,6 +15,12 @@ async function createProduct (req, res) {
     const result = await create(req.targetUser.username, req.body);
 
     if (!result.error) {
+        for (const [i, file] of req.files.entries()) {
+            const path = `uploads/products/${result.payload._id}/`
+            const fileName = `${i}.${mime.extension(file.mimetype)}`
+            await fs.mkdir(path, {recursive: true})
+            await fs.rename(file.path, path + fileName)
+        }
         return res.sendStatus(200);
     }
 

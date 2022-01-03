@@ -5,15 +5,17 @@ const {ObjectId} = require("mongodb");
 async function create(ownerUsername, product) {
     const Products = await getCollection('products');
 
-    await Products.insertOne({
+    const entity = {
         name: product.name,
         ean: product.ean,
         nutritionFacts: product.nutritionFacts,
         owner: ownerUsername,
         classes: product.classes
-    });
+    }
 
-    return Result.success();
+    await Products.insertOne(entity);
+
+    return Result.success(entity);
 }
 
 async function findByAuthor(username) {
