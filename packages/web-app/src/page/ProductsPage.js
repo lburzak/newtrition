@@ -16,6 +16,10 @@ import {useContext, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import CardsList from "../component/CardsList";
 
+function getFirstPhotoUrl(id) {
+    return `/api/products/${id}/photos/0`;
+}
+
 export function ProductsPage() {
     const [productCreatorOpened, setProductCreatorOpened] = useState(false);
     const [products, invalidateProducts] = useContext(DataContext).products;
@@ -31,6 +35,7 @@ export function ProductsPage() {
                     proteins={product.nutritionFacts.protein}
                     carbohydrates={product.nutritionFacts.carbohydrate}
                     ean={product.ean}
+                    imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
                     onDelete={() => {
                         client.products.byId(product._id).delete()
                             .catch(error => {

@@ -64,9 +64,6 @@ async function getProductPhoto(req, res) {
     if (!product)
         return res.status(404).send({error: "No such product"});
 
-    if (product.owner !== req.user.username)
-        return res.sendStatus(401);
-
     res.sendFile(`uploads/products/${productId}/${photoId}.png`, {root: '.'})
 }
 
