@@ -4,7 +4,7 @@ const {provideUserFromPath} = require("./requestHandlers/middleware/path");
 const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto} = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
-const {createRecipe, getUserRecipes, deleteRecipe} = require("./requestHandlers/recipes");
+const {createRecipe, getUserRecipes, deleteRecipe, getRecipePhoto} = require("./requestHandlers/recipes");
 const ValidationService = require("./services/validationService");
 const {buildValidationMiddleware} = require("./requestHandlers/middleware/validation");
 const multer = require("multer");
@@ -24,6 +24,7 @@ app.get('/api/products/classes', getAvailableClasses);
 app.delete('/api/products/:id', provideAuthenticatedUser, deleteProduct);
 app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);
 app.get('/api/products/:id/photos/:photoId', getProductPhoto);
+app.get('/api/recipes/:id/photos/:photoId', getRecipePhoto);
 
 usersRouter.get('/@me', getAuthenticatedUser);
 usersRouter.get('/:username/products', provideUserFromPath, getUserProducts);

@@ -51,8 +51,21 @@ async function deleteRecipe(req, res) {
     res.sendStatus(200);
 }
 
+async function getRecipePhoto(req, res) {
+    const productId = req.params.id;
+    const photoId = req.params.photoId;
+
+    const product = await RecipeRepository.getRecipeById(productId);
+
+    if (!product)
+        return res.status(404).send({error: "No such recipe"});
+
+    res.sendFile(`uploads/recipes/${productId}/${photoId}.png`, {root: '.'})
+}
+
 module.exports = {
     createRecipe,
     getUserRecipes,
-    deleteRecipe
+    deleteRecipe,
+    getRecipePhoto
 }

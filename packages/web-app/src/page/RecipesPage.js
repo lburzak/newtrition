@@ -6,6 +6,10 @@ import {useContext} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import {ProductCard} from "./ProductsPage";
 
+function getFirstPhotoUrl(id) {
+    return `/api/recipes/${id}/photos/0`;
+}
+
 export function RecipesPage() {
     const navigate = useNavigate();
     const client = useContext(NewtritionClientContext)
@@ -14,7 +18,7 @@ export function RecipesPage() {
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
             {
-                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} name={recipe.name} onDelete={() => {
+                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
                     client.recipes.byId(recipe.id).delete()
                         .then(() => invalidateRecipes())
                 }}/>)
