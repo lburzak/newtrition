@@ -79,7 +79,6 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
 
     const closeMenu = () => {
         setAnchor(null);
-        onDelete();
     };
 
     return <Card style={{position: 'relative'}} onMouseEnter={() => setButtonsVisibility(true)}
@@ -88,7 +87,10 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
             <IconButton onClick={openMenu}><MoreVert/></IconButton>
             <Menu anchorEl={anchor} open={open} onClose={closeMenu}>
                 <MenuList sx={{width: 320, maxWidth: '100%'}}>
-                    <MenuItem onClick={closeMenu}>
+                    <MenuItem onClick={() => {
+                        onDelete();
+                        closeMenu()
+                    }}>
                         <ListItemIcon>
                             <Delete fontSize="small"/>
                         </ListItemIcon>
