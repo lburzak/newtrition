@@ -5,14 +5,16 @@ const {ObjectId} = require("mongodb");
 async function create(ownerUsername, recipe) {
     const Recipes = await getCollection('recipe');
 
-    await Recipes.insertOne({
+    const entity = {
         name: recipe.name,
         ingredients: recipe.ingredients,
         steps: recipe.steps,
         owner: ownerUsername
-    });
+    };
 
-    return Result.success();
+    await Recipes.insertOne(entity);
+
+    return Result.success(entity);
 }
 
 async function findUserRecipes(username) {

@@ -12,6 +12,7 @@ import {useContext, useEffect, useReducer} from "react";
 import Message from "../form/message"
 import {DataContext, NewtritionClientContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
+import {convertJsonToFormData} from "../util/formData";
 
 const initialState = {
     fields: {
@@ -39,16 +40,6 @@ const DetailInput = ({name, unit, onChange}) => <FormControl variant="outlined">
     />
 </FormControl>
 
-function convertJsonToFormData(obj) {
-    const data = new FormData()
-
-    for (const key in obj) {
-        data.append(key, obj[key])
-    }
-
-    return data
-}
-
 function readProductFromInput(state) {
     const {name, calories, carbohydrate, fat, protein, ean, classes} = state.fields;
 
@@ -60,7 +51,7 @@ function readProductFromInput(state) {
             fat,
             protein
         }),
-        classes: JSON.stringify(classes)
+        classes
     };
 
     if (ean.length > 0)

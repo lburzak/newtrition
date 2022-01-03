@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
-import {DataContext} from "../App";
-import {RecipesApi} from "../api";
+import {DataContext, NewtritionClientContext} from "../App";
 import {useNavigate} from "react-router";
 import PhotosSlider from "../component/PhotosSlider";
+import {convertJsonToFormData} from "../util/formData";
 
 const initialState = {
     name: '',
@@ -25,7 +25,8 @@ const initialState = {
         {class: 'Ser', amount: 200, unit: 'g'}
     ],
     submitted: false,
-    finished: false
+    finished: false,
+    photos: []
 };
 
 function reducer(state, action) {
@@ -81,32 +82,63 @@ function reducer(state, action) {
                 submitted: true
             }
         case 'finishSubmission':
-            console.log(action)
             return {
                 ...state,
                 submitted: false,
                 finished: action.payload.success
+            };
+
+        case 'addPhoto':
+            return {
+                ...state,
+                photos: [...state.photos, action.payload.file]
+            }
+        case 'changePhoto':
+            const photos = [...state.photos];
+
+            photos[action.payload.index] = action.payload.file
+            return {
+                ...state,
+                photos
             }
     }
+}
+
+function readRecipeFromInput(state) {
+    const {name, steps, ingredients} = state;
+
+    const recipe = {
+        name,
+        steps,
+        ingredients
+    };
+
+    const data = convertJsonToFormData(recipe);
+
+    state.photos.forEach(photo => data.append('photos', photo))
+
+    return data;
 }
 
 export function RecipeCreatorPage() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const navigate = useNavigate();
+    const client = useContext(NewtritionClientContext)
 
     useEffect(() => {
         if (state.submitted) {
             console.log("submitting", state);
 
-            RecipesApi.Endpoint.createRecipe({
-                name: state.name,
-                steps: state.steps,
-                ingredients: state.ingredients
-            }).then(result => {
-                dispatch({type: 'finishSubmission', payload: {success: result.isSuccess}});
-            });
+            const recipe = readRecipeFromInput(state)
+
+            client.users.self.recipes.create(recipe).then(() => {
+                dispatch({type: 'finishSubmission', payload: {success: true}})
+            }).catch((error) => {
+                console.log(error.response)
+                dispatch({type: 'finishSubmission', payload: {success: false}})
+            })
         }
-    }, [state, dispatch])
+    }, [state, dispatch, client])
 
     useEffect(() => {
         if (state.finished)
@@ -122,7 +154,7 @@ export function RecipeCreatorPage() {
         </div>
         <Grid container height={'100%'}>
             <Grid item md={6} sm={12} lg={8}>
-                <PhotosSection/>
+                <PhotosSection dispatch={dispatch}/>
                 <StepsSection steps={state.steps} dispatch={dispatch}/>
             </Grid>
             <Grid item md={6} xs={12} lg={4}>
@@ -132,9 +164,13 @@ export function RecipeCreatorPage() {
     </div>
 }
 
-function PhotosSection() {
+function PhotosSection({dispatch}) {
     return <FormSection label={"Photos"}>
-        <PhotosSlider/>
+        <PhotosSlider onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
+                      onPhotoChanged={(index, file) => dispatch({
+                          type: 'changePhoto',
+                          payload: {index, file}
+                      })}/>
     </FormSection>
 }
 

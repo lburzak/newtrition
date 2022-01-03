@@ -31,7 +31,11 @@ usersRouter.post('/:username/products', upload.array('photos', 10), (req, res, n
    req.body.classes = JSON.parse(req.body.classes);
    next();
 }, provideUserFromPath, buildValidationMiddleware(ValidationService.validateProduct), createProduct);
-usersRouter.post('/:username/recipes', provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
+usersRouter.post('/:username/recipes', upload.array('photos', 10), (req, res, next) => {
+   req.body.steps = JSON.parse(req.body.steps);
+   req.body.ingredients = JSON.parse(req.body.ingredients);
+   next();
+}, provideUserFromPath, buildValidationMiddleware(ValidationService.validateRecipe), createRecipe);
 usersRouter.get('/:username/recipes', provideUserFromPath, getUserRecipes);
 
 authRouter.post('/signup', buildValidationMiddleware(ValidationService.validateCredentials), signUp);
