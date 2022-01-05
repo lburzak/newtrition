@@ -30,10 +30,11 @@ const initialState = {
     classes: []
 }
 
-const DetailInput = ({name, unit, onChange}) => <FormControl variant="outlined">
+const DetailInput = ({name, unit, onChange, value}) => <FormControl variant="outlined">
     <FormHelperText>{name}</FormHelperText>
     <OutlinedInput
         fullWidth
+        defaultValue={value}
         endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
         inputProps={{inputMode: 'decimal', pattern: '[0-9]*'}}
         onChange={onChange}
@@ -64,8 +65,30 @@ function readProductFromInput(state) {
     return data;
 }
 
-export function CreateProductPage() {
-    const [state, dispatch] = useReducer(reducer, initialState);
+function range(length) {
+    return [...Array(length).keys()]
+}
+
+function stateFromProduct(product) {
+    return product ? {
+        fields: {
+            name: product.name,
+            ean: product.ean,
+            calories: product.nutritionFacts.calories,
+            protein: product.nutritionFacts.protein,
+            carbohydrate: product.nutritionFacts.carbohydrate,
+            fat: product.nutritionFacts.fat
+        },
+        photos: range(product.photosCount).map(i => `/api/products/${product._id}/photos/${i}`),
+        errors: {},
+        // 'initial' | 'submitted' | 'waiting'
+        status: 'initial',
+        classes: product.classes
+    } : null
+}
+
+export function CreateProductPage({product}) {
+    const [state, dispatch] = useReducer(reducer, stateFromProduct(product) || initialState);
     const data = useContext(DataContext);
     const [, invalidateProducts] = data.products;
     const [classes, invalidateClasses] = data.classes;
@@ -111,36 +134,37 @@ export function CreateProductPage() {
                  }}>
 
         <div style={{paddingBottom: 16}}>
-            <PhotosSlider onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
+            <PhotosSlider defaultValue={state.photos} onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
                           onPhotoChanged={(index, file) => dispatch({type: 'changePhoto', payload: {index, file}})}/>
         </div>
 
         <Grid container spacing={2}>
             <Grid item xs={6} md={8}>
-                <TextField fullWidth label={"Product name"} variant={"outlined"}
+                <TextField fullWidth label={"Product name"} variant={"outlined"} value={state.fields.name}
                            onChange={buildFieldChangeHandler('name')}/>
             </Grid>
             <Grid item xs={6} md={4}>
-                <TextField fullWidth label={"EAN Code"} variant={"outlined"} onChange={buildFieldChangeHandler('ean')}
+                <TextField fullWidth label={"EAN Code"} variant={"outlined"} value={state.fields.ean || ""} onChange={buildFieldChangeHandler('ean')}
                            error={state.errors['ean'] !== undefined} helperText={state.errors['ean']}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Calories per 100g" unit="kcal" onChange={buildFieldChangeHandler('calories')}/>
+                <DetailInput name="Calories per 100g" unit="kcal" value={state.fields.calories} onChange={buildFieldChangeHandler('calories')}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Proteins per 100g" unit="grams" onChange={buildFieldChangeHandler('protein')}/>
+                <DetailInput name="Proteins per 100g" unit="grams" value={state.fields.protein} onChange={buildFieldChangeHandler('protein')}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Carbohydrates per 100g" unit="grams"
+                <DetailInput name="Carbohydrates per 100g" unit="grams" value={state.fields.carbohydrate}
                              onChange={buildFieldChangeHandler('carbohydrate')}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Fat per 100g" unit="grams" onChange={buildFieldChangeHandler('fat')}/>
+                <DetailInput name="Fat per 100g" unit="grams" value={state.fields.fat} onChange={buildFieldChangeHandler('fat')}/>
             </Grid>
             <Grid item xs={12}>
                 <Autocomplete
                     multiple
                     freeSolo
+                    defaultValue={state.classes}
                     options={classes}
                     onChange={(event, value) => dispatch({
                         type: 'updateField',
