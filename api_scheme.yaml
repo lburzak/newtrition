@@ -77,11 +77,9 @@ paths:
         '404':
           description: Not Found
       description: Deletes a product
-    patch:
-      tags:
-        - product
-      summary: Modify product
-      operationId: patch-products-productId
+    put:
+      summary: Replace product
+      operationId: put-products-productId
       responses:
         '200':
           description: OK
@@ -89,7 +87,7 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      description: Modifies a product
+      description: Replaces all product data while retaining ID
   '/products/{productId}/photos/{photoId}':
     parameters:
       - schema:
