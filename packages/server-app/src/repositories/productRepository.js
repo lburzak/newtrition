@@ -54,10 +54,17 @@ async function deleteProductById(productId) {
     await Products.deleteOne({_id: ObjectId(productId)});
 }
 
+async function replaceProductById(productId, product) {
+    const Products = await getCollection('products');
+
+    await Products.replaceOne({_id: ObjectId(productId)}, product);
+}
+
 module.exports = {
     create: create,
     findByAuthor: findByAuthor,
     findAllClasses,
     findProductById,
-    deleteProductById
+    deleteProductById,
+    replaceProductById
 }

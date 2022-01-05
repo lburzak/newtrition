@@ -1,4 +1,4 @@
-const {findByAuthor, create, findAllClasses, findProductById, deleteProductById} = require("../repositories/productRepository");
+const {findByAuthor, create, findAllClasses, findProductById, deleteProductById, replaceProductById} = require("../repositories/productRepository");
 const fs = require("fs/promises");
 const mime = require("mime-types")
 
@@ -18,16 +18,28 @@ async function createProduct (req, res) {
     const result = await create(req.targetUser.username, product);
 
     if (!result.error) {
-        for (const [i, file] of req.files.entries()) {
-            const path = `uploads/products/${result.payload._id}/`
-            const fileName = `${i}.${mime.extension(file.mimetype)}`
-            await fs.mkdir(path, {recursive: true})
-            await fs.rename(file.path, path + fileName)
-        }
+        await movePhotosToProductDir(req.files, result.payload._id);
         return res.sendStatus(200);
     }
 
     return res.sendStatus(500);
+}
+
+function getProductPath(productId) {
+    return `uploads/products/${productId}/`;
+}
+
+async function movePhotosToProductDir(files, productId) {
+    for (const [i, file] of files.entries()) {
+        const path = getProductPath(productId)
+        const fileName = `${i}.${mime.extension(file.mimetype)}`
+        await fs.mkdir(path, {recursive: true})
+        await fs.rename(file.path, path + fileName)
+    }
+}
+
+async function clearProductDir(productId) {
+    await fs.rm(getProductPath(productId) + '*', {recursive: true})
 }
 
 async function deleteProduct(req, res) {
@@ -67,10 +79,38 @@ async function getProductPhoto(req, res) {
     res.sendFile(`uploads/products/${productId}/${photoId}.png`, {root: '.'})
 }
 
+async function replaceProduct(req, res) {
+    if (req.targetUser.username !== req.user.username)
+        return res.sendStatus(401);
+
+    const {name, ean, nutritionFacts, classes} = req.body;
+    const productId = req.params.id;
+
+    const entity = {
+        name,
+        ean,
+        nutritionFacts,
+        classes,
+        owner: req.targetUser.username,
+        photosCount: req.files.length
+    }
+
+    const result = await replaceProductById(productId, entity);
+
+    if (!result.error) {
+        await clearProductDir(productId)
+        await movePhotosToProductDir(req.files, productId);
+        return res.sendStatus(200);
+    }
+
+    return res.sendStatus(500);
+}
+
 module.exports = {
     getUserProducts,
     createProduct,
     getAvailableClasses,
     deleteProduct,
-    getProductPhoto
+    getProductPhoto,
+    replaceProduct
 }
