@@ -11,10 +11,11 @@ import {
     Paper,
     Typography
 } from "@mui/material";
-import {Add, Close, Delete, MoreVert} from "@mui/icons-material";
+import {Add, Close, Delete, Edit, MoreVert} from "@mui/icons-material";
 import {useContext, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import CardsList from "../component/CardsList";
+import {useNavigate} from "react-router";
 
 function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
@@ -24,6 +25,7 @@ export function ProductsPage() {
     const [productCreatorOpened, setProductCreatorOpened] = useState(false);
     const [products, invalidateProducts] = useContext(DataContext).products;
     const client = useContext(NewtritionClientContext);
+    const navigate = useNavigate()
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
@@ -36,6 +38,7 @@ export function ProductsPage() {
                     carbohydrates={product.nutritionFacts.carbohydrate}
                     ean={product.ean}
                     imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
+                    onEdit={() => navigate(`/products/${product._id}`)}
                     onDelete={() => {
                         client.products.byId(product._id).delete()
                             .catch(error => {
@@ -73,7 +76,7 @@ const ProductSpecRow = ({name, value}) => <div
     <Typography variant={'body1'}>{value}</Typography>
 </div>
 
-export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, onDelete}) => {
+export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, onDelete, onEdit}) => {
     const [buttonsVisibility, setButtonsVisibility] = useState(false);
     const [anchor, setAnchor] = useState(null);
     const open = Boolean(anchor);
@@ -92,6 +95,15 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
             <IconButton onClick={openMenu}><MoreVert/></IconButton>
             <Menu anchorEl={anchor} open={open} onClose={closeMenu}>
                 <MenuList sx={{width: 320, maxWidth: '100%'}}>
+                    <MenuItem onClick={() => {
+                        onEdit();
+                        closeMenu()
+                    }}>
+                        <ListItemIcon>
+                            <Edit fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText>Edit</ListItemText>
+                    </MenuItem>
                     <MenuItem onClick={() => {
                         onDelete();
                         closeMenu()
