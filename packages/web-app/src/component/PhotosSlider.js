@@ -14,7 +14,7 @@ function readFile(file) {
     });
 }
 
-export default function PhotosSlider({onPhotoAdded, onPhotoChanged, defaultValue}) {
+export default function PhotosSlider({onPhotoAdded, onPhotoChanged, defaultValue = []}) {
     const [photos, setPhotos] = useState([
         ...defaultValue,
         null

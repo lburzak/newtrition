@@ -70,25 +70,28 @@ function range(length) {
 }
 
 function stateFromProduct(product) {
-    return product ? {
+    if (!product || !product._id)
+        return initialState;
+
+    return {
         fields: {
             name: product.name,
             ean: product.ean,
-            calories: product.nutritionFacts.calories,
-            protein: product.nutritionFacts.protein,
-            carbohydrate: product.nutritionFacts.carbohydrate,
-            fat: product.nutritionFacts.fat
+            calories: product.nutritionFacts?.calories,
+            protein: product.nutritionFacts?.protein,
+            carbohydrate: product.nutritionFacts?.carbohydrate,
+            fat: product.nutritionFacts?.fat
         },
         photos: range(product.photosCount).map(i => `/api/products/${product._id}/photos/${i}`),
         errors: {},
         // 'initial' | 'submitted' | 'waiting'
         status: 'initial',
         classes: product.classes
-    } : null
+    }
 }
 
 export function CreateProductPage({product}) {
-    const [state, dispatch] = useReducer(reducer, stateFromProduct(product) || initialState);
+    const [state, dispatch] = useReducer(reducer, stateFromProduct(product));
     const data = useContext(DataContext);
     const [, invalidateProducts] = data.products;
     const [classes, invalidateClasses] = data.classes;
@@ -127,7 +130,7 @@ export function CreateProductPage({product}) {
         }
     }, [dispatch, invalidateProducts, state, invalidateClasses, client]);
 
-    return <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}
+    return <form style={{display: 'flex', flexDirection: 'column', height: '100%', padding: 16}}
                  onSubmit={e => {
                      e.preventDefault();
                      dispatch({type: 'submit'});
@@ -180,7 +183,12 @@ export function CreateProductPage({product}) {
             </Grid>
         </Grid>
 
-        <Button fullWidth variant={"contained"} type={"submit"}>Save</Button>
+        <Grid container spacing={2}>
+            <Grid item md={10}/>
+            <Grid item md={2}>
+                <Button style={{marginTop: 16, height: 50}} fullWidth variant={"contained"} type={"submit"}>Save</Button>
+            </Grid>
+        </Grid>
     </form>;
 }
 

@@ -15,17 +15,15 @@ import {Add, Close, Delete, Edit, MoreVert} from "@mui/icons-material";
 import {useContext, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import CardsList from "../component/CardsList";
-import {useNavigate} from "react-router";
 
 function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
 }
 
 export function ProductsPage() {
-    const [productCreatorOpened, setProductCreatorOpened] = useState(false);
-    const [products, invalidateProducts] = useContext(DataContext).products;
+    const [editingProduct, setEditingProduct] = useState(null)
     const client = useContext(NewtritionClientContext);
-    const navigate = useNavigate()
+    const [products, invalidateProducts] = useContext(DataContext).products;
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
@@ -38,7 +36,7 @@ export function ProductsPage() {
                     carbohydrates={product.nutritionFacts.carbohydrate}
                     ean={product.ean}
                     imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
-                    onEdit={() => navigate(`/products/${product._id}`)}
+                    onEdit={() => setEditingProduct(product)}
                     onDelete={() => {
                         client.products.byId(product._id).delete()
                             .catch(error => {
@@ -58,13 +56,14 @@ export function ProductsPage() {
             position: 'absolute',
             bottom: 0
         }}>
-            <BottomSheet title="New product" visible={productCreatorOpened}
-                         onDismiss={() => setProductCreatorOpened(false)}>
-                <CreateProductPage/>
-            </BottomSheet>
+            { editingProduct ? <BottomSheet title={editingProduct?._id ? "Edit product" : "New product"} visible={editingProduct}
+                                            onDismiss={() => setEditingProduct(null)}>
+                <CreateProductPage product={editingProduct}/>
+            </BottomSheet> : <div/> }
+
         </div>
         <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
-             style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => setProductCreatorOpened(true)}>
+             style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => setEditingProduct({})}>
             <Add/> New product
         </Fab>
     </div>
