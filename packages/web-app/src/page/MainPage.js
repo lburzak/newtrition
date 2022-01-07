@@ -16,6 +16,7 @@ import {SignUpPage} from "./SignUpPage";
 import {ProductsPage} from "./ProductsPage";
 import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
+import {EditRecipePage} from "./EditRecipePage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -51,7 +52,7 @@ export const MainPage = () =>
                 <Route path="/products" element={<AuthGuard><ProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
-                <Route exact path="/recipes/:id" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
+                <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
             </Routes>
         </BrowserRouter>
     </div>

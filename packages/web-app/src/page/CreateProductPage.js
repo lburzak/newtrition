@@ -13,6 +13,7 @@ import Message from "../form/message"
 import {DataContext, NewtritionClientContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
 import {convertJsonToFormData} from "../util/formData";
+import {range} from "../util/range";
 
 const initialState = {
     fields: {
@@ -63,10 +64,6 @@ function readProductFromInput(state) {
     state.photos.forEach(photo => data.append('photos', photo))
 
     return data;
-}
-
-function range(length) {
-    return [...Array(length).keys()]
 }
 
 function stateFromProduct(product) {
@@ -135,7 +132,7 @@ export function CreateProductPage({product}) {
             invalidateProducts()
             invalidateClasses()
         }
-    }, [dispatch, invalidateProducts, state, invalidateClasses, client]);
+    }, [dispatch, invalidateProducts, state, invalidateClasses, client, productExists, product]);
 
     return <form style={{display: 'flex', flexDirection: 'column', height: '100%', padding: 16}}
                  onSubmit={e => {

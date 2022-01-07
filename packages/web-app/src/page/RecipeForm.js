@@ -15,9 +15,10 @@ import {useContext, useEffect, useReducer, useState} from "react";
 import {DataContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
 import {convertJsonToFormData} from "../util/formData";
+import {range} from "../util/range";
 
-export function RecipeForm({onSubmit}) {
-    const [state, dispatch] = useReducer(reducer, initialState);
+export function RecipeForm({onSubmit, defaultRecipe}) {
+    const [state, dispatch] = useReducer(reducer, defaultRecipe ? stateFromRecipe(defaultRecipe) : initialState);
 
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
@@ -36,6 +37,15 @@ export function RecipeForm({onSubmit}) {
             </Grid>
         </Grid>
     </div>
+}
+
+function stateFromRecipe(recipe) {
+    const {name, steps, ingredients, photosCount, id} = recipe;
+
+    return {
+        name, steps, ingredients,
+        photos: range(photosCount).map(i => `/api/recipes/${id}/photos/${i}`)
+    }
 }
 
 const initialState = {
