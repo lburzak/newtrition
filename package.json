@@ -1,0 +1,22 @@
+{
+  "name": "newtrition",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:polydome/newtrition.git",
+  "author": "Łukasz Burzak <lukasz.burzak@pollub.edu.pl>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.1.1",
+  "scripts": {
+    "buildBackend": "docker-compose -f backend-docker-compose.yml build",
+    "launchBackend": "docker-compose -f backend-docker-compose.yml up",
+    "runWeb": "yarn workspace @newtrition/web-app start",
+    "runServer": "yarn workspace @newtrition/server-app start"
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
+  }
+}

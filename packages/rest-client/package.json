@@ -1,0 +1,12 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "auto-bind": "^5.0.1",
+    "axios": "^0.24.0"
+  },
+  "name": "@newtrition/rest-client",
+  "version": "2.0.0",
+  "main": "lib/index.js",
+  "author": "polydome",
+  "private": true
+}
