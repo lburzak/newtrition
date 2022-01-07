@@ -12,10 +12,31 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
-import {useNavigate} from "react-router";
+import {DataContext} from "../App";
 import PhotosSlider from "../component/PhotosSlider";
 import {convertJsonToFormData} from "../util/formData";
+
+export function RecipeForm({onSubmit}) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
+        <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
+            <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
+                       onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
+            <Button disabled={state.submitted} variant={'contained'} onClick={() => onSubmit(readRecipeFromInput(state))}
+                    startIcon={<Done/>}>Save recipe</Button>
+        </div>
+        <Grid container height={'100%'}>
+            <Grid item md={6} sm={12} lg={8}>
+                <PhotosSection dispatch={dispatch}/>
+                <StepsSection steps={state.steps} dispatch={dispatch}/>
+            </Grid>
+            <Grid item md={6} xs={12} lg={4}>
+                <IngredientsSection ingredients={state.ingredients} dispatch={dispatch}/>
+            </Grid>
+        </Grid>
+    </div>
+}
 
 const initialState = {
     name: '',
@@ -74,20 +95,6 @@ function reducer(state, action) {
                 ...state,
                 ingredients: state.ingredients.filter((ingredient, index) => index !== action.payload)
             }
-        default:
-            return state;
-        case 'submit':
-            return {
-                ...state,
-                submitted: true
-            }
-        case 'finishSubmission':
-            return {
-                ...state,
-                submitted: false,
-                finished: action.payload.success
-            };
-
         case 'addPhoto':
             return {
                 ...state,
@@ -101,6 +108,8 @@ function reducer(state, action) {
                 ...state,
                 photos
             }
+        default:
+            return state;
     }
 }
 
@@ -118,50 +127,6 @@ function readRecipeFromInput(state) {
     state.photos.forEach(photo => data.append('photos', photo))
 
     return data;
-}
-
-export function RecipeCreatorPage() {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const navigate = useNavigate();
-    const client = useContext(NewtritionClientContext)
-
-    useEffect(() => {
-        if (state.submitted) {
-            console.log("submitting", state);
-
-            const recipe = readRecipeFromInput(state)
-
-            client.users.self.recipes.create(recipe).then(() => {
-                dispatch({type: 'finishSubmission', payload: {success: true}})
-            }).catch((error) => {
-                console.log(error.response)
-                dispatch({type: 'finishSubmission', payload: {success: false}})
-            })
-        }
-    }, [state, dispatch, client])
-
-    useEffect(() => {
-        if (state.finished)
-            navigate('/recipes');
-    }, [state, navigate])
-
-    return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
-        <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
-            <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
-                       onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
-            <Button disabled={state.submitted} variant={'contained'} onClick={() => dispatch({type: 'submit'})}
-                    startIcon={<Done/>}>Save recipe</Button>
-        </div>
-        <Grid container height={'100%'}>
-            <Grid item md={6} sm={12} lg={8}>
-                <PhotosSection dispatch={dispatch}/>
-                <StepsSection steps={state.steps} dispatch={dispatch}/>
-            </Grid>
-            <Grid item md={6} xs={12} lg={4}>
-                <IngredientsSection ingredients={state.ingredients} dispatch={dispatch}/>
-            </Grid>
-        </Grid>
-    </div>
 }
 
 function PhotosSection({dispatch}) {
