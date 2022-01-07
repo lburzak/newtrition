@@ -14,8 +14,8 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {LoginPage} from "./LoginPage";
 import {SignUpPage} from "./SignUpPage";
 import {ProductsPage} from "./ProductsPage";
-import {RecipeCreatorPage} from "./RecipeCreatorPage";
 import {RecipesPage} from "./RecipesPage";
+import {CreateRecipePage} from "./CreateRecipePage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -50,7 +50,8 @@ export const MainPage = () =>
                 <Route exact path="/signup" element={<SignUpPage />}/>
                 <Route path="/products" element={<AuthGuard><ProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
-                <Route exact path="/recipes/new" element={<AuthGuard><RecipeCreatorPage/></AuthGuard>}/>
+                <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
+                <Route exact path="/recipes/:id" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
             </Routes>
         </BrowserRouter>
     </div>

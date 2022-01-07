@@ -21,7 +21,7 @@ export function RecipesPage() {
                 recipes.map((recipe, index) => <ProductCard key={`product-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
                     client.recipes.byId(recipe.id).delete()
                         .then(() => invalidateRecipes())
-                }}/>)
+                }} onEdit={() => navigate(`/recipes/${recipe.id}`)}/>)
             }
         </CardsList>
         <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
