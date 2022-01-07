@@ -37,9 +37,18 @@ async function getRecipeById(id) {
     return await Recipes.findOne({_id: ObjectId(id)});
 }
 
+async function replaceRecipeById(recipeId, recipe) {
+    const Recipes = await getCollection('recipe');
+
+    await Recipes.replaceOne({_id: ObjectId(recipeId)}, recipe);
+
+    return Result.success()
+}
+
 module.exports = {
     create,
     findUserRecipes,
     deleteRecipeById,
-    getRecipeById
+    getRecipeById,
+    replaceRecipeById
 }

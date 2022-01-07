@@ -1,16 +1,51 @@
 const RecipeRepository = require('../repositories/recipeRepository');
 const fs = require("fs/promises");
 const mime = require("mime-types");
+const {getRecipeById, replaceRecipeById} = require("../repositories/recipeRepository");
+
+function getRecipePath(productId) {
+    return `uploads/recipes/${productId}/`;
+}
+
+async function movePhotosToRecipeDir(files, productId) {
+    for (const [i, file] of files.entries()) {
+        const path = getRecipePath(productId)
+        const fileName = `${i}.${mime.extension(file.mimetype)}`
+        await fs.mkdir(path, {recursive: true})
+        await fs.rename(file.path, path + fileName)
+    }
+}
 
 async function createRecipe(req, res) {
     const result = await RecipeRepository.create(req.targetUser.username, req.body);
-    if (!result.error) {
-        for (const [i, file] of req.files.entries()) {
-            const path = `uploads/recipes/${result.payload._id}/`
-            const fileName = `${i}.${mime.extension(file.mimetype)}`
-            await fs.mkdir(path, {recursive: true})
-            await fs.rename(file.path, path + fileName)
-        }
+    if (result.isSuccess) {
+        await movePhotosToRecipeDir(req.files, result.payload._id)
+        return res.sendStatus(200);
+    }
+
+    res.sendStatus(500);
+}
+
+async function replaceRecipe(req, res) {
+    const recipeId = req.params.id;
+    const currentRecipe = await getRecipeById(recipeId);
+
+    if (!currentRecipe)
+        return res.status(404).send({error: "No such recipe"});
+
+    if (currentRecipe.owner !== req.user.username)
+        return res.sendStatus(401);
+
+    const {name, ingredients, steps} = req.body;
+
+    const entity = {
+        name, ingredients, steps,
+        owner: currentRecipe.owner
+    };
+
+    const result = await replaceRecipeById(recipeId, entity);
+
+    if (result.isSuccess) {
         return res.sendStatus(200);
     }
 
@@ -67,5 +102,6 @@ module.exports = {
     createRecipe,
     getUserRecipes,
     deleteRecipe,
-    getRecipePhoto
+    getRecipePhoto,
+    replaceRecipe
 }
