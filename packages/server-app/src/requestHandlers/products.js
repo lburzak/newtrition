@@ -80,26 +80,29 @@ async function getProductPhoto(req, res) {
 }
 
 async function replaceProduct(req, res) {
-    if (req.targetUser.username !== req.user.username)
+    const productId = req.params.id;
+    const currentProduct = await findProductById(productId);
+
+    if (currentProduct.owner !== req.user.username)
         return res.sendStatus(401);
 
     const {name, ean, nutritionFacts, classes} = req.body;
-    const productId = req.params.id;
 
     const entity = {
         name,
         ean,
         nutritionFacts,
         classes,
-        owner: req.targetUser.username,
+        owner: currentProduct.owner,
         photosCount: req.files.length
     }
 
     const result = await replaceProductById(productId, entity);
 
-    if (!result.error) {
-        await clearProductDir(productId)
-        await movePhotosToProductDir(req.files, productId);
+    if (result.isSuccess) {
+        // TODO: Uncomment
+        // await clearProductDir(productId)
+        // await movePhotosToProductDir(req.files, productId);
         return res.sendStatus(200);
     }
 

@@ -58,6 +58,8 @@ async function replaceProductById(productId, product) {
     const Products = await getCollection('products');
 
     await Products.replaceOne({_id: ObjectId(productId)}, product);
+
+    return Result.success()
 }
 
 module.exports = {

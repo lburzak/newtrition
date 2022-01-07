@@ -38,7 +38,8 @@ class NewtritionClient {
         return {
             byId: (productId) => ({
                 get: async () => await this.httpClient.get(`/products/${productId}`),
-                delete: async () => await this.httpClient.delete(`/products/${productId}`)
+                delete: async () => await this.httpClient.delete(`/products/${productId}`),
+                put: async (product) => await this.httpClient.put(`/products/${productId}`, product)
             })
         }
     }

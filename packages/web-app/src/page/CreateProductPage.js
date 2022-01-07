@@ -42,7 +42,7 @@ const DetailInput = ({name, unit, onChange, value}) => <FormControl variant="out
 </FormControl>
 
 function readProductFromInput(state) {
-    const {name, calories, carbohydrate, fat, protein, ean, classes} = state.fields;
+    const {name, calories, carbohydrate, fat, protein, ean} = state.fields;
 
     const product = {
         name,
@@ -52,7 +52,7 @@ function readProductFromInput(state) {
             fat,
             protein
         }),
-        classes
+        classes: state.classes
     };
 
     if (ean.length > 0)
@@ -76,11 +76,11 @@ function stateFromProduct(product) {
     return {
         fields: {
             name: product.name,
-            ean: product.ean,
-            calories: product.nutritionFacts?.calories,
-            protein: product.nutritionFacts?.protein,
-            carbohydrate: product.nutritionFacts?.carbohydrate,
-            fat: product.nutritionFacts?.fat
+            ean: product.ean ?? "",
+            calories: product.nutritionFacts.calories ?? "",
+            protein: product.nutritionFacts.protein ?? "",
+            carbohydrate: product.nutritionFacts.carbohydrate ?? "",
+            fat: product.nutritionFacts.fat ?? ""
         },
         photos: range(product.photosCount).map(i => `/api/products/${product._id}/photos/${i}`),
         errors: {},
@@ -96,6 +96,7 @@ export function CreateProductPage({product}) {
     const [, invalidateProducts] = data.products;
     const [classes, invalidateClasses] = data.classes;
     const client = useContext(NewtritionClientContext);
+    const productExists = product._id;
 
     const buildFieldChangeHandler = (fieldName) => event => dispatch({
         type: 'updateField',
@@ -111,7 +112,13 @@ export function CreateProductPage({product}) {
 
         function processSubmission() {
             dispatch({type: 'submitStarted'})
-            client.users.self.products.create(readProductFromInput(state)).then(invalidateData)
+            const newProduct = readProductFromInput(state);
+
+            const operation = productExists
+                ? client.products.byId(product._id).put(newProduct)
+                : client.users.self.products.create(newProduct)
+
+            operation.then(invalidateData)
                 .catch(handleFailure)
                 .finally(() => dispatch({type: 'submitFinished'}))
         }
@@ -137,7 +144,8 @@ export function CreateProductPage({product}) {
                  }}>
 
         <div style={{paddingBottom: 16}}>
-            <PhotosSlider defaultValue={state.photos} onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
+            <PhotosSlider defaultValue={state.photos}
+                          onPhotoAdded={(file) => dispatch({type: 'addPhoto', payload: {file}})}
                           onPhotoChanged={(index, file) => dispatch({type: 'changePhoto', payload: {index, file}})}/>
         </div>
 
@@ -147,21 +155,25 @@ export function CreateProductPage({product}) {
                            onChange={buildFieldChangeHandler('name')}/>
             </Grid>
             <Grid item xs={6} md={4}>
-                <TextField fullWidth label={"EAN Code"} variant={"outlined"} value={state.fields.ean || ""} onChange={buildFieldChangeHandler('ean')}
+                <TextField fullWidth label={"EAN Code"} variant={"outlined"} value={state.fields.ean || ""}
+                           onChange={buildFieldChangeHandler('ean')}
                            error={state.errors['ean'] !== undefined} helperText={state.errors['ean']}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Calories per 100g" unit="kcal" value={state.fields.calories} onChange={buildFieldChangeHandler('calories')}/>
+                <DetailInput name="Calories per 100g" unit="kcal" value={state.fields.calories}
+                             onChange={buildFieldChangeHandler('calories')}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Proteins per 100g" unit="grams" value={state.fields.protein} onChange={buildFieldChangeHandler('protein')}/>
+                <DetailInput name="Proteins per 100g" unit="grams" value={state.fields.protein}
+                             onChange={buildFieldChangeHandler('protein')}/>
             </Grid>
             <Grid item xs={3}>
                 <DetailInput name="Carbohydrates per 100g" unit="grams" value={state.fields.carbohydrate}
                              onChange={buildFieldChangeHandler('carbohydrate')}/>
             </Grid>
             <Grid item xs={3}>
-                <DetailInput name="Fat per 100g" unit="grams" value={state.fields.fat} onChange={buildFieldChangeHandler('fat')}/>
+                <DetailInput name="Fat per 100g" unit="grams" value={state.fields.fat}
+                             onChange={buildFieldChangeHandler('fat')}/>
             </Grid>
             <Grid item xs={12}>
                 <Autocomplete
@@ -186,7 +198,8 @@ export function CreateProductPage({product}) {
         <Grid container spacing={2}>
             <Grid item md={10}/>
             <Grid item md={2}>
-                <Button style={{marginTop: 16, height: 50}} fullWidth variant={"contained"} type={"submit"}>Save</Button>
+                <Button style={{marginTop: 16, height: 50}} fullWidth variant={"contained"}
+                        type={"submit"}>Save</Button>
             </Grid>
         </Grid>
     </form>;
