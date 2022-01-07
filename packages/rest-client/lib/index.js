@@ -72,7 +72,8 @@ class NewtritionClient {
     get recipes() {
         return {
             byId: (recipeId) => ({
-                delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`)
+                delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`),
+                put: async (recipe) => await this.httpClient.put(`/recipes/${recipeId}`, recipe)
             })
         }
     }
