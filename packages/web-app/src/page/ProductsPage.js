@@ -46,7 +46,7 @@ export function ProductsPage() {
                             .then(() => invalidateProducts());
                     }}
                     onPublish={() => {
-                        client.products.byId(product._id).publicity.put({public: true})
+                        client.products.byId(product._id).patch({visibility: 'waitlist'})
                             .then(() => invalidateProducts());
                     }}
                 />)
