@@ -1,4 +1,5 @@
-const {findByAuthor, create, findAllClasses, findProductById, deleteProductById, replaceProductById, setProductPublicity} = require("../repositories/productRepository");
+const {findByAuthor, create, findAllClasses, findProductById, deleteProductById, replaceProductById} = require("../repositories/productRepository");
+const ProductRepository = require('../repositories/productRepository');
 const fs = require("fs/promises");
 const mime = require("mime-types")
 
@@ -109,11 +110,11 @@ async function replaceProduct(req, res) {
     return res.sendStatus(500);
 }
 
-async function changeProductPublicity(req, res) {
+async function updateProduct(req, res) {
     const productId = req.params.id;
-    const publicity = req.body.public;
+    const {visibility} = req.product;
 
-    const result = await setProductPublicity(productId, publicity);
+    const result = await ProductRepository.updateProduct(productId, {visibility});
 
     if (result.isSuccess) {
         return res.sendStatus(200);
@@ -129,5 +130,5 @@ module.exports = {
     deleteProduct,
     getProductPhoto,
     replaceProduct,
-    changeProductPublicity
+    updateProduct
 }

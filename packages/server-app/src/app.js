@@ -1,8 +1,7 @@
 const express = require('express');
 const {provideAuthenticatedUser} = require('./requestHandlers/middleware/auth');
 const {provideUserFromPath} = require("./requestHandlers/middleware/path");
-const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto, replaceProduct,
-   changeProductPublicity
+const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto, replaceProduct, updateProduct
 } = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
@@ -36,7 +35,7 @@ app.use('/api/users', provideAuthenticatedUser, usersRouter);
 app.use('/api/auth', authRouter)
 app.get('/api/products/classes', getAvailableClasses);
 app.delete('/api/products/:id', provideAuthenticatedUser, deleteProduct);
-app.put('/api/products/:id/publicity', provideAuthenticatedUser, changeProductPublicity);
+app.patch('/api/products/:id', provideAuthenticatedUser, updateProduct);
 app.put('/api/products/:id', upload.array('photos', 10), deserializeProduct, provideAuthenticatedUser, replaceProduct);
 app.put('/api/recipes/:id', upload.array('photos', 10), deserializeRecipe, provideAuthenticatedUser, replaceRecipe);
 app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);

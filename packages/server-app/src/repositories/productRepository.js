@@ -62,10 +62,11 @@ async function replaceProductById(productId, product) {
     return Result.success()
 }
 
-async function setProductPublicity(productId, publicity) {
+async function updateProduct(productId, product) {
+    const {visibility} = product;
     const Products = await getCollection('products');
 
-    await Products.updateOne({_id: ObjectId(productId)}, {$set: {"public": publicity}});
+    await Products.updateOne({_id: ObjectId(productId)}, {$set: {visibility}});
 
     return Result.success();
 }
@@ -77,5 +78,5 @@ module.exports = {
     findProductById,
     deleteProductById,
     replaceProductById,
-    setProductPublicity
+    updateProduct
 }
