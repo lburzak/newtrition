@@ -62,11 +62,20 @@ async function replaceProductById(productId, product) {
     return Result.success()
 }
 
+async function setProductPublicity(productId, publicity) {
+    const Products = await getCollection('products');
+
+    await Products.updateOne({_id: ObjectId(productId)}, {$set: {"public": publicity}});
+
+    return Result.success();
+}
+
 module.exports = {
     create: create,
     findByAuthor: findByAuthor,
     findAllClasses,
     findProductById,
     deleteProductById,
-    replaceProductById
+    replaceProductById,
+    setProductPublicity
 }
