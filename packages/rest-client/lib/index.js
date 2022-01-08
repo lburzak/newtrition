@@ -40,9 +40,7 @@ class NewtritionClient {
                 get: async () => await this.httpClient.get(`/products/${productId}`),
                 delete: async () => await this.httpClient.delete(`/products/${productId}`),
                 put: async (product) => await this.httpClient.put(`/products/${productId}`, product),
-                publicity: {
-                    put: async (publicity) => await this.httpClient.put(`/products/${productId}/publicity`, publicity)
-                }
+                patch: async (props) => await this.httpClient.patch(`/products/${productId}`, props)
             })
         }
     }
