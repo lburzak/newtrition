@@ -15,6 +15,7 @@ async function createProduct (req, res) {
 
     const product = req.body;
     product.photosCount = req.files.length;
+    product.visibility = 'private';
 
     const result = await create(req.targetUser.username, product);
 

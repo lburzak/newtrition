@@ -11,7 +11,8 @@ async function create(ownerUsername, product) {
         nutritionFacts: product.nutritionFacts,
         owner: ownerUsername,
         classes: product.classes,
-        photosCount: product.photosCount
+        photosCount: product.photosCount,
+        visibility: product.visibility
     }
 
     await Products.insertOne(entity);
