@@ -11,7 +11,7 @@ import {
     Paper,
     Typography
 } from "@mui/material";
-import {Add, Close, Delete, Edit, MoreVert} from "@mui/icons-material";
+import {Add, Close, Delete, Edit, MoreVert, Public} from "@mui/icons-material";
 import {useContext, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import CardsList from "../component/CardsList";
@@ -75,7 +75,7 @@ const ProductSpecRow = ({name, value}) => <div
     <Typography variant={'body1'}>{value}</Typography>
 </div>
 
-export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, onDelete, onEdit}) => {
+export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, onDelete, onEdit, onPublish = () => {}}) => {
     const [buttonsVisibility, setButtonsVisibility] = useState(false);
     const [anchor, setAnchor] = useState(null);
     const open = Boolean(anchor);
@@ -111,6 +111,15 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
                             <Delete fontSize="small"/>
                         </ListItemIcon>
                         <ListItemText>Delete</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={() => {
+                        onPublish();
+                        closeMenu()
+                    }}>
+                        <ListItemIcon>
+                            <Public fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText>Publish</ListItemText>
                     </MenuItem>
                 </MenuList>
             </Menu>
