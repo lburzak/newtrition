@@ -113,7 +113,7 @@ async function replaceProduct(req, res) {
 
 async function updateProduct(req, res) {
     const productId = req.params.id;
-    const {visibility} = req.product;
+    const {visibility} = req.body;
 
     const result = await ProductRepository.updateProduct(productId, {visibility});
 
