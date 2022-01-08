@@ -88,30 +88,21 @@ paths:
         '404':
           description: Not Found
       description: Replaces all product data while retaining ID
-  '/products/{productId}/publicity':
-    parameters:
-      - schema:
-          type: string
-        name: productId
-        in: path
-        required: true
-    put:
-      summary: Change product publicity
-      operationId: put-products-productId-publicity
+    patch:
+      summary: Update product
+      operationId: patch-products-productId
       responses:
         '200':
           description: OK
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      description: Change product visibility status
       requestBody:
         content:
           application/json:
             schema:
-              type: boolean
-        description: ''
+              type: object
+              properties:
+                visibility:
+                  $ref: '#/components/schemas/Visibility'
+      description: Allows for changing product visibility
   '/products/{productId}/photos/{photoId}':
     parameters:
       - schema:
@@ -341,35 +332,11 @@ paths:
           description: Unauthorized
       operationId: get-recipes
       description: Retrieves recipes available publicly
-  '/recipes/{recipeId}/publicity':
+  '/recipes/{recipeId}/photos/{photoId}':
     parameters:
       - schema:
           type: string
         name: recipeId
-        in: path
-        required: true
-    put:
-      summary: Change recipe publicity
-      operationId: put-recipes-productId-publicity
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not Found
-      description: Change recipe visibility status
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: boolean
-        description: ''
-  '/recipes/{productId}/photos/{photoId}':
-    parameters:
-      - schema:
-          type: string
-        name: productId
         in: path
         required: true
       - schema:
@@ -391,8 +358,8 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      operationId: get-product-photo
-      description: Retrieves a product photo
+      operationId: get-recipe-photo
+      description: Retrieves a recipe photo
   /auth/token:
     parameters: []
     post:
@@ -538,21 +505,19 @@ components:
           description: EAN-13 code associated with the product
         nutritionFacts:
           $ref: '#/components/schemas/NutritionFacts'
-        public:
-          type: boolean
-          default: null
-          description: 'Specifies, whether a product is available publicly. Can be ommitted if false.'
-          nullable: true
         classes:
           type: array
           items:
             type: string
         photosCount:
           type: number
+        visibility:
+          $ref: '#/components/schemas/Visibility'
       required:
         - id
         - name
         - classes
+      title: ''
     User:
       title: User
       type: object
@@ -698,6 +663,14 @@ components:
     Unit:
       title: Unit
       type: string
+    Visibility:
+      type: string
+      title: Visibility
+      default: private
+      enum:
+        - private
+        - waitlist
+        - public
   securitySchemes:
     TokenAuth:
       type: http
