@@ -111,11 +111,11 @@ async function replaceProduct(req, res) {
 
 async function changeProductPublicity(req, res) {
     const productId = req.params.id;
-    const publicity = req.body;
+    const publicity = req.body.public;
 
     const result = await setProductPublicity(productId, publicity);
 
-    if (result.isSuccess()) {
+    if (result.isSuccess) {
         return res.sendStatus(200);
     }
 

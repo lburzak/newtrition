@@ -45,6 +45,10 @@ export function ProductsPage() {
                             })
                             .then(() => invalidateProducts());
                     }}
+                    onPublish={() => {
+                        client.products.byId(product._id).publicity.put({public: true})
+                            .then(() => invalidateProducts());
+                    }}
                 />)
             }
         </CardsList>
