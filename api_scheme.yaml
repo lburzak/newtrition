@@ -41,6 +41,12 @@ paths:
               items:
                 $ref: '#/components/schemas/Product'
         description: ''
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: visibility
+          description: Product visibility filter
   '/products/{productId}':
     parameters:
       - schema:
