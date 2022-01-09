@@ -49,7 +49,7 @@ class NewtritionClient {
     get users() {
         return {
             self: {
-                profile: async () => await this.httpClient.get('/users/@me'),
+                get: async () => await this.httpClient.get('/users/@me'),
                 products: {
                     get: async () => await this.httpClient.get('/users/@me/products'),
                     create: async (product) => {
