@@ -77,7 +77,9 @@ async function findProducts(predicate) {
 
     const Products = await getCollection('products');
 
-    const products = await Products.find({visibility});
+    const products = await Products
+        .find({visibility})
+        .toArray();
 
     return Result.success(products);
 }
