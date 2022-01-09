@@ -19,6 +19,7 @@ import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
 import {useContext} from "react";
 import ProductsWaitlistPage from "./ProductsWaitlistPage";
+import SearchProductsPage from "./SearchProductsPage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -51,6 +52,7 @@ export const MainPage = () =>
             <Routes>
                 <Route exact path="/login" element={<LoginPage/>}/>
                 <Route exact path="/signup" element={<SignUpPage/>}/>
+                <Route path="/products" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
                 <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
@@ -67,6 +69,14 @@ const SideMenu = ({visible}) => {
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
         <List>
+            <ListItem disablePadding>
+                <ListItemButton>
+                    <ListItemIcon>
+                        <Fastfood/>
+                    </ListItemIcon>
+                    <ListItemText primary="Search products" onClick={() => navigate('/products')}/>
+                </ListItemButton>
+            </ListItem>
             <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
