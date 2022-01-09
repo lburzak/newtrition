@@ -72,13 +72,11 @@ async function updateProduct(productId, product) {
     return Result.success();
 }
 
-async function findProducts(predicate) {
-    const {visibility} = predicate;
-
+async function findProducts(query) {
     const Products = await getCollection('products');
 
     const products = await Products
-        .find({visibility})
+        .find(query)
         .toArray();
 
     return Result.success(products);

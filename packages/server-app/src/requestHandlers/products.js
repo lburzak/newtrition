@@ -1,4 +1,11 @@
-const {findByAuthor, create, findAllClasses, findProductById, deleteProductById, replaceProductById} = require("../repositories/productRepository");
+const {
+    findByAuthor,
+    create,
+    findAllClasses,
+    findProductById,
+    deleteProductById,
+    replaceProductById
+} = require("../repositories/productRepository");
 const ProductRepository = require('../repositories/productRepository');
 const fs = require("fs/promises");
 const mime = require("mime-types")
@@ -9,7 +16,7 @@ async function getUserProducts(req, res) {
     res.status(200).json(products);
 }
 
-async function createProduct (req, res) {
+async function createProduct(req, res) {
     if (req.targetUser.username !== req.user.username)
         return res.sendStatus(401);
 
@@ -124,13 +131,42 @@ async function updateProduct(req, res) {
     return res.sendStatus(500);
 }
 
-async function getProducts(req, res) {
-    const {visibility} = req.query;
+function makeQuery({visibility, visible, username}) {
+    const visiblePredicate = {
+        $or: [
+            {visibility: 'public'},
+            {owner: username}
+        ]
+    };
 
-    const result = await ProductRepository.findProducts({visibility});
+    const visibilityPredicate = {
+        visibility: visibility
+    }
+
+    const predicates = [];
+
+    if (visible)
+        predicates.push(visiblePredicate)
+
+    if (visibility)
+        predicates.push(visibilityPredicate)
+
+    return {
+        $and: predicates
+    }
+}
+
+async function getProducts(req, res) {
+    const {visibility, visible} = req.query;
+    const {username} = req.user;
+
+    const query = makeQuery({visibility, visible, username});
+    const result = await ProductRepository.findProducts(query);
 
     if (result.isSuccess)
         return res.status(200).send(result.payload);
+
+    res.sendStatus(500);
 }
 
 module.exports = {
