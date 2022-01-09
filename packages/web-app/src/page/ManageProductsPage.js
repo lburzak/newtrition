@@ -20,7 +20,7 @@ export function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
 }
 
-export function ProductsPage() {
+export function ManageProductsPage() {
     const [editingProduct, setEditingProduct] = useState(null)
     const client = useContext(NewtritionClientContext);
     const [products, invalidateProducts] = useContext(DataContext).products;

@@ -1,5 +1,5 @@
 import CardsList from "../component/CardsList";
-import {getFirstPhotoUrl, ProductCard} from "./ProductsPage";
+import {getFirstPhotoUrl, ProductCard} from "./ManageProductsPage";
 import {useContext, useEffect, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 

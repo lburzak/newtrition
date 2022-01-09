@@ -4,7 +4,7 @@ import {useNavigate} from "react-router";
 import CardsList from "../component/CardsList";
 import {useContext} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
-import {ProductCard} from "./ProductsPage";
+import {ProductCard} from "./ManageProductsPage";
 
 function getFirstPhotoUrl(id) {
     return `/api/recipes/${id}/photos/0`;

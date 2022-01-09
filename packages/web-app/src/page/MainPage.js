@@ -13,7 +13,7 @@ import {useNavigate} from "react-router";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {LoginPage} from "./LoginPage";
 import {SignUpPage} from "./SignUpPage";
-import {ProductsPage} from "./ProductsPage";
+import {ManageProductsPage} from "./ManageProductsPage";
 import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
@@ -51,7 +51,7 @@ export const MainPage = () =>
             <Routes>
                 <Route exact path="/login" element={<LoginPage/>}/>
                 <Route exact path="/signup" element={<SignUpPage/>}/>
-                <Route path="/products" element={<AuthGuard><ProductsPage/></AuthGuard>}/>
+                <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
                 <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
@@ -72,7 +72,7 @@ const SideMenu = ({visible}) => {
                     <ListItemIcon>
                         <Fastfood/>
                     </ListItemIcon>
-                    <ListItemText primary="Products" onClick={() => navigate('/products')}/>
+                    <ListItemText primary="My products" onClick={() => navigate('/my-products')}/>
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
