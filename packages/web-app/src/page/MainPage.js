@@ -3,10 +3,11 @@ import {
     Button, Divider,
     List,
     ListItem,
-    ListItemIcon
+    ListItemIcon,
+    Collapse
 } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
-import {AccountCircle, Fastfood, Restaurant} from "@mui/icons-material";
+import {AccountCircle, Fastfood, Restaurant, ExpandLess, ExpandMore, Search, Edit, Pending} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 import {AuthContext} from "../App";
 import {useNavigate} from "react-router";
@@ -17,7 +18,7 @@ import {ManageProductsPage} from "./ManageProductsPage";
 import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import ProductsWaitlistPage from "./ProductsWaitlistPage";
 import SearchProductsPage from "./SearchProductsPage";
 
@@ -62,29 +63,46 @@ export const MainPage = () =>
         </BrowserRouter>
     </div>
 
+function LinkItem({path, name, icon}) {
+    const navigate = useNavigate();
+
+    return <ListItemButton sx={{pl: 4}}>
+        <ListItemIcon>{icon}</ListItemIcon>
+        <ListItemText primary={name} onClick={() => navigate(path)}/>
+    </ListItemButton>
+}
+
 const SideMenu = ({visible}) => {
     const navigate = useNavigate();
     const {authState} = useContext(AuthContext)
 
+    const [open, setOpen] = useState(true);
+
+    const handleClick = () => {
+        setOpen(!open);
+    };
+
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
         <List>
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Fastfood/>
-                    </ListItemIcon>
-                    <ListItemText primary="Search products" onClick={() => navigate('/products')}/>
-                </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Fastfood/>
-                    </ListItemIcon>
-                    <ListItemText primary="My products" onClick={() => navigate('/my-products')}/>
-                </ListItemButton>
-            </ListItem>
+            <ListItemButton onClick={handleClick}>
+                <ListItemIcon>
+                    <Fastfood />
+                </ListItemIcon>
+                <ListItemText primary="Products" />
+                {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <LinkItem name={"Search"} path={"/products"} icon={<Search/>}/>
+                    <LinkItem name={"My products"} path={"/my-products"} icon={<Edit/>}/>
+                    {
+                        authState.admin
+                            ? <LinkItem name={"Waitlist"} path={"/waitlist/products"} icon={<Pending/>}/>
+                            : <div/>
+                    }
+                </List>
+            </Collapse>
             <ListItem disablePadding>
                 <ListItemButton>
                     <ListItemIcon>
@@ -93,21 +111,6 @@ const SideMenu = ({visible}) => {
                     <ListItemText primary="Recipes" onClick={() => navigate('/recipes')}/>
                 </ListItemButton>
             </ListItem>
-            {
-                authState.admin ?
-                    <div>
-                        <Divider orientation={"horizontal"}/>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <Restaurant/>
-                                </ListItemIcon>
-                                <ListItemText primary="Products waitlist"
-                                              onClick={() => navigate('/waitlist/products')}/>
-                            </ListItemButton>
-                        </ListItem>
-                    </div> : <div/>
-            }
         </List>
         <ProfileView/>
     </Box>;
