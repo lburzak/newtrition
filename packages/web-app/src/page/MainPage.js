@@ -17,6 +17,8 @@ import {ProductsPage} from "./ProductsPage";
 import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
+import {useContext} from "react";
+import ProductsWaitlistPage from "./ProductsWaitlistPage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -35,7 +37,7 @@ const ProfileView = () => <AuthContext.Consumer>
 const AuthGuard = ({children}) =>
     <AuthContext.Consumer>
         {({authState}) =>
-            authState.authenticated ? {...children} : <Navigate to="/login" />
+            authState.authenticated ? {...children} : <Navigate to="/login"/>
         }
     </AuthContext.Consumer>
 
@@ -47,18 +49,20 @@ export const MainPage = () =>
             </AuthContext.Consumer>
             <Divider variant={'fullWidth'} orientation={'vertical'}/>
             <Routes>
-                <Route exact path="/login" element={<LoginPage />}/>
-                <Route exact path="/signup" element={<SignUpPage />}/>
+                <Route exact path="/login" element={<LoginPage/>}/>
+                <Route exact path="/signup" element={<SignUpPage/>}/>
                 <Route path="/products" element={<AuthGuard><ProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
                 <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
+                <Route exact path="/waitlist/products" element={<AuthGuard><ProductsWaitlistPage/></AuthGuard>}/>
             </Routes>
         </BrowserRouter>
     </div>
 
 const SideMenu = ({visible}) => {
     const navigate = useNavigate();
+    const {authState} = useContext(AuthContext)
 
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
@@ -79,6 +83,21 @@ const SideMenu = ({visible}) => {
                     <ListItemText primary="Recipes" onClick={() => navigate('/recipes')}/>
                 </ListItemButton>
             </ListItem>
+            {
+                authState.admin ?
+                    <div>
+                        <Divider orientation={"horizontal"}/>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    <Restaurant/>
+                                </ListItemIcon>
+                                <ListItemText primary="Products waitlist"
+                                              onClick={() => navigate('/waitlist/products')}/>
+                            </ListItemButton>
+                        </ListItem>
+                    </div> : <div/>
+            }
         </List>
         <ProfileView/>
     </Box>;

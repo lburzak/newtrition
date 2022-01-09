@@ -3,12 +3,13 @@ import AuthStorage from "./storage";
 export const initialAuthState = {
     authenticated: false,
     accessToken: null,
-    username: null
+    username: null,
+    admin: null
 };
 
 export function loadAuthState() {
     if (AuthStorage.accessToken && AuthStorage.username)
-        return {authenticated: true, accessToken: AuthStorage.accessToken, username: AuthStorage.username};
+        return {authenticated: true, accessToken: AuthStorage.accessToken, username: AuthStorage.username, admin: AuthStorage.admin};
 
     return initialAuthState;
 }
@@ -25,6 +26,15 @@ export function authReducer(state, event) {
             accessToken: accessToken,
             username: username
         };
+    } else if (event.type === 'profileFetched') {
+        const {admin} = event.payload;
+
+        AuthStorage.admin = admin;
+
+        return {
+            ...state,
+            admin
+        }
     } else if (event.type === 'loggedOut') {
         AuthStorage.clear();
 

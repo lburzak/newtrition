@@ -2,7 +2,7 @@ import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
 import {blue} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {AuthContext} from "../App";
+import {AuthContext, NewtritionClientContext} from "../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../component/PaperForm";
 import {Row} from "../component/Row";
@@ -24,6 +24,7 @@ const Heading = () => <div>
 export const LoginPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const {authState, authDispatch} = useContext(AuthContext);
+    const client = useContext(NewtritionClientContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,7 +33,7 @@ export const LoginPage = () => {
 
         if (state.submitted)
             AuthApi.Endpoint.initiateLoginFlow(state)
-                .then(buildLoginResultHandler(dispatch, authDispatch));
+                .then(buildLoginResultHandler(dispatch, authDispatch, client));
     })
 
     // noinspection HtmlUnknownTarget
@@ -52,9 +53,12 @@ export const LoginPage = () => {
     </PaperForm>;
 }
 
-const buildLoginResultHandler = (dispatch, authDispatch) => (result) => {
+const buildLoginResultHandler = (dispatch, authDispatch, client) => (result) => {
     if (result.isSuccess) {
         const {accessToken, username} = result.payload;
+
+        client.users.self.get().then((res) => authDispatch({type: 'profileFetched', payload: {admin: res.data.admin}}))
+
         return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
     }
 

@@ -16,7 +16,7 @@ import {useContext, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../App";
 import CardsList from "../component/CardsList";
 
-function getFirstPhotoUrl(id) {
+export function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
 }
 

@@ -15,6 +15,14 @@ class AuthStorage {
         localStorage.setItem('accessToken', value);
     }
 
+    get admin() {
+        return localStorage.getItem('admin')
+    }
+
+    set admin(value) {
+        localStorage.setItem('admin', value)
+    }
+
     clear() {
         localStorage.removeItem('username');
         localStorage.removeItem('accessToken');
