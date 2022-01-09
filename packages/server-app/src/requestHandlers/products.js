@@ -124,6 +124,15 @@ async function updateProduct(req, res) {
     return res.sendStatus(500);
 }
 
+async function getProducts(req, res) {
+    const {visibility} = req.query;
+
+    const result = await ProductRepository.findProducts({visibility});
+
+    if (result.isSuccess)
+        return res.status(200).send(result.payload);
+}
+
 module.exports = {
     getUserProducts,
     createProduct,
@@ -131,5 +140,6 @@ module.exports = {
     deleteProduct,
     getProductPhoto,
     replaceProduct,
-    updateProduct
+    updateProduct,
+    getProducts
 }

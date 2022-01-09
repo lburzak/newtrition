@@ -1,7 +1,8 @@
 const express = require('express');
 const {provideAuthenticatedUser} = require('./requestHandlers/middleware/auth');
 const {provideUserFromPath} = require("./requestHandlers/middleware/path");
-const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto, replaceProduct, updateProduct
+const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getProductPhoto, replaceProduct, updateProduct,
+   getProducts
 } = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
@@ -33,6 +34,7 @@ const deserializeRecipe = (req, res, next) => {
 
 app.use('/api/users', provideAuthenticatedUser, usersRouter);
 app.use('/api/auth', authRouter)
+app.get('/api/products', getProducts)
 app.get('/api/products/classes', getAvailableClasses);
 app.delete('/api/products/:id', provideAuthenticatedUser, deleteProduct);
 app.patch('/api/products/:id', provideAuthenticatedUser, updateProduct);

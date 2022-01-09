@@ -72,6 +72,16 @@ async function updateProduct(productId, product) {
     return Result.success();
 }
 
+async function findProducts(predicate) {
+    const {visibility} = predicate;
+
+    const Products = await getCollection('products');
+
+    const products = await Products.find({visibility});
+
+    return Result.success(products);
+}
+
 module.exports = {
     create: create,
     findByAuthor: findByAuthor,
@@ -79,5 +89,6 @@ module.exports = {
     findProductById,
     deleteProductById,
     replaceProductById,
-    updateProduct
+    updateProduct,
+    findProducts
 }

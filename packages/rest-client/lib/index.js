@@ -36,6 +36,7 @@ class NewtritionClient {
 
     get products() {
         return {
+            get: async (params) => await this.httpClient.get('/products', {params}),
             byId: (productId) => ({
                 get: async () => await this.httpClient.get(`/products/${productId}`),
                 delete: async () => await this.httpClient.delete(`/products/${productId}`),
