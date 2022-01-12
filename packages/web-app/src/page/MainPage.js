@@ -76,7 +76,7 @@ const SideMenu = ({visible}) => {
     const navigate = useNavigate();
     const {authState} = useContext(AuthContext)
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const handleClick = () => {
         setOpen(!open);
