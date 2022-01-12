@@ -338,6 +338,31 @@ paths:
           description: Unauthorized
       operationId: get-recipes
       description: Retrieves recipes available publicly
+  '/recipes/{recipeId}':
+    parameters:
+      - schema:
+          type: string
+        name: recipeId
+        in: path
+        required: true
+    put:
+      summary: Replace recipe
+      operationId: put-recipes-recipeId
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Update recipe
+      operationId: patch-recipes-recipeId
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete recipe
+      operationId: delete-recipes-recipeId
+      responses:
+        '200':
+          description: OK
   '/recipes/{recipeId}/photos/{photoId}':
     parameters:
       - schema:
