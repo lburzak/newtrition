@@ -2467,6 +2467,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mui/x-data-grid@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "@mui/x-data-grid@npm:5.2.2"
+  dependencies:
+    "@mui/utils": ^5.2.3
+    clsx: ^1.1.1
+    prop-types: ^15.8.0
+    reselect: ^4.1.5
+  peerDependencies:
+    "@mui/material": ^5.2.7
+    "@mui/system": ^5.2.6
+    react: ^17.0.2
+  checksum: 955440b7c545b3ade71008a47870d4ac8f4db7365dd23cf287273802fe5f4b999f3f2f57765777f88808618220f123b5b8e473ed98e53e40858dc2b03aea6d3f
+  languageName: node
+  linkType: hard
+
 "@newtrition/rest-client@workspace:*, @newtrition/rest-client@workspace:packages/rest-client":
   version: 0.0.0-use.local
   resolution: "@newtrition/rest-client@workspace:packages/rest-client"
@@ -2505,6 +2521,7 @@ __metadata:
     "@material-ui/icons": ^4.11.2
     "@mui/icons-material": ^5.0.5
     "@mui/material": ^5.0.6
+    "@mui/x-data-grid": ^5.2.2
     "@newtrition/rest-client": "workspace:*"
     "@testing-library/jest-dom": ^5.11.4
     "@testing-library/react": ^11.1.0
@@ -13841,6 +13858,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prop-types@npm:^15.8.0":
+  version: 15.8.1
+  resolution: "prop-types@npm:15.8.1"
+  dependencies:
+    loose-envify: ^1.4.0
+    object-assign: ^4.1.1
+    react-is: ^16.13.1
+  checksum: c056d3f1c057cb7ff8344c645450e14f088a915d078dcda795041765047fa080d38e5d626560ccaac94a4e16e3aa15f3557c1a9a8d1174530955e992c675e459
+  languageName: node
+  linkType: hard
+
 "proxy-addr@npm:~2.0.4, proxy-addr@npm:~2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -14557,6 +14585,13 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: eee0e303adffb69be55d1a214e415cf42b7441ae858c76dfc5353148644f6fd6e698926fc4643f510d5c126d12a705e7c8ed7e38061113bdf37547ab356797ff
+  languageName: node
+  linkType: hard
+
+"reselect@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "reselect@npm:4.1.5"
+  checksum: 54c13c1e795b2ea70cba8384138aebe78adda00cbea303cc94b64da0a70d74c896cc9a03115ae38b8bff990e7a60dcd6452ab68cbec01b0b38c1afda70714cf0
   languageName: node
   linkType: hard
 

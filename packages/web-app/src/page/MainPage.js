@@ -21,6 +21,8 @@ import {Fragment, useContext, useState} from "react";
 import ProductsWaitlistPage from "./ProductsWaitlistPage";
 import SearchProductsPage from "./SearchProductsPage";
 import UniversalRecipesPage from "./UniversalRecipesPage";
+import RecipesWaitlistPage from "./RecipesWaitlistPage";
+import ManageRecipesPage from "./ManageRecipesPage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -59,13 +61,11 @@ export const MainPage = () => {
                 <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><UniversalRecipesPage
                     getRecipes={() => client.recipes.get({visible: true})}/></AuthGuard>}/>
-                <Route exact path="/my-recipes" element={<AuthGuard><UniversalRecipesPage
-                    getRecipes={() => client.users.self.recipes.get()}/></AuthGuard>}/>
+                <Route exact path="/my-recipes" element={<AuthGuard><ManageRecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
                 <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
                 <Route exact path="/waitlist/products" element={<AuthGuard><ProductsWaitlistPage/></AuthGuard>}/>
-                <Route exact path="/waitlist/recipes" element={<AuthGuard><UniversalRecipesPage
-                    getRecipes={() => client.recipes.get({visibility: 'waitlist'})}/></AuthGuard>}/>
+                <Route exact path="/waitlist/recipes" element={<AuthGuard><RecipesWaitlistPage/></AuthGuard>}/>
             </Routes>
         </BrowserRouter>
     </div>;
@@ -120,7 +120,7 @@ const SideMenu = ({visible}) => {
             </ExpandableMenuItem>
             <ExpandableMenuItem icon={<Restaurant/>} label={"Recipes"}>
                 <LinkItem name={"Search"} path={"/recipes"} icon={<Search/>}/>
-                <LinkItem name={"My products"} path={"/my-recipes"} icon={<Edit/>}/>
+                <LinkItem name={"My recipes"} path={"/my-recipes"} icon={<Edit/>}/>
                 {
                     authState.admin
                         ? <LinkItem name={"Waitlist"} path={"/waitlist/recipes"} icon={<Pending/>}/>

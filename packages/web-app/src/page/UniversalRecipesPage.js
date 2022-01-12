@@ -1,32 +1,22 @@
 import CardsList from "../component/CardsList";
 import {ProductCard} from "./ManageProductsPage";
-import {useContext, useEffect, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
+import {useContext} from "react";
+import {NewtritionClientContext} from "../App";
+import {useRemoteData} from "../hook/remoteData";
 
 function getFirstPhotoUrl(id) {
     return `/api/recipes/${id}/photos/0`;
 }
 
 export default function UniversalRecipesPage({getRecipes}) {
-    const [recipes, setRecipes] = useState(null)
+    const [recipes, invalidate] = useRemoteData(getRecipes, []);
     const client = useContext(NewtritionClientContext)
-    const [, invalidateRecipes] = useContext(DataContext).recipes;
-
-    useEffect(() => {
-        if (recipes !== null)
-            return;
-
-        getRecipes()
-            .then(result => setRecipes(result.data))
-    }, [client, recipes, setRecipes, getRecipes])
-
-    const recipesSafe = recipes || [];
 
     return <CardsList>
         {
-            recipesSafe.map((recipe, index) => <ProductCard key={`recipe-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
+            recipes.map((recipe, index) => <ProductCard key={`recipe-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
                 client.recipes.byId(recipe.id).delete()
-                    .then(() => invalidateRecipes())
+                    .then(() => invalidate())
             }}/>)
         }
     </CardsList>
