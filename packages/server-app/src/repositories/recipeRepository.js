@@ -9,7 +9,8 @@ async function create(ownerUsername, recipe) {
         name: recipe.name,
         ingredients: recipe.ingredients,
         steps: recipe.steps,
-        owner: ownerUsername
+        owner: ownerUsername,
+        visibility: recipe.visibility
     };
 
     await Recipes.insertOne(entity);
@@ -45,10 +46,31 @@ async function replaceRecipeById(recipeId, recipe) {
     return Result.success()
 }
 
+async function updateRecipe(productId, recipe) {
+    const {visibility} = recipe;
+    const Products = await getCollection('recipe');
+
+    await Products.updateOne({_id: ObjectId(productId)}, {$set: {visibility}});
+
+    return Result.success();
+}
+
+async function findRecipes(query) {
+    const Recipes = await getCollection('recipe');
+
+    const recipes = await Recipes
+        .find(query)
+        .toArray();
+
+    return Result.success(recipes);
+}
+
 module.exports = {
     create,
     findUserRecipes,
     deleteRecipeById,
     getRecipeById,
-    replaceRecipeById
+    replaceRecipeById,
+    updateRecipe,
+    findRecipes
 }

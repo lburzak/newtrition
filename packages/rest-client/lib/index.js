@@ -73,9 +73,11 @@ class NewtritionClient {
 
     get recipes() {
         return {
+            get: async (params) => await this.httpClient.get('/recipes', {params}),
             byId: (recipeId) => ({
                 delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`),
-                put: async (recipe) => await this.httpClient.put(`/recipes/${recipeId}`, recipe)
+                put: async (recipe) => await this.httpClient.put(`/recipes/${recipeId}`, recipe),
+                patch: async (props) => await this.httpClient.patch(`/recipes/${recipeId}`, props)
             })
         }
     }

@@ -9,18 +9,18 @@ import {
 import ListItemButton from "@mui/material/ListItemButton";
 import {AccountCircle, Fastfood, Restaurant, ExpandLess, ExpandMore, Search, Edit, Pending} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
-import {AuthContext} from "../App";
+import {AuthContext, NewtritionClientContext} from "../App";
 import {useNavigate} from "react-router";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {LoginPage} from "./LoginPage";
 import {SignUpPage} from "./SignUpPage";
 import {ManageProductsPage} from "./ManageProductsPage";
-import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
 import {Fragment, useContext, useState} from "react";
 import ProductsWaitlistPage from "./ProductsWaitlistPage";
 import SearchProductsPage from "./SearchProductsPage";
+import UniversalRecipesPage from "./UniversalRecipesPage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>
@@ -43,8 +43,10 @@ const AuthGuard = ({children}) =>
         }
     </AuthContext.Consumer>
 
-export const MainPage = () =>
-    <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
+export const MainPage = () => {
+    const client = useContext(NewtritionClientContext)
+
+    return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
         <BrowserRouter>
             <AuthContext.Consumer>
                 {({authState}) => <SideMenu visible={authState.authenticated}/>}
@@ -55,13 +57,19 @@ export const MainPage = () =>
                 <Route exact path="/signup" element={<SignUpPage/>}/>
                 <Route path="/products" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
                 <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
-                <Route exact path="/recipes" element={<AuthGuard><RecipesPage/></AuthGuard>}/>
+                <Route exact path="/recipes" element={<AuthGuard><UniversalRecipesPage
+                    getRecipes={() => client.recipes.get({visible: true})}/></AuthGuard>}/>
+                <Route exact path="/my-recipes" element={<AuthGuard><UniversalRecipesPage
+                    getRecipes={() => client.users.self.recipes.get()}/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
                 <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
                 <Route exact path="/waitlist/products" element={<AuthGuard><ProductsWaitlistPage/></AuthGuard>}/>
+                <Route exact path="/waitlist/recipes" element={<AuthGuard><UniversalRecipesPage
+                    getRecipes={() => client.recipes.get({visibility: 'waitlist'})}/></AuthGuard>}/>
             </Routes>
         </BrowserRouter>
-    </div>
+    </div>;
+}
 
 function LinkItem({path, name, icon}) {
     const navigate = useNavigate();

@@ -6,7 +6,7 @@ const {getUserProducts, createProduct, getAvailableClasses, deleteProduct, getPr
 } = require("./requestHandlers/products");
 const {getAuthenticatedUser} = require("./requestHandlers/users");
 const {signUp, getToken} = require("./requestHandlers/auth");
-const {createRecipe, getUserRecipes, deleteRecipe, getRecipePhoto, replaceRecipe} = require("./requestHandlers/recipes");
+const {createRecipe, getUserRecipes, deleteRecipe, getRecipePhoto, replaceRecipe, updateRecipe, getRecipes} = require("./requestHandlers/recipes");
 const ValidationService = require("./services/validationService");
 const {buildValidationMiddleware} = require("./requestHandlers/middleware/validation");
 const multer = require("multer");
@@ -35,9 +35,11 @@ const deserializeRecipe = (req, res, next) => {
 app.use('/api/users', provideAuthenticatedUser, usersRouter);
 app.use('/api/auth', authRouter)
 app.get('/api/products', provideAuthenticatedUser, getProducts)
+app.get('/api/recipes', provideAuthenticatedUser, getRecipes)
 app.get('/api/products/classes', getAvailableClasses);
 app.delete('/api/products/:id', provideAuthenticatedUser, deleteProduct);
 app.patch('/api/products/:id', provideAuthenticatedUser, updateProduct);
+app.patch('/api/recipes/:id', provideAuthenticatedUser, updateRecipe);
 app.put('/api/products/:id', upload.array('photos', 10), deserializeProduct, provideAuthenticatedUser, replaceProduct);
 app.put('/api/recipes/:id', upload.array('photos', 10), deserializeRecipe, provideAuthenticatedUser, replaceRecipe);
 app.delete('/api/recipes/:id', provideAuthenticatedUser, deleteRecipe);

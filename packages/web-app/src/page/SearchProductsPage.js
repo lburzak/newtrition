@@ -18,7 +18,7 @@ export default function SearchProductsPage() {
                     setStatus('fetched')
                 })
         }
-    }, [client, setProducts])
+    }, [client, setProducts, status])
 
     return <CardsList>
         {

@@ -9,6 +9,7 @@ const {
 const ProductRepository = require('../repositories/productRepository');
 const fs = require("fs/promises");
 const mime = require("mime-types")
+const {makeQuery} = require("../repositories/queryUtil");
 
 async function getUserProducts(req, res) {
     const products = await findByAuthor(req.targetUser.username);
@@ -129,31 +130,6 @@ async function updateProduct(req, res) {
     }
 
     return res.sendStatus(500);
-}
-
-function makeQuery({visibility, visible, username}) {
-    const visiblePredicate = {
-        $or: [
-            {visibility: 'public'},
-            {owner: username}
-        ]
-    };
-
-    const visibilityPredicate = {
-        visibility: visibility
-    }
-
-    const predicates = [];
-
-    if (visible)
-        predicates.push(visiblePredicate)
-
-    if (visibility)
-        predicates.push(visibilityPredicate)
-
-    return {
-        $and: predicates
-    }
 }
 
 async function getProducts(req, res) {
