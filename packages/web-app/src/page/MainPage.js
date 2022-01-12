@@ -18,7 +18,7 @@ import {ManageProductsPage} from "./ManageProductsPage";
 import {RecipesPage} from "./RecipesPage";
 import {CreateRecipePage} from "./CreateRecipePage";
 import {EditRecipePage} from "./EditRecipePage";
-import {useContext, useState} from "react";
+import {Fragment, useContext, useState} from "react";
 import ProductsWaitlistPage from "./ProductsWaitlistPage";
 import SearchProductsPage from "./SearchProductsPage";
 
@@ -72,45 +72,53 @@ function LinkItem({path, name, icon}) {
     </ListItemButton>
 }
 
-const SideMenu = ({visible}) => {
-    const navigate = useNavigate();
-    const {authState} = useContext(AuthContext)
-
+function ExpandableMenuItem({label, icon, children}) {
     const [open, setOpen] = useState(false);
 
     const handleClick = () => {
         setOpen(!open);
     };
 
+    return <Fragment>
+        <ListItemButton onClick={handleClick}>
+            <ListItemIcon>
+                {icon}
+            </ListItemIcon>
+            <ListItemText primary={label} />
+            {open ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={open} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+                {children}
+            </List>
+        </Collapse>
+    </Fragment>
+}
+
+const SideMenu = ({visible}) => {
+    const {authState} = useContext(AuthContext)
+
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
         <List>
-            <ListItemButton onClick={handleClick}>
-                <ListItemIcon>
-                    <Fastfood />
-                </ListItemIcon>
-                <ListItemText primary="Products" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                    <LinkItem name={"Search"} path={"/products"} icon={<Search/>}/>
-                    <LinkItem name={"My products"} path={"/my-products"} icon={<Edit/>}/>
-                    {
-                        authState.admin
-                            ? <LinkItem name={"Waitlist"} path={"/waitlist/products"} icon={<Pending/>}/>
-                            : <div/>
-                    }
-                </List>
-            </Collapse>
-            <ListItem disablePadding>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <Restaurant/>
-                    </ListItemIcon>
-                    <ListItemText primary="Recipes" onClick={() => navigate('/recipes')}/>
-                </ListItemButton>
-            </ListItem>
+            <ExpandableMenuItem icon={<Fastfood/>} label={"Products"}>
+                <LinkItem name={"Search"} path={"/products"} icon={<Search/>}/>
+                <LinkItem name={"My products"} path={"/my-products"} icon={<Edit/>}/>
+                {
+                    authState.admin
+                        ? <LinkItem name={"Waitlist"} path={"/waitlist/products"} icon={<Pending/>}/>
+                        : <div/>
+                }
+            </ExpandableMenuItem>
+            <ExpandableMenuItem icon={<Restaurant/>} label={"Recipes"}>
+                <LinkItem name={"Search"} path={"/recipes"} icon={<Search/>}/>
+                <LinkItem name={"My products"} path={"/my-recipes"} icon={<Edit/>}/>
+                {
+                    authState.admin
+                        ? <LinkItem name={"Waitlist"} path={"/waitlist/recipes"} icon={<Pending/>}/>
+                        : <div/>
+                }
+            </ExpandableMenuItem>
         </List>
         <ProfileView/>
     </Box>;
