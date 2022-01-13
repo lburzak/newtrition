@@ -1,8 +1,8 @@
-import CardsList from "../component/CardsList";
-import {ProductCard} from "./ManageProductsPage";
+import CardsList from "../../component/CardsList";
+import {ProductCard} from "../product/ManageProductsPage";
 import {useContext} from "react";
-import {NewtritionClientContext} from "../App";
-import {useRemoteData} from "../hook/remoteData";
+import {NewtritionClientContext} from "../../App";
+import {useRemoteData} from "../../hook/remoteData";
 
 function getFirstPhotoUrl(id) {
     return `/api/recipes/${id}/photos/0`;

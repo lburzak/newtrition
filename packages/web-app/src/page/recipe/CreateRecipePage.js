@@ -1,4 +1,4 @@
-import {NewtritionClientContext} from "../App";
+import {NewtritionClientContext} from "../../App";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {RecipeForm} from "./RecipeForm";

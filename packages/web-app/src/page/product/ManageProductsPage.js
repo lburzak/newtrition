@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import {Add, Close, Delete, Edit, MoreVert, Public, Key, Pending} from "@mui/icons-material";
 import {useContext, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
-import CardsList from "../component/CardsList";
+import {DataContext, NewtritionClientContext} from "../../App";
+import CardsList from "../../component/CardsList";
 
 export function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;

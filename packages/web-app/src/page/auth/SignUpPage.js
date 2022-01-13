@@ -1,12 +1,13 @@
 import {Button, TextField, Typography} from "@mui/material";
 import {AccountCircle} from "@mui/icons-material";
-import {blue} from "@mui/material/colors";
+import {grey} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
-import {AuthContext, NewtritionClientContext} from "../App";
+import Message from "../../form/message";
+import {AuthContext} from "../../App";
 import {useNavigate} from "react-router";
-import {PaperForm} from "../component/PaperForm";
-import {Row} from "../component/Row";
-import {AuthApi} from "../api";
+import {PaperForm} from "../../component/PaperForm";
+import {Row} from "../../component/Row";
+import {AuthApi} from "../../api";
 
 const initialState = {
     usernameError: null,
@@ -17,14 +18,13 @@ const initialState = {
 }
 
 const Heading = () => <div>
-    <AccountCircle sx={{color: blue[400], fontSize: 160}}/>
-    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign In</Typography>
+    <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
+    <Typography variant={"h3"} style={{marginBottom: 40}}>Create an account</Typography>
 </div>
 
-export const LoginPage = () => {
+export const SignUpPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const {authState, authDispatch} = useContext(AuthContext);
-    const client = useContext(NewtritionClientContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,8 +32,8 @@ export const LoginPage = () => {
             navigate('/');
 
         if (state.submitted)
-            AuthApi.Endpoint.initiateLoginFlow(state)
-                .then(buildLoginResultHandler(dispatch, authDispatch, client));
+            AuthApi.Endpoint.initiateSignUpFlow(state)
+                .then(buildSignUpResultHandler(dispatch, authDispatch));
     })
 
     // noinspection HtmlUnknownTarget
@@ -47,23 +47,25 @@ export const LoginPage = () => {
                        error={state.passwordError !== null} helperText={state.passwordError}
                        onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
             <Button fullWidth variant={"contained"} type={"submit"}
-                    disabled={state.submitted}>Sign in</Button>
-            <a href="/signup">Don't have an account yet?</a>
+                    disabled={state.submitted}>Sign up</Button>
+            <a href="/login">Already have an account?</a>
         </Row>
     </PaperForm>;
 }
 
-const buildLoginResultHandler = (dispatch, authDispatch, client) => (result) => {
+const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
     if (result.isSuccess) {
         const {accessToken, username} = result.payload;
-
-        client.users.self.get().then((res) => authDispatch({type: 'profileFetched', payload: {admin: res.data.admin}}))
-
         return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
     }
 
-    if (result.isFailure) {
-        return console.error("Something went wrong.");
+    switch (result.error) {
+        case AuthApi.Error.USER_ALREADY_EXISTS:
+            return dispatch({type: 'userAlreadyExists'});
+        case AuthApi.Error.VALIDATION_FAILED:
+            return dispatch({type: 'validationFailed', payload: result.payload});
+        default:
+            return console.error("Something went wrong.");
     }
 }
 
@@ -75,6 +77,22 @@ function reducer(state, event) {
             return {...state, password: event.payload};
         case 'submitted':
             return {...state, submitted: true}
+        case 'userAlreadyExists':
+            return {
+                ...state,
+                usernameError: "User with such username already exists.",
+                submitted: false
+            };
+        case 'validationFailed':
+            const usernameErrors = event.payload.username;
+            const passwordErrors = event.payload.password;
+
+            return {
+                ...state,
+                usernameError: usernameErrors ? Message.fromValidationError(usernameErrors[0]) : null,
+                passwordError: passwordErrors ? Message.fromValidationError(passwordErrors[0]) : null,
+                submitted: false
+            }
         default:
             return {...state}
     }

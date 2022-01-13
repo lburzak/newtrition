@@ -1,10 +1,10 @@
 import {Add} from "@mui/icons-material";
 import {Fab} from "@mui/material";
 import {useNavigate} from "react-router";
-import CardsList from "../component/CardsList";
+import CardsList from "../../component/CardsList";
 import {useContext} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
-import {ProductCard} from "./ManageProductsPage";
+import {DataContext, NewtritionClientContext} from "../../App";
+import {ProductCard} from "../product/ManageProductsPage";
 
 function getFirstPhotoUrl(id) {
     return `/api/recipes/${id}/photos/0`;

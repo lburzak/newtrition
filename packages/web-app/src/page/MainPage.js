@@ -12,17 +12,17 @@ import ListItemText from "@mui/material/ListItemText";
 import {AuthContext, NewtritionClientContext} from "../App";
 import {useNavigate} from "react-router";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import {LoginPage} from "./LoginPage";
-import {SignUpPage} from "./SignUpPage";
-import {ManageProductsPage} from "./ManageProductsPage";
-import {CreateRecipePage} from "./CreateRecipePage";
-import {EditRecipePage} from "./EditRecipePage";
+import {LoginPage} from "./auth/LoginPage";
+import {SignUpPage} from "./auth/SignUpPage";
+import {ManageProductsPage} from "./product/ManageProductsPage";
+import {CreateRecipePage} from "./recipe/CreateRecipePage";
+import {EditRecipePage} from "./recipe/EditRecipePage";
 import {Fragment, useContext, useState} from "react";
-import ProductsWaitlistPage from "./ProductsWaitlistPage";
-import SearchProductsPage from "./SearchProductsPage";
-import UniversalRecipesPage from "./UniversalRecipesPage";
-import RecipesWaitlistPage from "./RecipesWaitlistPage";
-import ManageRecipesPage from "./ManageRecipesPage";
+import ProductsWaitlistPage from "./product/ProductsWaitlistPage";
+import SearchProductsPage from "./product/SearchProductsPage";
+import UniversalRecipesPage from "./recipe/UniversalRecipesPage";
+import RecipesWaitlistPage from "./recipe/RecipesWaitlistPage";
+import ManageRecipesPage from "./recipe/ManageRecipesPage";
 
 const ProfileView = () => <AuthContext.Consumer>
     {({authState, authDispatch}) => <Box>

@@ -1,6 +1,6 @@
-import {useRemoteData} from "../hook/remoteData";
+import {useRemoteData} from "../../hook/remoteData";
 import {useContext} from "react";
-import {NewtritionClientContext} from "../App";
+import {NewtritionClientContext} from "../../App";
 import {DataGrid} from '@mui/x-data-grid';
 import {Button} from "@mui/material";
 import {Close, Done, Visibility} from "@mui/icons-material";

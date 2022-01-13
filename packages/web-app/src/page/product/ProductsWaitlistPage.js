@@ -1,7 +1,7 @@
-import CardsList from "../component/CardsList";
+import CardsList from "../../component/CardsList";
 import {getFirstPhotoUrl, ProductCard} from "./ManageProductsPage";
 import {useContext, useEffect, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
+import {DataContext, NewtritionClientContext} from "../../App";
 
 export default function ProductsWaitlistPage() {
     const [products, setProducts] = useState([])
