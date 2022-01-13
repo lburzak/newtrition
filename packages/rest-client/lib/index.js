@@ -36,10 +36,12 @@ class NewtritionClient {
 
     get products() {
         return {
+            get: async (params) => await this.httpClient.get('/products', {params}),
             byId: (productId) => ({
                 get: async () => await this.httpClient.get(`/products/${productId}`),
                 delete: async () => await this.httpClient.delete(`/products/${productId}`),
-                put: async (product) => await this.httpClient.put(`/products/${productId}`, product)
+                put: async (product) => await this.httpClient.put(`/products/${productId}`, product),
+                patch: async (props) => await this.httpClient.patch(`/products/${productId}`, props)
             })
         }
     }
@@ -47,7 +49,7 @@ class NewtritionClient {
     get users() {
         return {
             self: {
-                profile: async () => await this.httpClient.get('/users/@me'),
+                get: async () => await this.httpClient.get('/users/@me'),
                 products: {
                     get: async () => await this.httpClient.get('/users/@me/products'),
                     create: async (product) => {
@@ -71,9 +73,11 @@ class NewtritionClient {
 
     get recipes() {
         return {
+            get: async (params) => await this.httpClient.get('/recipes', {params}),
             byId: (recipeId) => ({
                 delete: async () => await this.httpClient.delete(`/recipes/${recipeId}`),
-                put: async (recipe) => await this.httpClient.put(`/recipes/${recipeId}`, recipe)
+                put: async (recipe) => await this.httpClient.put(`/recipes/${recipeId}`, recipe),
+                patch: async (props) => await this.httpClient.patch(`/recipes/${recipeId}`, props)
             })
         }
     }

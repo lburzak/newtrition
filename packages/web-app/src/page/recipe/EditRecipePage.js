@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router";
-import {DataContext, NewtritionClientContext} from "../App";
+import {DataContext, NewtritionClientContext} from "../../App";
 import {RecipeForm} from "./RecipeForm";
 import {useContext, useEffect, useState} from "react";
 

@@ -2,6 +2,7 @@ const RecipeRepository = require('../repositories/recipeRepository');
 const fs = require("fs/promises");
 const mime = require("mime-types");
 const {getRecipeById, replaceRecipeById} = require("../repositories/recipeRepository");
+const {makeQuery} = require("../repositories/queryUtil");
 
 function getRecipePath(productId) {
     return `uploads/recipes/${productId}/`;
@@ -17,7 +18,13 @@ async function movePhotosToRecipeDir(files, productId) {
 }
 
 async function createRecipe(req, res) {
+    const recipe = req.body;
+
+    recipe.visibility = 'private';
+    recipe.photosCount = req.files.length;
+
     const result = await RecipeRepository.create(req.targetUser.username, req.body);
+
     if (result.isSuccess) {
         await movePhotosToRecipeDir(req.files, result.payload._id)
         return res.sendStatus(200);
@@ -98,10 +105,38 @@ async function getRecipePhoto(req, res) {
     res.sendFile(`uploads/recipes/${productId}/${photoId}.png`, {root: '.'})
 }
 
+async function updateRecipe(req, res) {
+    const recipeId = req.params.id;
+    const {visibility} = req.body;
+
+    const result = await RecipeRepository.updateRecipe(recipeId, {visibility});
+
+    if (result.isSuccess) {
+        return res.sendStatus(200);
+    }
+
+    return res.sendStatus(500);
+}
+
+async function getRecipes(req, res) {
+    const {visibility, visible} = req.query;
+    const {username} = req.user;
+
+    const query = makeQuery({visibility, visible, username});
+    const result = await RecipeRepository.findRecipes(query);
+
+    if (result.isSuccess)
+        return res.status(200).send(result.payload);
+
+    res.sendStatus(500);
+}
+
 module.exports = {
     createRecipe,
     getUserRecipes,
     deleteRecipe,
     getRecipePhoto,
-    replaceRecipe
+    replaceRecipe,
+    updateRecipe,
+    getRecipes
 }

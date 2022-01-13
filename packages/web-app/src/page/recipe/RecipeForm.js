@@ -12,10 +12,10 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
-import {DataContext} from "../App";
-import PhotosSlider from "../component/PhotosSlider";
-import {convertJsonToFormData} from "../util/formData";
-import {range} from "../util/range";
+import {DataContext} from "../../App";
+import PhotosSlider from "../../component/PhotosSlider";
+import {convertJsonToFormData} from "../../util/formData";
+import {range} from "../../util/range";
 
 export function RecipeForm({onSubmit, defaultRecipe}) {
     const [state, dispatch] = useReducer(reducer, defaultRecipe ? stateFromRecipe(defaultRecipe) : initialState);

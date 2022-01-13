@@ -9,11 +9,11 @@ import {
     TextField
 } from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
-import Message from "../form/message"
-import {DataContext, NewtritionClientContext} from "../App";
-import PhotosSlider from "../component/PhotosSlider";
-import {convertJsonToFormData} from "../util/formData";
-import {range} from "../util/range";
+import Message from "../../form/message"
+import {DataContext, NewtritionClientContext} from "../../App";
+import PhotosSlider from "../../component/PhotosSlider";
+import {convertJsonToFormData} from "../../util/formData";
+import {range} from "../../util/range";
 
 const initialState = {
     fields: {

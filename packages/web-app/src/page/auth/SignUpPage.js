@@ -1,13 +1,13 @@
-import {Button, TextField, Typography} from "@mui/material";
-import {AccountCircle} from "@mui/icons-material";
-import {grey} from "@mui/material/colors";
+import {Button, TextField} from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
-import Message from "../form/message";
-import {AuthContext} from "../App";
+import Message from "../../form/message";
+import {AuthContext} from "../../App";
 import {useNavigate} from "react-router";
-import {PaperForm} from "../component/PaperForm";
-import {Row} from "../component/Row";
-import {AuthApi} from "../api";
+import {PaperForm} from "../../component/PaperForm";
+import {Row} from "../../component/Row";
+import {AuthApi} from "../../api";
+import {grey} from "@mui/material/colors";
+import FormHeading from "../../component/FormHeading";
 
 const initialState = {
     usernameError: null,
@@ -16,11 +16,6 @@ const initialState = {
     password: "",
     submitted: false
 }
-
-const Heading = () => <div>
-    <AccountCircle sx={{color: grey[400], fontSize: 160}}/>
-    <Typography variant={"h3"} style={{marginBottom: 40}}>Create an account</Typography>
-</div>
 
 export const SignUpPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -37,7 +32,7 @@ export const SignUpPage = () => {
     })
 
     // noinspection HtmlUnknownTarget
-    return <PaperForm heading={<Heading/>} onSubmit={() => dispatch({type: 'submitted'})}>
+    return <PaperForm heading={<FormHeading header={"Create an account"} iconColor={grey[400]}/>} onSubmit={() => dispatch({type: 'submitted'})}>
         <Row horizontalSpacing={2} maxWidth={600}>
             <TextField fullWidth label={"Username"} variant={"outlined"}
                        error={state.usernameError !== null} helperText={state.usernameError}

@@ -11,7 +11,8 @@ async function create(ownerUsername, product) {
         nutritionFacts: product.nutritionFacts,
         owner: ownerUsername,
         classes: product.classes,
-        photosCount: product.photosCount
+        photosCount: product.photosCount,
+        visibility: product.visibility
     }
 
     await Products.insertOne(entity);
@@ -62,11 +63,32 @@ async function replaceProductById(productId, product) {
     return Result.success()
 }
 
+async function updateProduct(productId, product) {
+    const {visibility} = product;
+    const Products = await getCollection('products');
+
+    await Products.updateOne({_id: ObjectId(productId)}, {$set: {visibility}});
+
+    return Result.success();
+}
+
+async function findProducts(query) {
+    const Products = await getCollection('products');
+
+    const products = await Products
+        .find(query)
+        .toArray();
+
+    return Result.success(products);
+}
+
 module.exports = {
     create: create,
     findByAuthor: findByAuthor,
     findAllClasses,
     findProductById,
     deleteProductById,
-    replaceProductById
+    replaceProductById,
+    updateProduct,
+    findProducts
 }

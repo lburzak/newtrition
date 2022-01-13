@@ -1,6 +1,6 @@
 import {CreateProductPage} from "./CreateProductPage";
 import {
-    Card,
+    Card, Chip,
     Divider,
     Fab,
     IconButton,
@@ -11,16 +11,16 @@ import {
     Paper,
     Typography
 } from "@mui/material";
-import {Add, Close, Delete, Edit, MoreVert} from "@mui/icons-material";
+import {Add, Close, Delete, Edit, MoreVert, Public, Key, Pending} from "@mui/icons-material";
 import {useContext, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../App";
-import CardsList from "../component/CardsList";
+import {DataContext, NewtritionClientContext} from "../../App";
+import CardsList from "../../component/CardsList";
 
-function getFirstPhotoUrl(id) {
+export function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
 }
 
-export function ProductsPage() {
+export function ManageProductsPage() {
     const [editingProduct, setEditingProduct] = useState(null)
     const client = useContext(NewtritionClientContext);
     const [products, invalidateProducts] = useContext(DataContext).products;
@@ -35,6 +35,7 @@ export function ProductsPage() {
                     proteins={product.nutritionFacts.protein}
                     carbohydrates={product.nutritionFacts.carbohydrate}
                     ean={product.ean}
+                    visibility={product.visibility}
                     imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
                     onEdit={() => setEditingProduct(product)}
                     onDelete={() => {
@@ -43,6 +44,10 @@ export function ProductsPage() {
                                 if (error.response.status === 404)
                                     console.error(`Attempted to delete non-existing product ${product._id}`)
                             })
+                            .then(() => invalidateProducts());
+                    }}
+                    onPublish={() => {
+                        client.products.byId(product._id).patch({visibility: 'waitlist'})
                             .then(() => invalidateProducts());
                     }}
                 />)
@@ -75,7 +80,43 @@ const ProductSpecRow = ({name, value}) => <div
     <Typography variant={'body1'}>{value}</Typography>
 </div>
 
-export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, onDelete, onEdit}) => {
+function visibilityToText(visibility) {
+    switch (visibility) {
+        case 'waitlist':
+            return 'Pending';
+        case 'public':
+            return 'Public';
+        case 'private':
+        default:
+            return 'Private';
+    }
+}
+
+function visibilityToColor(visibility) {
+    switch (visibility) {
+        case 'waitlist':
+            return 'warning';
+        case 'public':
+            return 'success';
+        case 'private':
+        default:
+            return 'info';
+    }
+}
+
+function visibilityToIcon(visibility) {
+    switch (visibility) {
+        case 'waitlist':
+            return <Pending/>;
+        case 'public':
+            return <Public/>;
+        case 'private':
+        default:
+            return <Key/>;
+    }
+}
+
+export const ProductCard = ({name, calories, proteins, carbohydrates, ean, imageSrc, visibility, onDelete, onEdit, onPublish = () => {}}) => {
     const [buttonsVisibility, setButtonsVisibility] = useState(false);
     const [anchor, setAnchor] = useState(null);
     const open = Boolean(anchor);
@@ -90,6 +131,7 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
 
     return <Card style={{position: 'relative'}} onMouseEnter={() => setButtonsVisibility(true)}
                  onMouseLeave={() => setButtonsVisibility(false)}>
+        <Chip label={visibilityToText(visibility)} icon={visibilityToIcon(visibility)} color={visibilityToColor(visibility)} variant={buttonsVisibility ? "filled" : "outlined"} style={{position: 'absolute', left: 6, top: 6}} />
         <div style={{display: buttonsVisibility ? 'block' : 'none', position: 'absolute', right: 0, top: 0}}>
             <IconButton onClick={openMenu}><MoreVert/></IconButton>
             <Menu anchorEl={anchor} open={open} onClose={closeMenu}>
@@ -111,6 +153,15 @@ export const ProductCard = ({name, calories, proteins, carbohydrates, ean, image
                             <Delete fontSize="small"/>
                         </ListItemIcon>
                         <ListItemText>Delete</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={() => {
+                        onPublish();
+                        closeMenu()
+                    }}>
+                        <ListItemIcon>
+                            <Public fontSize="small"/>
+                        </ListItemIcon>
+                        <ListItemText>Publish</ListItemText>
                     </MenuItem>
                 </MenuList>
             </Menu>
