@@ -20,6 +20,11 @@ export function getFirstPhotoUrl(id) {
     return `/api/products/${id}/photos/0`;
 }
 
+function generatePlaceholderPhotoUrl(photosCount, photoKey, text) {
+    const color = rainbow(photosCount, photoKey);
+    return `https://craftypixels.com/placeholder-image/400x200/${color}/fff&text=${text}`;
+}
+
 export function ManageProductsPage() {
     const [editingProduct, setEditingProduct] = useState(null)
     const client = useContext(NewtritionClientContext);
@@ -36,7 +41,7 @@ export function ManageProductsPage() {
                     carbohydrates={product.nutritionFacts.carbohydrate}
                     ean={product.ean}
                     visibility={product.visibility}
-                    imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
+                    imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : generatePlaceholderPhotoUrl(products.length, index, product.name)}
                     onEdit={() => setEditingProduct(product)}
                     onDelete={() => {
                         client.products.byId(product._id).delete()
