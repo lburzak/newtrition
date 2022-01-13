@@ -3,7 +3,7 @@ import {Close} from "@mui/icons-material";
 
 export default function BottomSheet({title, visible, onDismiss, children}) {
     return <div
-        style={{visibility: visible ? 'visible' : 'hidden', zIndex: 2, display: 'flex', justifyContent: 'center'}}>
+        style={{flow: 1, visibility: visible ? 'visible' : 'hidden', zIndex: 2, display: 'flex', justifyContent: 'center'}}>
         <Paper elevation={4} style={{
             minHeight: 400,
             width: '90%',

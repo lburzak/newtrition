@@ -1,21 +1,16 @@
-import {CreateProductPage} from "./CreateProductPage";
 import {Fab} from "@mui/material";
 import {Add, Delete, Edit, Public} from "@mui/icons-material";
-import {useContext, useState} from "react";
+import {useContext} from "react";
 import {DataContext, NewtritionClientContext} from "../../App";
 import CardsList from "../../component/CardsList";
 import ProductCard from "../../component/ProductCard";
 import {CardMenu} from "../../component/CardItem";
-import BottomSheet from "../../component/BottomSheet";
+import useProductDialog from "../../hook/productDialog";
 
 export function ManageProductsPage() {
-    const [editingProduct, setEditingProduct] = useState(null)
     const client = useContext(NewtritionClientContext);
     const [products, invalidateProducts] = useContext(DataContext).products;
-
-    function editProduct(id) {
-        client.products.byId(id).delete().then(() => invalidateProducts())
-    }
+    const [productDialog, showProduct] = useProductDialog()
 
     function deleteProduct(id) {
         client.products.byId(id).delete().then(() => invalidateProducts())
@@ -35,7 +30,7 @@ export function ManageProductsPage() {
                         <CardMenu items={[{
                             label: "Edit",
                             icon: <Edit fontSize="small"/>,
-                            onClick: () => editProduct(product._id)
+                            onClick: () => showProduct(product)
                         }, {
                             label: "Delete",
                             icon: <Delete fontSize="small"/>,
@@ -48,23 +43,9 @@ export function ManageProductsPage() {
                     }/>)
             }
         </CardsList>
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-end',
-            flex: 1,
-            position: 'absolute',
-            bottom: 0
-        }}>
-            {editingProduct ?
-                <BottomSheet title={editingProduct?._id ? "Edit product" : "New product"} visible={editingProduct}
-                             onDismiss={() => setEditingProduct(null)}>
-                    <CreateProductPage product={editingProduct}/>
-                </BottomSheet> : <div/>}
-
-        </div>
+        {productDialog}
         <Fab color={'primary'} variant={"extended"} sx={{mr: 1}}
-             style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => setEditingProduct({})}>
+             style={{position: 'absolute', right: 20, bottom: 20}} onClick={() => showProduct({})}>
             <Add/> New product
         </Fab>
     </div>
