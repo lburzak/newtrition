@@ -2,7 +2,7 @@ import {NewtritionClientContext} from "../../App";
 import {useRemoteData} from "../../hook/remoteData";
 import {useContext} from "react";
 import CardsList from "../../component/CardsList";
-import {ProductCard} from "../product/ManageProductsPage";
+import {CardItem} from "../../component/CardItem";
 import {useNavigate} from "react-router";
 import {Fab} from "@mui/material";
 import {Add} from "@mui/icons-material";
@@ -42,7 +42,7 @@ export default function ManageRecipesPage() {
 }
 
 function RecipeCard({recipe, onPublish, onEdit, onDelete}) {
-    return <ProductCard
+    return <CardItem
         imageSrc={getFirstPhotoUrl(recipe.id)}
         name={recipe.name}
         visibility={recipe.visibility}

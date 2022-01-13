@@ -1,7 +1,8 @@
 import CardsList from "../../component/CardsList";
-import {getFirstPhotoUrl, ProductCard} from "./ManageProductsPage";
 import {useContext, useEffect, useState} from "react";
 import {DataContext, NewtritionClientContext} from "../../App";
+import {getDefaultProductPhoto} from "../../util/photo";
+import {CardItem} from "../../component/CardItem";
 
 export default function ProductsWaitlistPage() {
     const [products, setProducts] = useState([])
@@ -15,7 +16,7 @@ export default function ProductsWaitlistPage() {
 
     return <CardsList>
         {
-            products.map((product, index) => <ProductCard
+            products.map((product, index) => <CardItem
                 key={`product-${index}`}
                 name={product.name}
                 calories={product.nutritionFacts.calories}
@@ -23,7 +24,7 @@ export default function ProductsWaitlistPage() {
                 carbohydrates={product.nutritionFacts.carbohydrate}
                 ean={product.ean}
                 visibility={product.visibility}
-                imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
+                imageSrc={product.photosCount > 0 ? getDefaultProductPhoto(product._id) : undefined}
                 onPublish={() => client.products.byId(product._id).patch({visibility: 'public'})
                     .then(() => invalidateProducts())}
             />)

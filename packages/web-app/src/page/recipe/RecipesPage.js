@@ -4,7 +4,7 @@ import {useNavigate} from "react-router";
 import CardsList from "../../component/CardsList";
 import {useContext} from "react";
 import {DataContext, NewtritionClientContext} from "../../App";
-import {ProductCard} from "../product/ManageProductsPage";
+import {CardItem} from "../product/ManageProductsPage";
 
 function getFirstPhotoUrl(id) {
     return `/api/recipes/${id}/photos/0`;
@@ -18,7 +18,7 @@ export function RecipesPage() {
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
         <CardsList>
             {
-                recipes.map((recipe, index) => <ProductCard key={`product-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
+                recipes.map((recipe, index) => <CardItem key={`product-${index}`} imageSrc={getFirstPhotoUrl(recipe.id)} name={recipe.name} onDelete={() => {
                     client.recipes.byId(recipe.id).delete()
                         .then(() => invalidateRecipes())
                 }} onEdit={() => navigate(`/recipes/${recipe.id}`)}/>)
