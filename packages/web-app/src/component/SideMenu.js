@@ -37,9 +37,9 @@ export default function SideMenu({visible}) {
 function LinkItem({path, name, icon}) {
     const navigate = useNavigate();
 
-    return <ListItemButton sx={{pl: 4}}>
+    return <ListItemButton sx={{pl: 4}} onClick={() => navigate(path)}>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText primary={name} onClick={() => navigate(path)}/>
+        <ListItemText primary={name}/>
     </ListItemButton>
 }
 
