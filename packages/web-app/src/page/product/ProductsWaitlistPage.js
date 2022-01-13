@@ -1,33 +1,25 @@
-import CardsList from "../../component/CardsList";
-import {useContext, useEffect, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../../App";
-import {getDefaultProductPhoto} from "../../util/photo";
-import {CardItem} from "../../component/CardItem";
+import {useContext} from "react";
+import {NewtritionClientContext} from "../../App";
+import {useRemoteData} from "../../hook/remoteData";
+import Waitlist from "../../component/Waitlist";
 
 export default function ProductsWaitlistPage() {
-    const [products, setProducts] = useState([])
-    const client = useContext(NewtritionClientContext)
-    const [, invalidateProducts] = useContext(DataContext).products;
+    const client = useContext(NewtritionClientContext);
+    const [recipes, invalidate] = useRemoteData(() => client.products.get({visibility: 'waitlist'}), [])
 
-    useEffect(() => {
-        client.products.get({visibility: 'waitlist'})
-            .then(result => setProducts(result.data))
-    }, [client, products, setProducts])
+    function acceptProduct(id) {
+        client.products.byId(id).patch({visibility: 'public'})
+            .then(invalidate);
+    }
 
-    return <CardsList>
-        {
-            products.map((product, index) => <CardItem
-                key={`product-${index}`}
-                name={product.name}
-                calories={product.nutritionFacts.calories}
-                proteins={product.nutritionFacts.protein}
-                carbohydrates={product.nutritionFacts.carbohydrate}
-                ean={product.ean}
-                visibility={product.visibility}
-                imageSrc={product.photosCount > 0 ? getDefaultProductPhoto(product._id) : undefined}
-                onPublish={() => client.products.byId(product._id).patch({visibility: 'public'})
-                    .then(() => invalidateProducts())}
-            />)
-        }
-    </CardsList>
+    function declineProduct(id) {
+        client.products.byId(id).patch({visibility: 'private'})
+            .then(invalidate);
+    }
+
+    function showProduct(id) {
+
+    }
+
+    return <Waitlist items={recipes} onAccept={acceptProduct} onDecline={declineProduct} onShow={showProduct}/>
 }
