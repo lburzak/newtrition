@@ -9,17 +9,17 @@ export default function RecipesWaitlistPage() {
     const client = useContext(NewtritionClientContext);
     const [recipes, invalidate] = useRemoteData(() => client.recipes.get({visibility: 'waitlist'}), [])
 
-    function acceptRecipe(id) {
+    function acceptRecipe({id}) {
         client.recipes.byId(id).patch({visibility: 'public'})
             .then(invalidate);
     }
 
-    function declineRecipe(id) {
+    function declineRecipe({id}) {
         client.recipes.byId(id).patch({visibility: 'private'})
             .then(invalidate);
     }
 
-    function showRecipe(id) {
+    function showRecipe({id}) {
         navigate(`/recipes/${id}`)
     }
 

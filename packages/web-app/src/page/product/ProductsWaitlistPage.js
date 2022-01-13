@@ -9,18 +9,18 @@ export default function ProductsWaitlistPage() {
     const [recipes, invalidate] = useRemoteData(() => client.products.get({visibility: 'waitlist'}), [])
     const [productDialog, showProductDialog] = useProductDialog()
 
-    function acceptProduct(id) {
+    function acceptProduct({id}) {
         client.products.byId(id).patch({visibility: 'public'})
             .then(invalidate);
     }
 
-    function declineProduct(id) {
+    function declineProduct({id}) {
         client.products.byId(id).patch({visibility: 'private'})
             .then(invalidate);
     }
 
-    function showProduct(id) {
-        showProductDialog({})
+    function showProduct(product) {
+        showProductDialog(product)
     }
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
