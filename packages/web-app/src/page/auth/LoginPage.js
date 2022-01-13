@@ -1,5 +1,4 @@
-import {Button, TextField, Typography} from "@mui/material";
-import {AccountCircle} from "@mui/icons-material";
+import {Button, TextField} from "@mui/material";
 import {blue} from "@mui/material/colors";
 import {useContext, useEffect, useReducer} from "react";
 import {AuthContext, NewtritionClientContext} from "../../App";
@@ -7,6 +6,7 @@ import {useNavigate} from "react-router";
 import {PaperForm} from "../../component/PaperForm";
 import {Row} from "../../component/Row";
 import {AuthApi} from "../../api";
+import FormHeading from "../../component/FormHeading";
 
 const initialState = {
     usernameError: null,
@@ -15,11 +15,6 @@ const initialState = {
     password: "",
     submitted: false
 }
-
-const Heading = () => <div>
-    <AccountCircle sx={{color: blue[400], fontSize: 160}}/>
-    <Typography variant={"h3"} style={{marginBottom: 40}}>Sign In</Typography>
-</div>
 
 export const LoginPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -37,7 +32,7 @@ export const LoginPage = () => {
     })
 
     // noinspection HtmlUnknownTarget
-    return <PaperForm heading={<Heading/>} onSubmit={() => dispatch({type: 'submitted'})}>
+    return <PaperForm heading={<FormHeading header={"Sign in"} iconColor={blue[400]}/>} onSubmit={() => dispatch({type: 'submitted'})}>
         <Row horizontalSpacing={2} maxWidth={600}>
             <TextField fullWidth label={"Username"} variant={"outlined"}
                        error={state.usernameError !== null} helperText={state.usernameError}
