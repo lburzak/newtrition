@@ -1,15 +1,16 @@
 import {Fab} from "@mui/material";
 import {Add, Delete, Edit, Public} from "@mui/icons-material";
 import {useContext} from "react";
-import {DataContext, NewtritionClientContext} from "../../App";
+import {NewtritionClientContext} from "../../App";
 import CardsList from "../../component/CardsList";
 import ProductCard from "../../component/ProductCard";
 import {CardMenu} from "../../component/CardItem";
 import useProductDialog from "../../hook/productDialog";
+import {useRemoteData} from "../../hook/remoteData";
 
 export function ManageProductsPage() {
     const client = useContext(NewtritionClientContext);
-    const [products, invalidateProducts] = useContext(DataContext).products;
+    const [products, invalidateProducts] = useRemoteData(client.users.self.products.get, [])
     const [productDialog, showProduct] = useProductDialog()
 
     function deleteProduct(id) {
