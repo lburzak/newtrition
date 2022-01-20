@@ -154,6 +154,7 @@ function StepsSection({steps, dispatch}) {
     return <FormSection label={"Steps"}>
         <List>
             {steps.map((step, index) => <StepItem position={index + 1} content={step}
+                                                  key={`step-${index}`}
                                                   onContentChanged={(content) => dispatch({
                                                       type: 'updateStep',
                                                       payload: {index, content}
@@ -219,6 +220,7 @@ function IngredientsSection({ingredients, dispatch}) {
                     <List>
                         {ingredients.map((ingredient, index) => <IngredientItem name={ingredient.class}
                                                                                 unit={ingredient.unit}
+                                                                                key={`ingredient-${index}`}
                                                                                 amount={ingredient.amount}
                                                                                 onDelete={() => dispatch({
                                                                                     type: 'deleteIngredient',
@@ -237,8 +239,8 @@ function IngredientItem({name, amount, unit, onDelete}) {
     return <ListItem>
         <ListItemText primary={name} secondary={`${amount} ${unit}`}/>
         <ListItemIcon style={{display: 'flex', justifyContent: 'center'}}>
-            <IconButton>
-                <Delete onClick={() => onDelete()}/>
+            <IconButton onClick={() => onDelete()}>
+                <Delete/>
             </IconButton>
         </ListItemIcon>
     </ListItem>
@@ -264,13 +266,13 @@ function StepItem({position, content, onContentChanged, onDelete}) {
                 <Typography>{content}</Typography>}
         </ListItemText>
         <ListItemIcon>
-            <IconButton>
-                {editMode ? <Done onClick={() => setEditMode(false)}/> : <Edit onClick={() => setEditMode(true)}/>}
+            <IconButton onClick={() => setEditMode(editMode)}>
+                {editMode ? <Done/> : <Edit/>}
             </IconButton>
         </ListItemIcon>
         <ListItemSecondaryAction>
-            <IconButton>
-                <Delete onClick={() => onDelete()}/>
+            <IconButton onClick={() => onDelete()}>
+                <Delete/>
             </IconButton>
         </ListItemSecondaryAction>
     </ListItem>
