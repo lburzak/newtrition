@@ -43,7 +43,10 @@ export const LoginPage = () => {
                        onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
             <Button fullWidth variant={"contained"} type={"submit"}
                     disabled={state.submitted}>Sign in</Button>
-            <a href="/signup">Don't have an account yet?</a>
+
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <a href="/signup">Don't have an account yet?</a>
+            </div>
         </Row>
     </PaperForm>;
 }
