@@ -12,10 +12,11 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useContext, useEffect, useReducer, useState} from "react";
-import {DataContext} from "../../App";
+import {NewtritionClientContext} from "../../App";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
+import {useRemoteData} from "../../hook/remoteData";
 
 export function RecipeForm({onSubmit, defaultRecipe}) {
     const [state, dispatch] = useReducer(reducer, defaultRecipe ? stateFromRecipe(defaultRecipe) : initialState);
@@ -170,7 +171,8 @@ function IngredientForm({onCreateIngredient}) {
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
-    const [classes] = useContext(DataContext).classes;
+    const client = useContext(NewtritionClientContext)
+    const [classes] = useRemoteData(client.products.classes.get, [])
 
     const submit = () => onCreateIngredient({name: product, amount, unit});
 
