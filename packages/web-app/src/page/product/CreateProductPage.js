@@ -53,7 +53,7 @@ function readProductFromInput(state) {
             fat,
             protein
         }),
-        classes: state.classes
+        classes: JSON.stringify(state.classes)
     };
 
     if (ean.length > 0)
@@ -179,8 +179,8 @@ export function CreateProductPage({product}) {
                     defaultValue={state.classes}
                     options={classes}
                     onChange={(event, value) => dispatch({
-                        type: 'updateField',
-                        payload: {field: 'classes', content: value}
+                        type: 'updateClasses',
+                        payload: value
                     })}
                     renderInput={(params) => (
                         <TextField
@@ -220,6 +220,8 @@ function reducer(state, action) {
                 ...state,
                 status: 'waiting'
             }
+        case 'updateClasses':
+            return {...state, classes: action.payload}
         case 'updateField':
             const newState = {
                 ...state,
