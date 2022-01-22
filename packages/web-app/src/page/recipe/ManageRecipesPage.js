@@ -26,6 +26,7 @@ export default function ManageRecipesPage() {
         <CardsList>
             {
                 recipes.map((recipe, index) => <RecipeCard
+                    showAuthor={false}
                     key={`product-${index}`}
                     recipe={recipe}
                     menu={<CardMenu items={[{

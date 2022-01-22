@@ -46,7 +46,7 @@ export function CardMenu({items}) {
     </div>
 }
 
-export const CardItem = ({name, calories, proteins, carbohydrates, ean, imageSrc, visibility, menu}) => {
+export const CardItem = ({name, ean, imageSrc, visibility, menu, children}) => {
     const [buttonsVisibility, setButtonsVisibility] = useState(false);
 
     return <Card style={{position: 'relative'}} onMouseEnter={() => setButtonsVisibility(true)}
@@ -65,16 +65,14 @@ export const CardItem = ({name, calories, proteins, carbohydrates, ean, imageSrc
         <div style={{display: 'flex', flexDirection: 'column', padding: 10}}>
             <Typography variant={'h6'} fontWeight={'bold'}>{name}</Typography>
             <Typography variant={'body1'} fontFamily={'monospace'} style={{color: 'hsl(0, 0%, 50%)'}}>{ean}</Typography>
-            <Divider orientation={'horizontal'}/>
-            <ProductSpecRow name={'Calories'} value={calories}/>
-            <ProductSpecRow name={'Proteins'} value={proteins}/>
-            <ProductSpecRow name={'Carbs'} value={carbohydrates}/>
+            {children.length > 0 ? <Divider orientation={'horizontal'}/> : <Fragment/>}
+            {children}
         </div>
     </Card>;
 }
 
 
-const ProductSpecRow = ({name, value}) => <div
+export const Spec = ({name, value}) => <div
     style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
     <Typography variant={'body1'} style={{color: 'hsl(0, 0%, 70%)'}}>{name}</Typography>
     <Typography variant={'body1'}>{value}</Typography>
