@@ -53,11 +53,8 @@ function stateFromRecipe(recipe) {
 
 const initialState = {
     name: '',
-    steps: ["Heat the oven to 180 degrees.", "Put cheese on top.", "Fry the onion.", "Enjoy the dish."],
-    ingredients: [
-        {class: 'Mleko', amount: 300, unit: 'ml'},
-        {class: 'Ser', amount: 200, unit: 'g'}
-    ],
+    steps: [],
+    ingredients: [],
     submitted: false,
     finished: false,
     photos: []
