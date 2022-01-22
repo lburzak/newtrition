@@ -21,10 +21,11 @@ export const MainPage = () => {
             <SideMenu visible={client.isAuthenticated}/>
             <Divider variant={'fullWidth'} orientation={'vertical'}/>
             <Routes>
+                <Route exact path="/" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
                 <Route exact path="/login" element={<LoginPage/>}/>
                 <Route exact path="/signup" element={<SignUpPage/>}/>
-                <Route path="/products" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
-                <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
+                <Route exact path="/products" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
+                <Route exact path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
                 <Route exact path="/recipes" element={<AuthGuard><SearchRecipesPage/></AuthGuard>}/>
                 <Route exact path="/my-recipes" element={<AuthGuard><ManageRecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
