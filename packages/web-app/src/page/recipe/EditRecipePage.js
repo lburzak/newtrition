@@ -1,21 +1,22 @@
 import {useNavigate, useParams} from "react-router";
-import {DataContext, NewtritionClientContext} from "../../App";
 import {RecipeForm} from "./RecipeForm";
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
+import {useRemoteData} from "../../hook/remoteData";
+import {useClient} from "../../hook/client";
 
 export function EditRecipePage() {
     const {id} = useParams();
 
     const navigate = useNavigate();
-    const client = useContext(NewtritionClientContext)
+    const client = useClient();
     const [submitState, setSubmitState] = useState({
         recipe: null,
         // 'initial' | 'submitted' | 'finished'
         status: 'initial'
     });
 
-    const [recipes] = useContext(DataContext).recipes;
-    const recipe = recipes.filter(it => it.id === id)[0];
+    const [recipes] = useRemoteData(client.users.self.recipes.get, []);
+    const recipe = recipes.filter(it => it._id === id)[0];
 
     useEffect(() => {
         if (submitState.status !== 'submitted')

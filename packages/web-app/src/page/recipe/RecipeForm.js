@@ -11,14 +11,17 @@ import {
     Typography
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
-import {useContext, useEffect, useReducer, useState} from "react";
-import {DataContext} from "../../App";
+import {useEffect, useReducer, useState} from "react";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
+import {useRemoteData} from "../../hook/remoteData";
 
 export function RecipeForm({onSubmit, defaultRecipe}) {
-    const [state, dispatch] = useReducer(reducer, defaultRecipe ? stateFromRecipe(defaultRecipe) : initialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    if (!state.initialized && defaultRecipe)
+        dispatch({type: 'initialize', payload: stateFromRecipe(defaultRecipe)})
 
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
@@ -50,11 +53,8 @@ function stateFromRecipe(recipe) {
 
 const initialState = {
     name: '',
-    steps: ["Heat the oven to 180 degrees.", "Put cheese on top.", "Fry the onion.", "Enjoy the dish."],
-    ingredients: [
-        {class: 'Mleko', amount: 300, unit: 'ml'},
-        {class: 'Ser', amount: 200, unit: 'g'}
-    ],
+    steps: [],
+    ingredients: [],
     submitted: false,
     finished: false,
     photos: []
@@ -62,6 +62,8 @@ const initialState = {
 
 function reducer(state, action) {
     switch (action.type) {
+        case 'initialize':
+            return {...action.payload, initialized: true}
         case 'updateStep':
             return {
                 ...state,
@@ -153,6 +155,7 @@ function StepsSection({steps, dispatch}) {
     return <FormSection label={"Steps"}>
         <List>
             {steps.map((step, index) => <StepItem position={index + 1} content={step}
+                                                  key={`step-${index}`}
                                                   onContentChanged={(content) => dispatch({
                                                       type: 'updateStep',
                                                       payload: {index, content}
@@ -170,7 +173,7 @@ function IngredientForm({onCreateIngredient}) {
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
-    const [classes] = useContext(DataContext).classes;
+    const [classes] = useRemoteData(client => client.products.classes.get(), [])
 
     const submit = () => onCreateIngredient({name: product, amount, unit});
 
@@ -217,6 +220,7 @@ function IngredientsSection({ingredients, dispatch}) {
                     <List>
                         {ingredients.map((ingredient, index) => <IngredientItem name={ingredient.class}
                                                                                 unit={ingredient.unit}
+                                                                                key={`ingredient-${index}`}
                                                                                 amount={ingredient.amount}
                                                                                 onDelete={() => dispatch({
                                                                                     type: 'deleteIngredient',
@@ -235,8 +239,8 @@ function IngredientItem({name, amount, unit, onDelete}) {
     return <ListItem>
         <ListItemText primary={name} secondary={`${amount} ${unit}`}/>
         <ListItemIcon style={{display: 'flex', justifyContent: 'center'}}>
-            <IconButton>
-                <Delete onClick={() => onDelete()}/>
+            <IconButton onClick={() => onDelete()}>
+                <Delete/>
             </IconButton>
         </ListItemIcon>
     </ListItem>
@@ -258,17 +262,23 @@ function StepItem({position, content, onContentChanged, onDelete}) {
         </ListItemAvatar>
         <ListItemText>
             {editMode ?
-                <TextField onChange={(e) => onContentChanged(e.target.value)} variant={'standard'} value={content}/> :
+                <TextField onChange={(e) => onContentChanged(e.target.value)} onKeyPress={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === 'Enter') {
+                        setEditMode(false)
+                        ev.preventDefault();
+                    }
+                }} variant={'standard'} value={content}/> :
                 <Typography>{content}</Typography>}
         </ListItemText>
         <ListItemIcon>
-            <IconButton>
-                {editMode ? <Done onClick={() => setEditMode(false)}/> : <Edit onClick={() => setEditMode(true)}/>}
+            <IconButton onClick={() => setEditMode(!editMode)}>
+                {editMode ? <Done/> : <Edit/>}
             </IconButton>
         </ListItemIcon>
         <ListItemSecondaryAction>
-            <IconButton>
-                <Delete onClick={() => onDelete()}/>
+            <IconButton onClick={() => onDelete()}>
+                <Delete/>
             </IconButton>
         </ListItemSecondaryAction>
     </ListItem>

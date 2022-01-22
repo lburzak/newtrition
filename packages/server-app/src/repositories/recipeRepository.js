@@ -10,7 +10,8 @@ async function create(ownerUsername, recipe) {
         ingredients: recipe.ingredients,
         steps: recipe.steps,
         owner: ownerUsername,
-        visibility: recipe.visibility
+        visibility: recipe.visibility,
+        photosCount: recipe.photosCount
     };
 
     await Recipes.insertOne(entity);

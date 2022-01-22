@@ -1,12 +1,11 @@
-import {Button, TextField} from "@mui/material";
+import {Button, Link, TextField} from "@mui/material";
 import {blue} from "@mui/material/colors";
-import {useContext, useEffect, useReducer} from "react";
-import {AuthContext, NewtritionClientContext} from "../../App";
+import {useEffect, useReducer} from "react";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../../component/PaperForm";
 import {Row} from "../../component/Row";
-import {AuthApi} from "../../api";
 import FormHeading from "../../component/FormHeading";
+import {useClient} from "../../hook/client";
 
 const initialState = {
     usernameError: null,
@@ -18,17 +17,15 @@ const initialState = {
 
 export const LoginPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {authState, authDispatch} = useContext(AuthContext);
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (authState.authenticated)
+        if (client.isAuthenticated)
             navigate('/');
 
         if (state.submitted)
-            AuthApi.Endpoint.initiateLoginFlow(state)
-                .then(buildLoginResultHandler(dispatch, authDispatch, client));
+            client.login(state);
     })
 
     // noinspection HtmlUnknownTarget
@@ -43,23 +40,12 @@ export const LoginPage = () => {
                        onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
             <Button fullWidth variant={"contained"} type={"submit"}
                     disabled={state.submitted}>Sign in</Button>
-            <a href="/signup">Don't have an account yet?</a>
+
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <Link href={"#"} onClick={() => navigate('/signup')}>Don't have an account yet?</Link>
+            </div>
         </Row>
     </PaperForm>;
-}
-
-const buildLoginResultHandler = (dispatch, authDispatch, client) => (result) => {
-    if (result.isSuccess) {
-        const {accessToken, username} = result.payload;
-
-        client.users.self.get().then((res) => authDispatch({type: 'profileFetched', payload: {admin: res.data.admin}}))
-
-        return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
-    }
-
-    if (result.isFailure) {
-        return console.error("Something went wrong.");
-    }
 }
 
 function reducer(state, event) {

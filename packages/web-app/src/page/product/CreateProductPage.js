@@ -8,12 +8,13 @@ import {
     OutlinedInput,
     TextField
 } from "@mui/material";
-import {useContext, useEffect, useReducer} from "react";
+import {useEffect, useReducer} from "react";
 import Message from "../../form/message"
-import {DataContext, NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
+import {useRemoteData} from "../../hook/remoteData";
 
 const initialState = {
     fields: {
@@ -37,7 +38,7 @@ const DetailInput = ({name, unit, onChange, value}) => <FormControl variant="out
         fullWidth
         defaultValue={value}
         endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
-        inputProps={{inputMode: 'decimal', pattern: '[0-9]*'}}
+        inputProps={{inputMode: 'decimal', pattern: '[0-9]*(\.[0.9]*)*'}}
         onChange={onChange}
     />
 </FormControl>
@@ -53,7 +54,7 @@ function readProductFromInput(state) {
             fat,
             protein
         }),
-        classes: state.classes
+        classes: JSON.stringify(state.classes)
     };
 
     if (ean.length > 0)
@@ -87,12 +88,10 @@ function stateFromProduct(product) {
     }
 }
 
-export function CreateProductPage({product}) {
+export function CreateProductPage({product, onSubmit}) {
     const [state, dispatch] = useReducer(reducer, stateFromProduct(product));
-    const data = useContext(DataContext);
-    const [, invalidateProducts] = data.products;
-    const [classes, invalidateClasses] = data.classes;
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
+    const [classes] = useRemoteData(client.products.classes.get, []);
     const productExists = product._id;
 
     const buildFieldChangeHandler = (fieldName) => event => dispatch({
@@ -115,7 +114,7 @@ export function CreateProductPage({product}) {
                 ? client.products.byId(product._id).put(newProduct)
                 : client.users.self.products.create(newProduct)
 
-            operation.then(invalidateData)
+            operation.then(onSubmit)
                 .catch(handleFailure)
                 .finally(() => dispatch({type: 'submitFinished'}))
         }
@@ -127,12 +126,7 @@ export function CreateProductPage({product}) {
                 console.error("Server did not respond")
             }
         }
-
-        function invalidateData() {
-            invalidateProducts()
-            invalidateClasses()
-        }
-    }, [dispatch, invalidateProducts, state, invalidateClasses, client, productExists, product]);
+    }, [dispatch, state, client, productExists, product, onSubmit]);
 
     return <form style={{display: 'flex', flexDirection: 'column', height: '100%', padding: 16}}
                  onSubmit={e => {
@@ -179,8 +173,8 @@ export function CreateProductPage({product}) {
                     defaultValue={state.classes}
                     options={classes}
                     onChange={(event, value) => dispatch({
-                        type: 'updateField',
-                        payload: {field: 'classes', content: value}
+                        type: 'updateClasses',
+                        payload: value
                     })}
                     renderInput={(params) => (
                         <TextField
@@ -220,6 +214,8 @@ function reducer(state, action) {
                 ...state,
                 status: 'waiting'
             }
+        case 'updateClasses':
+            return {...state, classes: action.payload}
         case 'updateField':
             const newState = {
                 ...state,

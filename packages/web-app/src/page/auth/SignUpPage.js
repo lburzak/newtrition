@@ -1,13 +1,12 @@
-import {Button, TextField} from "@mui/material";
-import {useContext, useEffect, useReducer} from "react";
+import {Button, Link, TextField} from "@mui/material";
+import {useEffect, useReducer} from "react";
 import Message from "../../form/message";
-import {AuthContext} from "../../App";
 import {useNavigate} from "react-router";
 import {PaperForm} from "../../component/PaperForm";
 import {Row} from "../../component/Row";
-import {AuthApi} from "../../api";
 import {grey} from "@mui/material/colors";
 import FormHeading from "../../component/FormHeading";
+import {useClient} from "../../hook/client";
 
 const initialState = {
     usernameError: null,
@@ -19,16 +18,15 @@ const initialState = {
 
 export const SignUpPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {authState, authDispatch} = useContext(AuthContext);
     const navigate = useNavigate();
+    const client = useClient();
 
     useEffect(() => {
-        if (authState.authenticated)
+        if (client.isAuthenticated)
             navigate('/');
 
         if (state.submitted)
-            AuthApi.Endpoint.initiateSignUpFlow(state)
-                .then(buildSignUpResultHandler(dispatch, authDispatch));
+            client.signup(state);
     })
 
     // noinspection HtmlUnknownTarget
@@ -43,25 +41,11 @@ export const SignUpPage = () => {
                        onChange={e => dispatch({type: 'passwordChanged', payload: e.target.value})}/>
             <Button fullWidth variant={"contained"} type={"submit"}
                     disabled={state.submitted}>Sign up</Button>
-            <a href="/login">Already have an account?</a>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                <Link href={"#"} onClick={() => navigate('/login')}>Already have an account?</Link>
+            </div>
         </Row>
     </PaperForm>;
-}
-
-const buildSignUpResultHandler = (dispatch, authDispatch) => (result) => {
-    if (result.isSuccess) {
-        const {accessToken, username} = result.payload;
-        return authDispatch({type: 'loggedIn', payload: {accessToken, username}});
-    }
-
-    switch (result.error) {
-        case AuthApi.Error.USER_ALREADY_EXISTS:
-            return dispatch({type: 'userAlreadyExists'});
-        case AuthApi.Error.VALIDATION_FAILED:
-            return dispatch({type: 'validationFailed', payload: result.payload});
-        default:
-            return console.error("Something went wrong.");
-    }
 }
 
 function reducer(state, event) {

@@ -1,16 +1,16 @@
-import {NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import {useRemoteData} from "../../hook/remoteData";
-import {useContext} from "react";
 import CardsList from "../../component/CardsList";
-import {ProductCard} from "../product/ManageProductsPage";
 import {useNavigate} from "react-router";
 import {Fab} from "@mui/material";
-import {Add} from "@mui/icons-material";
+import {Add, Delete, Edit, Public} from "@mui/icons-material";
+import {CardMenu} from "../../component/CardItem";
+import RecipeCard from "../../component/RecipeCard";
 
 export default function ManageRecipesPage() {
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const navigate = useNavigate();
-    const [recipes, invalidate] = useRemoteData(() => client.recipes.get({visible: true}), [])
+    const [recipes, invalidate] = useRemoteData(client.users.self.recipes.get, [])
 
     function publishRecipe(id) {
         client.recipes.byId(id).patch({visibility: 'waitlist'})
@@ -26,11 +26,22 @@ export default function ManageRecipesPage() {
         <CardsList>
             {
                 recipes.map((recipe, index) => <RecipeCard
+                    showAuthor={false}
                     key={`product-${index}`}
                     recipe={recipe}
-                    onPublish={() => publishRecipe(recipe._id)}
-                    onDelete={() => deleteRecipe(recipe._id)}
-                    onEdit={() => navigate(`/recipes/${recipe.id}`)}
+                    menu={<CardMenu items={[{
+                        label: "Edit",
+                        icon: <Edit fontSize="small"/>,
+                        onClick: () => navigate(`/recipes/${recipe._id}`)
+                    }, {
+                        label: "Delete",
+                        icon: <Delete fontSize="small"/>,
+                        onClick: () => deleteRecipe(recipe._id)
+                    }, {
+                        label: "Publish",
+                        icon: <Public fontSize="small"/>,
+                        onClick: () => publishRecipe(recipe._id)
+                    }]}/>}
                 />)
             }
         </CardsList>
@@ -41,16 +52,3 @@ export default function ManageRecipesPage() {
     </div>
 }
 
-function RecipeCard({recipe, onPublish, onEdit, onDelete}) {
-    return <ProductCard
-        imageSrc={getFirstPhotoUrl(recipe.id)}
-        name={recipe.name}
-        visibility={recipe.visibility}
-        onPublish={onPublish}
-        onDelete={onDelete}
-        onEdit={onEdit}/>
-}
-
-function getFirstPhotoUrl(id) {
-    return `/api/recipes/${id}/photos/0`;
-}

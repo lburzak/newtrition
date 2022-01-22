@@ -1,32 +1,29 @@
-import CardsList from "../../component/CardsList";
-import {getFirstPhotoUrl, ProductCard} from "./ManageProductsPage";
-import {useContext, useEffect, useState} from "react";
-import {DataContext, NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
+import {useRemoteData} from "../../hook/remoteData";
+import Waitlist from "../../component/Waitlist";
+import useProductDialog from "../../hook/productDialog";
 
 export default function ProductsWaitlistPage() {
-    const [products, setProducts] = useState([])
-    const client = useContext(NewtritionClientContext)
-    const [, invalidateProducts] = useContext(DataContext).products;
+    const client = useClient();
+    const [recipes, invalidate] = useRemoteData(() => client.products.get({visibility: 'waitlist'}), [])
+    const [productDialog, showProductDialog] = useProductDialog()
 
-    useEffect(() => {
-        client.products.get({visibility: 'waitlist'})
-            .then(result => setProducts(result.data))
-    }, [client, products, setProducts])
+    function acceptProduct({id}) {
+        client.products.byId(id).patch({visibility: 'public'})
+            .then(invalidate);
+    }
 
-    return <CardsList>
-        {
-            products.map((product, index) => <ProductCard
-                key={`product-${index}`}
-                name={product.name}
-                calories={product.nutritionFacts.calories}
-                proteins={product.nutritionFacts.protein}
-                carbohydrates={product.nutritionFacts.carbohydrate}
-                ean={product.ean}
-                visibility={product.visibility}
-                imageSrc={product.photosCount > 0 ? getFirstPhotoUrl(product._id) : undefined}
-                onPublish={() => client.products.byId(product._id).patch({visibility: 'public'})
-                    .then(() => invalidateProducts())}
-            />)
-        }
-    </CardsList>
+    function declineProduct({id}) {
+        client.products.byId(id).patch({visibility: 'private'})
+            .then(invalidate);
+    }
+
+    function showProduct(product) {
+        showProductDialog(product)
+    }
+
+    return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
+        <Waitlist items={recipes} onAccept={acceptProduct} onDecline={declineProduct} onShow={showProduct}/>
+        {productDialog}
+    </div>
 }
