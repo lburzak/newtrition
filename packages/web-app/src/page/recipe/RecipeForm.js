@@ -171,7 +171,7 @@ function IngredientForm({onCreateIngredient}) {
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
-    const [classes] = useRemoteData(client => client.products.classes.get, [])
+    const [classes] = useRemoteData(client => client.products.classes.get(), [])
 
     const submit = () => onCreateIngredient({name: product, amount, unit});
 
