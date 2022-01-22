@@ -1,4 +1,4 @@
-import {Button, TextField} from "@mui/material";
+import {Button, Link, TextField} from "@mui/material";
 import {blue} from "@mui/material/colors";
 import {useEffect, useReducer} from "react";
 import {useNavigate} from "react-router";
@@ -42,7 +42,7 @@ export const LoginPage = () => {
                     disabled={state.submitted}>Sign in</Button>
 
             <div style={{display: 'flex', justifyContent: 'center'}}>
-                <a href="/signup">Don't have an account yet?</a>
+                <Link href={"#"} onClick={() => navigate('/signup')}>Don't have an account yet?</Link>
             </div>
         </Row>
     </PaperForm>;

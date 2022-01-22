@@ -1,4 +1,4 @@
-import {Button, TextField} from "@mui/material";
+import {Button, Link, TextField} from "@mui/material";
 import {useEffect, useReducer} from "react";
 import Message from "../../form/message";
 import {useNavigate} from "react-router";
@@ -42,7 +42,7 @@ export const SignUpPage = () => {
             <Button fullWidth variant={"contained"} type={"submit"}
                     disabled={state.submitted}>Sign up</Button>
             <div style={{display: 'flex', justifyContent: 'center'}}>
-                <a href="/login">Already have an account?</a>
+                <Link href={"#"} onClick={() => navigate('/login')}>Already have an account?</Link>
             </div>
         </Row>
     </PaperForm>;
