@@ -26,6 +26,7 @@ class AuthStorage {
     clear() {
         localStorage.removeItem('username');
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('admin')
     }
 }
 
