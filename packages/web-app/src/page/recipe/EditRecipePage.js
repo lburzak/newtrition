@@ -15,8 +15,8 @@ export function EditRecipePage() {
         status: 'initial'
     });
 
-    const [recipes] = useRemoteData(client.users.self.recipes.get);
-    const recipe = recipes.filter(it => it.id === id)[0];
+    const [recipes] = useRemoteData(client.users.self.recipes.get, []);
+    const recipe = recipes.filter(it => it._id === id)[0];
 
     useEffect(() => {
         if (submitState.status !== 'submitted')

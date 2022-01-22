@@ -32,7 +32,7 @@ export default function ManageRecipesPage() {
                     menu={<CardMenu items={[{
                         label: "Edit",
                         icon: <Edit fontSize="small"/>,
-                        onClick: () => navigate(`/recipes/${recipe.id}`)
+                        onClick: () => navigate(`/recipes/${recipe._id}`)
                     }, {
                         label: "Delete",
                         icon: <Delete fontSize="small"/>,
