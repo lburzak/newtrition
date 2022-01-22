@@ -264,7 +264,7 @@ function StepItem({position, content, onContentChanged, onDelete}) {
                 <Typography>{content}</Typography>}
         </ListItemText>
         <ListItemIcon>
-            <IconButton onClick={() => setEditMode(editMode)}>
+            <IconButton onClick={() => setEditMode(!editMode)}>
                 {editMode ? <Done/> : <Edit/>}
             </IconButton>
         </ListItemIcon>
