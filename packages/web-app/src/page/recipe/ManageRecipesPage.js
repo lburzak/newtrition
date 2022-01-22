@@ -2,10 +2,11 @@ import {NewtritionClientContext} from "../../App";
 import {useRemoteData} from "../../hook/remoteData";
 import {useContext} from "react";
 import CardsList from "../../component/CardsList";
-import {CardItem} from "../../component/CardItem";
 import {useNavigate} from "react-router";
 import {Fab} from "@mui/material";
-import {Add} from "@mui/icons-material";
+import {Add, Delete, Edit, Public} from "@mui/icons-material";
+import {CardMenu} from "../../component/CardItem";
+import RecipeCard from "../../component/RecipeCard";
 
 export default function ManageRecipesPage() {
     const client = useContext(NewtritionClientContext);
@@ -28,9 +29,19 @@ export default function ManageRecipesPage() {
                 recipes.map((recipe, index) => <RecipeCard
                     key={`product-${index}`}
                     recipe={recipe}
-                    onPublish={() => publishRecipe(recipe._id)}
-                    onDelete={() => deleteRecipe(recipe._id)}
-                    onEdit={() => navigate(`/recipes/${recipe.id}`)}
+                    menu={<CardMenu items={[{
+                        label: "Edit",
+                        icon: <Edit fontSize="small"/>,
+                        onClick: () => navigate(`/recipes/${recipe.id}`)
+                    }, {
+                        label: "Delete",
+                        icon: <Delete fontSize="small"/>,
+                        onClick: () => deleteRecipe(recipe._id)
+                    }, {
+                        label: "Publish",
+                        icon: <Public fontSize="small"/>,
+                        onClick: () => publishRecipe(recipe._id)
+                    }]}/>}
                 />)
             }
         </CardsList>
@@ -41,16 +52,3 @@ export default function ManageRecipesPage() {
     </div>
 }
 
-function RecipeCard({recipe, onPublish, onEdit, onDelete}) {
-    return <CardItem
-        imageSrc={getFirstPhotoUrl(recipe.id)}
-        name={recipe.name}
-        visibility={recipe.visibility}
-        onPublish={onPublish}
-        onDelete={onDelete}
-        onEdit={onEdit}/>
-}
-
-function getFirstPhotoUrl(id) {
-    return `/api/recipes/${id}/photos/0`;
-}

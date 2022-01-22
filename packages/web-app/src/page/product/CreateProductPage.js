@@ -126,7 +126,7 @@ export function CreateProductPage({product, onSubmit}) {
                 console.error("Server did not respond")
             }
         }
-    }, [dispatch, state, client, productExists, product]);
+    }, [dispatch, state, client, productExists, product, onSubmit]);
 
     return <form style={{display: 'flex', flexDirection: 'column', height: '100%', padding: 16}}
                  onSubmit={e => {
