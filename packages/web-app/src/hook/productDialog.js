@@ -2,19 +2,24 @@ import BottomSheet from "../component/BottomSheet";
 import {Fragment, useState} from "react";
 import {CreateProductPage} from "../page/product/CreateProductPage";
 
-export default function useProductDialog() {
+export default function useProductDialog({onFinish = () => {}}) {
     const [editingProduct, setEditingProduct] = useState(null)
-    const dialog = <ProductDialog editingProduct={editingProduct} setEditingProduct={setEditingProduct}/>
+    const dialog = <ProductDialog editingProduct={editingProduct} setEditingProduct={setEditingProduct} onFinish={onFinish}/>
     return [dialog, setEditingProduct];
 }
 
-function ProductDialog({editingProduct, setEditingProduct}) {
+function ProductDialog({editingProduct, setEditingProduct, onFinish}) {
+    const dismiss = () => {
+        setEditingProduct(null)
+        onFinish()
+    }
+
     return editingProduct ?
         <AbsolutePosition>
             <BottomSheet title={editingProduct?._id ? "Edit product" : "New product"}
                          visible={editingProduct}
-                         onDismiss={() => setEditingProduct(null)}>
-                <CreateProductPage product={editingProduct}/>
+                         onDismiss={dismiss}>
+                <CreateProductPage product={editingProduct} onSubmit={dismiss}/>
             </BottomSheet>
         </AbsolutePosition> : <Fragment/>
 }

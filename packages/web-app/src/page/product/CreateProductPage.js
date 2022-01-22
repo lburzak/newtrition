@@ -10,10 +10,11 @@ import {
 } from "@mui/material";
 import {useContext, useEffect, useReducer} from "react";
 import Message from "../../form/message"
-import {DataContext, NewtritionClientContext} from "../../App";
+import {NewtritionClientContext} from "../../App";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
+import {useRemoteData} from "../../hook/remoteData";
 
 const initialState = {
     fields: {
@@ -87,12 +88,10 @@ function stateFromProduct(product) {
     }
 }
 
-export function CreateProductPage({product}) {
+export function CreateProductPage({product, onSubmit}) {
     const [state, dispatch] = useReducer(reducer, stateFromProduct(product));
-    const data = useContext(DataContext);
-    const [, invalidateProducts] = data.products;
-    const [classes, invalidateClasses] = data.classes;
     const client = useContext(NewtritionClientContext);
+    const [classes] = useRemoteData(client.products.classes.get, []);
     const productExists = product._id;
 
     const buildFieldChangeHandler = (fieldName) => event => dispatch({
@@ -115,7 +114,7 @@ export function CreateProductPage({product}) {
                 ? client.products.byId(product._id).put(newProduct)
                 : client.users.self.products.create(newProduct)
 
-            operation.then(invalidateData)
+            operation.then(onSubmit)
                 .catch(handleFailure)
                 .finally(() => dispatch({type: 'submitFinished'}))
         }
@@ -127,12 +126,7 @@ export function CreateProductPage({product}) {
                 console.error("Server did not respond")
             }
         }
-
-        function invalidateData() {
-            invalidateProducts()
-            invalidateClasses()
-        }
-    }, [dispatch, invalidateProducts, state, invalidateClasses, client, productExists, product]);
+    }, [dispatch, state, client, productExists, product]);
 
     return <form style={{display: 'flex', flexDirection: 'column', height: '100%', padding: 16}}
                  onSubmit={e => {
