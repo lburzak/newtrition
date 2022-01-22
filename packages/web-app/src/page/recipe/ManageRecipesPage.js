@@ -11,7 +11,7 @@ import RecipeCard from "../../component/RecipeCard";
 export default function ManageRecipesPage() {
     const client = useContext(NewtritionClientContext);
     const navigate = useNavigate();
-    const [recipes, invalidate] = useRemoteData(() => client.recipes.get({visible: true}), [])
+    const [recipes, invalidate] = useRemoteData(client.users.self.recipes.get, [])
 
     function publishRecipe(id) {
         client.recipes.byId(id).patch({visibility: 'waitlist'})

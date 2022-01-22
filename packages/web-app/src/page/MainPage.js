@@ -11,6 +11,7 @@ import SearchProductsPage from "./product/SearchProductsPage";
 import RecipesWaitlistPage from "./recipe/RecipesWaitlistPage";
 import ManageRecipesPage from "./recipe/ManageRecipesPage";
 import SideMenu from "../component/SideMenu";
+import {SearchRecipesPage} from "./recipe/SearchRecipesPage";
 
 export const MainPage = () => {
     return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
@@ -24,7 +25,7 @@ export const MainPage = () => {
                 <Route exact path="/signup" element={<SignUpPage/>}/>
                 <Route path="/products" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
                 <Route path="/my-products" element={<AuthGuard><ManageProductsPage/></AuthGuard>}/>
-                <Route exact path="/recipes" element={<AuthGuard><ManageRecipesPage/></AuthGuard>}/>
+                <Route exact path="/recipes" element={<AuthGuard><SearchRecipesPage/></AuthGuard>}/>
                 <Route exact path="/my-recipes" element={<AuthGuard><ManageRecipesPage/></AuthGuard>}/>
                 <Route exact path="/recipes/new" element={<AuthGuard><CreateRecipePage/></AuthGuard>}/>
                 <Route exact path="/recipes/:id" element={<AuthGuard><EditRecipePage/></AuthGuard>}/>
