@@ -2,7 +2,7 @@ import BottomSheet from "../component/BottomSheet";
 import {Fragment, useState} from "react";
 import {CreateProductPage} from "../page/product/CreateProductPage";
 
-export default function useProductDialog({onFinish = () => {}}) {
+export default function useProductDialog(onFinish = () => {}) {
     const [editingProduct, setEditingProduct] = useState(null)
     const dialog = <ProductDialog editingProduct={editingProduct} setEditingProduct={setEditingProduct} onFinish={onFinish}/>
     return [dialog, setEditingProduct];

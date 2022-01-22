@@ -11,7 +11,7 @@ import {useRemoteData} from "../../hook/remoteData";
 export function ManageProductsPage() {
     const client = useContext(NewtritionClientContext);
     const [products, invalidateProducts] = useRemoteData(client.users.self.products.get, [])
-    const [productDialog, showProduct] = useProductDialog({onFinish: invalidateProducts})
+    const [productDialog, showProduct] = useProductDialog(invalidateProducts)
 
     function deleteProduct(id) {
         client.products.byId(id).delete().then(() => invalidateProducts())
