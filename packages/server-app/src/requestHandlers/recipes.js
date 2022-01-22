@@ -61,10 +61,11 @@ async function replaceRecipe(req, res) {
 
 function serializeRecipeRecord(record) {
     return {
-        id: record._id,
+        _id: record._id,
         name: record.name,
         steps: record.steps,
-        ingredients: record.ingredients
+        ingredients: record.ingredients,
+        photosCount: record.photosCount
     }
 }
 
