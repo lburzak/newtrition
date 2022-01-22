@@ -22,7 +22,7 @@ export const SignUpPage = () => {
     const client = useClient();
 
     useEffect(() => {
-        if (client.isAuthenticated.authenticated)
+        if (client.isAuthenticated)
             navigate('/');
 
         if (state.submitted)
