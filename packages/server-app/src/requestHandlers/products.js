@@ -86,7 +86,8 @@ async function getProductPhoto(req, res) {
     if (!product)
         return res.status(404).send({error: "No such product"});
 
-    res.sendFile(`uploads/products/${productId}/${photoId}.png`, {root: '.'})
+    const files = await fs.readdir(`uploads/products/${productId}`);
+    res.sendFile(`uploads/products/${productId}/${files[photoId]}`, {root: '.'})
 }
 
 async function replaceProduct(req, res) {
