@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import {Add, Delete, Done, Edit} from "@mui/icons-material";
 import {useEffect, useReducer, useState} from "react";
-import {useClient} from "../../hook/client";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
@@ -172,8 +171,7 @@ function IngredientForm({onCreateIngredient}) {
     const [amount, setAmount] = useState('');
     const [unit, setUnit] = useState('g');
     const cannotProceed = !product;
-    const client = useClient()
-    const [classes] = useRemoteData(client.products.classes.get, [])
+    const [classes] = useRemoteData(client => client.products.classes.get, [])
 
     const submit = () => onCreateIngredient({name: product, amount, unit});
 
