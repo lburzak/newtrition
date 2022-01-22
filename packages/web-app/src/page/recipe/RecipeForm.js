@@ -262,7 +262,13 @@ function StepItem({position, content, onContentChanged, onDelete}) {
         </ListItemAvatar>
         <ListItemText>
             {editMode ?
-                <TextField onChange={(e) => onContentChanged(e.target.value)} variant={'standard'} value={content}/> :
+                <TextField onChange={(e) => onContentChanged(e.target.value)} onKeyPress={(ev) => {
+                    console.log(`Pressed keyCode ${ev.key}`);
+                    if (ev.key === 'Enter') {
+                        setEditMode(false)
+                        ev.preventDefault();
+                    }
+                }} variant={'standard'} value={content}/> :
                 <Typography>{content}</Typography>}
         </ListItemText>
         <ListItemIcon>
