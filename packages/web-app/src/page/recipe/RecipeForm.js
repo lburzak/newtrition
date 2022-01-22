@@ -18,7 +18,10 @@ import {range} from "../../util/range";
 import {useRemoteData} from "../../hook/remoteData";
 
 export function RecipeForm({onSubmit, defaultRecipe}) {
-    const [state, dispatch] = useReducer(reducer, defaultRecipe ? stateFromRecipe(defaultRecipe) : initialState);
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    if (!state.initialized && defaultRecipe)
+        dispatch({type: 'initialize', payload: stateFromRecipe(defaultRecipe)})
 
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
@@ -62,6 +65,8 @@ const initialState = {
 
 function reducer(state, action) {
     switch (action.type) {
+        case 'initialize':
+            return {...action.payload, initialized: true}
         case 'updateStep':
             return {
                 ...state,
