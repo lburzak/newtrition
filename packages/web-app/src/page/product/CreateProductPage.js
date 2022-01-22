@@ -38,7 +38,7 @@ const DetailInput = ({name, unit, onChange, value}) => <FormControl variant="out
         fullWidth
         defaultValue={value}
         endAdornment={<InputAdornment position="end">{unit}</InputAdornment>}
-        inputProps={{inputMode: 'decimal', pattern: '[0-9]*'}}
+        inputProps={{inputMode: 'decimal', pattern: '[0-9]*(\.[0.9]*)*'}}
         onChange={onChange}
     />
 </FormControl>
