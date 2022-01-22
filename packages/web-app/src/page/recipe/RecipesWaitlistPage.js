@@ -1,12 +1,11 @@
 import {useRemoteData} from "../../hook/remoteData";
-import {useContext} from "react";
-import {NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import {useNavigate} from "react-router";
 import Waitlist from "../../component/Waitlist";
 
 export default function RecipesWaitlistPage() {
     const navigate = useNavigate()
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const [recipes, invalidate] = useRemoteData(() => client.recipes.get({visibility: 'waitlist'}), [])
 
     function acceptRecipe({id}) {

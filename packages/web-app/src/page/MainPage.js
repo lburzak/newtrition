@@ -1,5 +1,4 @@
 import {Divider} from "@mui/material";
-import {AuthContext} from "../App";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {LoginPage} from "./auth/LoginPage";
 import {SignUpPage} from "./auth/SignUpPage";
@@ -12,13 +11,14 @@ import RecipesWaitlistPage from "./recipe/RecipesWaitlistPage";
 import ManageRecipesPage from "./recipe/ManageRecipesPage";
 import SideMenu from "../component/SideMenu";
 import {SearchRecipesPage} from "./recipe/SearchRecipesPage";
+import {useClient} from "../hook/client";
 
 export const MainPage = () => {
+    const client = useClient()
+
     return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
         <BrowserRouter>
-            <AuthContext.Consumer>
-                {({authState}) => <SideMenu visible={authState.authenticated}/>}
-            </AuthContext.Consumer>
+            <SideMenu visible={client.isAuthenticated}/>
             <Divider variant={'fullWidth'} orientation={'vertical'}/>
             <Routes>
                 <Route exact path="/login" element={<LoginPage/>}/>
@@ -37,9 +37,7 @@ export const MainPage = () => {
 }
 
 function AuthGuard({children}) {
-    return <AuthContext.Consumer>
-        {({authState}) =>
-            authState.authenticated ? {...children} : <Navigate to="/login"/>
-        }
-    </AuthContext.Consumer>
+    const client = useClient()
+
+    return client.isAuthenticated ? children : <Navigate to="/login"/>
 }

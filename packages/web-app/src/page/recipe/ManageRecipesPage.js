@@ -1,6 +1,5 @@
-import {NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import {useRemoteData} from "../../hook/remoteData";
-import {useContext} from "react";
 import CardsList from "../../component/CardsList";
 import {useNavigate} from "react-router";
 import {Fab} from "@mui/material";
@@ -9,7 +8,7 @@ import {CardMenu} from "../../component/CardItem";
 import RecipeCard from "../../component/RecipeCard";
 
 export default function ManageRecipesPage() {
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const navigate = useNavigate();
     const [recipes, invalidate] = useRemoteData(client.users.self.recipes.get, [])
 

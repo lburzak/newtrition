@@ -1,11 +1,11 @@
-import {NewtritionClientContext} from "../../App";
-import {useContext, useEffect, useState} from "react";
+import {useClient} from "../../hook/client";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {RecipeForm} from "./RecipeForm";
 
 export function CreateRecipePage() {
     const navigate = useNavigate();
-    const client = useContext(NewtritionClientContext)
+    const client = useClient()
     const [submitState, setSubmitState] = useState({
         recipe: null,
         // 'initial' | 'submitted' | 'finished'

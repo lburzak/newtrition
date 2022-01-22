@@ -1,11 +1,10 @@
-import {useContext} from "react";
-import {NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import {useRemoteData} from "../../hook/remoteData";
 import Waitlist from "../../component/Waitlist";
 import useProductDialog from "../../hook/productDialog";
 
 export default function ProductsWaitlistPage() {
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const [recipes, invalidate] = useRemoteData(() => client.products.get({visibility: 'waitlist'}), [])
     const [productDialog, showProductDialog] = useProductDialog()
 

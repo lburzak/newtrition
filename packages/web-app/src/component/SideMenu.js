@@ -1,12 +1,12 @@
-import {AuthContext} from "../App";
-import {useContext, Fragment, useState} from "react";
+import {Fragment, useState} from "react";
 import {Edit, Fastfood, Pending, Restaurant, Search, ExpandLess, ExpandMore} from "@mui/icons-material";
 import {List, Box, ListItemButton, ListItemIcon, ListItemText, Collapse} from "@mui/material";
 import ProfileView from "./ProfileView";
 import {useNavigate} from "react-router";
+import {useClient} from "../hook/client";
 
 export default function SideMenu({visible}) {
-    const {authState} = useContext(AuthContext)
+    const client = useClient()
 
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
@@ -15,7 +15,7 @@ export default function SideMenu({visible}) {
                 <LinkItem name={"Search"} path={"/products"} icon={<Search/>}/>
                 <LinkItem name={"My products"} path={"/my-products"} icon={<Edit/>}/>
                 {
-                    authState.admin
+                    client.admin
                         ? <LinkItem name={"Waitlist"} path={"/waitlist/products"} icon={<Pending/>}/>
                         : <div/>
                 }
@@ -24,7 +24,7 @@ export default function SideMenu({visible}) {
                 <LinkItem name={"Search"} path={"/recipes"} icon={<Search/>}/>
                 <LinkItem name={"My recipes"} path={"/my-recipes"} icon={<Edit/>}/>
                 {
-                    authState.admin
+                    client.admin
                         ? <LinkItem name={"Waitlist"} path={"/waitlist/recipes"} icon={<Pending/>}/>
                         : <div/>
                 }

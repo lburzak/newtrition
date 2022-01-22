@@ -8,9 +8,9 @@ import {
     OutlinedInput,
     TextField
 } from "@mui/material";
-import {useContext, useEffect, useReducer} from "react";
+import {useEffect, useReducer} from "react";
 import Message from "../../form/message"
-import {NewtritionClientContext} from "../../App";
+import {useClient} from "../../hook/client";
 import PhotosSlider from "../../component/PhotosSlider";
 import {convertJsonToFormData} from "../../util/formData";
 import {range} from "../../util/range";
@@ -90,7 +90,7 @@ function stateFromProduct(product) {
 
 export function CreateProductPage({product, onSubmit}) {
     const [state, dispatch] = useReducer(reducer, stateFromProduct(product));
-    const client = useContext(NewtritionClientContext);
+    const client = useClient();
     const [classes] = useRemoteData(client.products.classes.get, []);
     const productExists = product._id;
 
