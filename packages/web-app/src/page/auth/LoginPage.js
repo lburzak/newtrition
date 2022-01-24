@@ -27,6 +27,14 @@ export const LoginPage = () => {
         if (state.submitted) {
             const {username, password} = state
             client.login({username, password})
+                .catch(error => {
+                    if (error.response.status === 401) {
+                        dispatch({type: 'credentialsDenied'})
+                    } else {
+                        console.error(error)
+                        console.error("Unexpected response")
+                    }
+                })
         }
     })
 
@@ -58,6 +66,8 @@ function reducer(state, event) {
             return {...state, password: event.payload};
         case 'submitted':
             return {...state, submitted: true}
+        case 'credentialsDenied':
+            return {...state, usernameError: '', passwordError: 'Invalid username and/or password.', submitted: false}
         default:
             return {...state}
     }
