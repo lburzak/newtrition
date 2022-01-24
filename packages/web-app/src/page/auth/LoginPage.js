@@ -24,8 +24,10 @@ export const LoginPage = () => {
         if (client.isAuthenticated)
             navigate('/');
 
-        if (state.submitted)
-            client.login(state);
+        if (state.submitted) {
+            const {username, password} = state
+            client.login({username, password})
+        }
     })
 
     // noinspection HtmlUnknownTarget

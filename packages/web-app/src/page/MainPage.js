@@ -12,13 +12,14 @@ import ManageRecipesPage from "./recipe/ManageRecipesPage";
 import SideMenu from "../component/SideMenu";
 import {SearchRecipesPage} from "./recipe/SearchRecipesPage";
 import {useClient} from "../hook/client";
+import {Fragment} from "react";
 
 export const MainPage = () => {
     const client = useClient()
 
     return <div style={{display: 'flex', flexDirection: 'row', width: '100vw', height: '100vh'}}>
         <BrowserRouter>
-            <SideMenu visible={client.isAuthenticated}/>
+            {client.isAuthenticated ? <SideMenu visible={client.isAuthenticated}/> : <Fragment/>}
             <Divider variant={'fullWidth'} orientation={'vertical'}/>
             <Routes>
                 <Route exact path="/" element={<AuthGuard><SearchProductsPage/></AuthGuard>}/>
