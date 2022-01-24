@@ -15,6 +15,16 @@ export function ClientProvider({children}) {
     );
 
     const newtritionClient = useMemo(() => {
+        function login({username, password}) {
+            AuthApi.Endpoint.initiateLoginFlow({username, password})
+                .then(buildLoginResultHandler(authDispatch, newtritionClient));
+        }
+
+        function signup({username, password}) {
+            AuthApi.Endpoint.initiateSignUpFlow({username, password})
+                .then(buildSignUpResultHandler(authDispatch));
+        }
+
         const client = new NewtritionClient('/api');
         client.token = authState.accessToken;
         client.admin = authState.admin;
@@ -22,18 +32,9 @@ export function ClientProvider({children}) {
         client.login = login;
         client.signup = signup;
         client.logout = logout;
+
         return client;
     }, [authState]);
-
-    function login({username, password}) {
-        AuthApi.Endpoint.initiateLoginFlow({username, password})
-            .then(buildLoginResultHandler(authDispatch, newtritionClient));
-    }
-
-    function signup({username, password}) {
-        AuthApi.Endpoint.initiateSignUpFlow({username, password})
-            .then(buildSignUpResultHandler(authDispatch));
-    }
 
     function logout() {
         authDispatch({type: 'loggedOut'})

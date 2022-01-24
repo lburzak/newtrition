@@ -17,7 +17,7 @@ export function useRemoteData(fetch, initialData) {
         }
 
         if (invalidated) refresh()
-    }, [invalidated, fetch])
+    }, [invalidated, fetch, client])
 
     return [data, invalidate];
 }
