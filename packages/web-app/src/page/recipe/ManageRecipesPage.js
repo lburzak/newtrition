@@ -3,9 +3,10 @@ import {useRemoteData} from "../../hook/remoteData";
 import CardsList from "../../component/CardsList";
 import {useNavigate} from "react-router";
 import {Fab} from "@mui/material";
-import {Add, Delete, Edit, Public} from "@mui/icons-material";
+import {Add, Delete, Edit} from "@mui/icons-material";
 import {CardMenu} from "../../component/CardItem";
 import RecipeCard from "../../component/RecipeCard";
+import {createVisibilityAction} from "../../util/domain";
 
 export default function ManageRecipesPage() {
     const client = useClient();
@@ -14,6 +15,11 @@ export default function ManageRecipesPage() {
 
     function publishRecipe(id) {
         client.recipes.byId(id).patch({visibility: 'waitlist'})
+            .then(invalidate);
+    }
+
+    function unpublishRecipe(id) {
+        client.recipes.byId(id).patch({visibility: 'private'})
             .then(invalidate);
     }
 
@@ -37,11 +43,7 @@ export default function ManageRecipesPage() {
                         label: "Delete",
                         icon: <Delete fontSize="small"/>,
                         onClick: () => deleteRecipe(recipe._id)
-                    }, {
-                        label: "Publish",
-                        icon: <Public fontSize="small"/>,
-                        onClick: () => publishRecipe(recipe._id)
-                    }]}/>}
+                    }, createVisibilityAction(recipe, unpublishRecipe, publishRecipe)]}/>}
                 />)
             }
         </CardsList>

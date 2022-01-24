@@ -1,11 +1,12 @@
 import {Fab} from "@mui/material";
-import {Add, Delete, Edit, Public} from "@mui/icons-material";
+import {Add, Delete, Edit} from "@mui/icons-material";
 import CardsList from "../../component/CardsList";
 import ProductCard from "../../component/ProductCard";
 import {CardMenu} from "../../component/CardItem";
 import useProductDialog from "../../hook/productDialog";
 import {useRemoteData} from "../../hook/remoteData";
 import {useClient} from "../../hook/client";
+import {createVisibilityAction} from "../../util/domain";
 
 export function ManageProductsPage() {
     const client = useClient()
@@ -18,6 +19,10 @@ export function ManageProductsPage() {
 
     function publishProduct(id) {
         client.products.byId(id).patch({visibility: 'waitlist'}).then(() => invalidateProducts())
+    }
+
+    function unpublishProduct(id) {
+        client.products.byId(id).patch({visibility: 'private'}).then(() => invalidateProducts())
     }
 
     return <div style={{display: 'flex', flexDirection: 'row', flex: 1}}>
@@ -35,11 +40,8 @@ export function ManageProductsPage() {
                             label: "Delete",
                             icon: <Delete fontSize="small"/>,
                             onClick: () => deleteProduct(product._id)
-                        }, {
-                            label: "Publish",
-                            icon: <Public fontSize="small"/>,
-                            onClick: () => publishProduct(product._id)
-                        }]}/>
+                        },
+                            createVisibilityAction(product, unpublishProduct, publishProduct)]}/>
                     }/>)
             }
         </CardsList>
