@@ -3,10 +3,10 @@ import {Edit, Fastfood, Pending, Restaurant, Search, ExpandLess, ExpandMore} fro
 import {List, Box, ListItemButton, ListItemIcon, ListItemText, Collapse} from "@mui/material";
 import ProfileView from "./ProfileView";
 import {useNavigate} from "react-router";
-import {useClient} from "../hook/client";
+import {useRemoteData} from "../hook/remoteData";
 
 export default function SideMenu({visible}) {
-    const client = useClient()
+    const [user] = useRemoteData(client => client.users.self.get(), {})
 
     return <Box sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}
                 style={{display: visible ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between'}}>
@@ -15,7 +15,7 @@ export default function SideMenu({visible}) {
                 <LinkItem name={"Search"} path={"/products"} icon={<Search/>}/>
                 <LinkItem name={"My products"} path={"/my-products"} icon={<Edit/>}/>
                 {
-                    client.admin
+                    user.admin
                         ? <LinkItem name={"Waitlist"} path={"/waitlist/products"} icon={<Pending/>}/>
                         : <div/>
                 }
@@ -24,13 +24,13 @@ export default function SideMenu({visible}) {
                 <LinkItem name={"Search"} path={"/recipes"} icon={<Search/>}/>
                 <LinkItem name={"My recipes"} path={"/my-recipes"} icon={<Edit/>}/>
                 {
-                    client.admin
+                    user.admin
                         ? <LinkItem name={"Waitlist"} path={"/waitlist/recipes"} icon={<Pending/>}/>
                         : <div/>
                 }
             </ExpandableMenuItem>
         </List>
-        <ProfileView/>
+        <ProfileView user={user}/>
     </Box>;
 }
 

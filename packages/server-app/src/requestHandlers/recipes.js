@@ -65,7 +65,8 @@ function serializeRecipeRecord(record) {
         name: record.name,
         steps: record.steps,
         ingredients: record.ingredients,
-        photosCount: record.photosCount
+        photosCount: record.photosCount,
+        visibility: record.visibility
     }
 }
 

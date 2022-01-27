@@ -24,14 +24,24 @@ export const LoginPage = () => {
         if (client.isAuthenticated)
             navigate('/');
 
-        if (state.submitted)
-            client.login(state);
+        if (state.submitted) {
+            const {username, password} = state
+            client.login({username, password})
+                .catch(error => {
+                    if (error.response.status === 401 || error.response.status === 400) {
+                        dispatch({type: 'credentialsDenied'})
+                    } else {
+                        console.error(error)
+                        console.error("Unexpected response")
+                    }
+                })
+        }
     })
 
     // noinspection HtmlUnknownTarget
     return <PaperForm heading={<FormHeading header={"Sign in"} iconColor={blue[400]}/>} onSubmit={() => dispatch({type: 'submitted'})}>
         <Row horizontalSpacing={2} maxWidth={600}>
-            <TextField fullWidth label={"Username"} variant={"outlined"}
+            <TextField fullWidth label={"Username"} variant={"outlined"} autoComplete={"off"}
                        error={state.usernameError !== null} helperText={state.usernameError}
                        onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
             <TextField fullWidth label={"Password"} variant={"outlined"}
@@ -56,6 +66,8 @@ function reducer(state, event) {
             return {...state, password: event.payload};
         case 'submitted':
             return {...state, submitted: true}
+        case 'credentialsDenied':
+            return {...state, usernameError: '', passwordError: 'Invalid username and/or password.', submitted: false}
         default:
             return {...state}
     }

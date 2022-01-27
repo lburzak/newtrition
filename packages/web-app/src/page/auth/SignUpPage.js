@@ -16,23 +16,53 @@ const initialState = {
     submitted: false
 }
 
+function extractFieldErrors(errors, field) {
+    return errors.filter(error => error['field'] === field);
+}
+
+function packFieldErrors(errors) {
+    const usernameErrors = extractFieldErrors(errors, 'username');
+    const passwordErrors = extractFieldErrors(errors, 'password');
+
+    return {
+        username: usernameErrors.length > 0 ? usernameErrors : undefined,
+        password: passwordErrors.length > 0 ? passwordErrors : undefined,
+    };
+}
+
 export const SignUpPage = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const navigate = useNavigate();
     const client = useClient();
 
     useEffect(() => {
-        if (client.isAuthenticated)
-            navigate('/');
+        if (client.isAuthenticated) {
+            navigate('/')
+        }
 
-        if (state.submitted)
-            client.signup(state);
+        if (state.submitted) {
+            const {username, password} = state
+            client.auth.signup({username, password})
+                .catch(handleSignupError)
+                .then(() => client.login({username, password}))
+        }
+
+        function handleSignupError(error) {
+            switch (error.response.status) {
+                case 409:
+                    return dispatch({type: 'userAlreadyExists'});
+                case 400:
+                    return dispatch({type: 'validationFailed', payload: packFieldErrors(error.response.data.errors)});
+                default:
+                    return console.error("Something went wrong.");
+            }
+        }
     })
 
     // noinspection HtmlUnknownTarget
     return <PaperForm heading={<FormHeading header={"Create an account"} iconColor={grey[400]}/>} onSubmit={() => dispatch({type: 'submitted'})}>
         <Row horizontalSpacing={2} maxWidth={600}>
-            <TextField fullWidth label={"Username"} variant={"outlined"}
+            <TextField fullWidth label={"Username"} variant={"outlined"} autoComplete={"off"}
                        error={state.usernameError !== null} helperText={state.usernameError}
                        onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
             <TextField fullWidth label={"Password"} variant={"outlined"}

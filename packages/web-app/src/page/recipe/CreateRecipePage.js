@@ -26,7 +26,7 @@ export function CreateRecipePage() {
 
     useEffect(() => {
         if (submitState.status === 'finished')
-            navigate('/recipes');
+            navigate('/my-recipes');
     }, [submitState, navigate])
 
     return <RecipeForm onSubmit={(recipe) => setSubmitState({recipe, status: 'submitted'})}/>

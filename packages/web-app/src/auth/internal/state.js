@@ -8,32 +8,32 @@ export const initialAuthState = {
 };
 
 export function loadAuthState() {
-    if (AuthStorage.accessToken && AuthStorage.username)
-        return {authenticated: true, accessToken: AuthStorage.accessToken, username: AuthStorage.username, admin: AuthStorage.admin};
+    if (AuthStorage.accessToken)
+        return {authenticated: true, accessToken: AuthStorage.accessToken};
 
     return initialAuthState;
 }
 
 export function authReducer(state, event) {
     if (event.type === 'loggedIn') {
-        const {accessToken, username} = event.payload;
+        const accessToken = event.payload;
 
-        AuthStorage.username = username;
         AuthStorage.accessToken = accessToken;
 
         return {
             authenticated: true,
-            accessToken: accessToken,
-            username: username
+            accessToken: accessToken
         };
     } else if (event.type === 'profileFetched') {
-        const {admin} = event.payload;
+        const {admin, username} = event.payload;
 
         AuthStorage.admin = admin;
+        AuthStorage.username = username;
 
         return {
             ...state,
-            admin
+            admin,
+            username
         }
     } else if (event.type === 'loggedOut') {
         AuthStorage.clear();

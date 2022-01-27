@@ -37,7 +37,7 @@ export function CardMenu({items}) {
         <IconButton onClick={openMenu}><MoreVert/></IconButton>
         <Menu anchorEl={anchor} open={open} onClose={closeMenu}>
             <MenuList sx={{width: 320, maxWidth: '100%'}}>
-                {items.map(item => <CardMenuItem icon={item.icon} label={item.label} onClick={() => {
+                {items.map((item, index) => <CardMenuItem key={`item-${index}`} icon={item.icon} label={item.label} onClick={() => {
                     closeMenu();
                     item.onClick();
                 }}/>)}

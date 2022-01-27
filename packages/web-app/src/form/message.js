@@ -16,7 +16,7 @@ const values = {
 export function fromValidationError(error) {
     const field = error.field.charAt(0).toUpperCase() + error.field.slice(1);
     const type = error.type;
-    const fieldErrors = values[field];
+    const fieldErrors = values[error.field];
 
     let value = undefined;
 
