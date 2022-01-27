@@ -143,11 +143,11 @@ export function CreateProductPage({product, onSubmit}) {
 
         <Grid container spacing={2}>
             <Grid item xs={6} md={8}>
-                <TextField fullWidth label={"Product name"} variant={"outlined"} value={state.fields.name}
+                <TextField fullWidth label={"Product name"} variant={"outlined"} value={state.fields.name} autoComplete={"off"}
                            onChange={buildFieldChangeHandler('name')}/>
             </Grid>
             <Grid item xs={6} md={4}>
-                <TextField fullWidth label={"EAN Code"} variant={"outlined"} value={state.fields.ean || ""}
+                <TextField fullWidth label={"EAN Code"} variant={"outlined"} value={state.fields.ean || ""} autoComplete={"off"}
                            onChange={buildFieldChangeHandler('ean')}
                            error={state.errors['ean'] !== undefined} helperText={state.errors['ean']}/>
             </Grid>

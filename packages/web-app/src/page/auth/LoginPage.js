@@ -41,7 +41,7 @@ export const LoginPage = () => {
     // noinspection HtmlUnknownTarget
     return <PaperForm heading={<FormHeading header={"Sign in"} iconColor={blue[400]}/>} onSubmit={() => dispatch({type: 'submitted'})}>
         <Row horizontalSpacing={2} maxWidth={600}>
-            <TextField fullWidth label={"Username"} variant={"outlined"}
+            <TextField fullWidth label={"Username"} variant={"outlined"} autoComplete={"off"}
                        error={state.usernameError !== null} helperText={state.usernameError}
                        onChange={e => dispatch({type: 'usernameChanged', payload: e.target.value})}/>
             <TextField fullWidth label={"Password"} variant={"outlined"}

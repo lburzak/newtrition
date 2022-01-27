@@ -25,7 +25,7 @@ export function RecipeForm({onSubmit, defaultRecipe}) {
 
     return <div style={{display: 'flex', flexDirection: 'column', width: '100%', padding: 20}}>
         <div style={{display: 'flex', flexDirection: 'row', gap: 12}}>
-            <TextField style={{flex: 1}} label={"Recipe name"} value={state.name}
+            <TextField style={{flex: 1}} label={"Recipe name"} value={state.name} autoComplete={"off"}
                        onChange={(e) => dispatch({type: 'changeName', payload: e.target.value})} fullWidth/>
             <Button disabled={state.submitted} variant={'contained'} onClick={() => onSubmit(readRecipeFromInput(state))}
                     startIcon={<Done/>}>Save recipe</Button>
@@ -183,11 +183,11 @@ function IngredientForm({onCreateIngredient}) {
                 disablePortal
                 options={classes.map(product => product.slice(0, 1).toUpperCase() + product.slice(1))}
                 onChange={(e, value) => setProduct(value)}
-                renderInput={(params) => <TextField {...params} label="Ingredient"/>}
+                renderInput={(params) => <TextField {...params} label="Ingredient" autoComplete={"off"}/>}
             />
         </Grid>
         <Grid item xs={4}>
-            <TextField onChange={(e) => setAmount(e.target.value)} label={"Amount"} disabled={cannotProceed}/>
+            <TextField onChange={(e) => setAmount(e.target.value)} label={"Amount"} disabled={cannotProceed} autoComplete={"off"}/>
         </Grid>
         <Grid item xs={4}>
             <FormControl fullWidth disabled={cannotProceed}>
@@ -262,7 +262,7 @@ function StepItem({position, content, onContentChanged, onDelete}) {
         </ListItemAvatar>
         <ListItemText>
             {editMode ?
-                <TextField onChange={(e) => onContentChanged(e.target.value)} onKeyPress={(ev) => {
+                <TextField onChange={(e) => onContentChanged(e.target.value)} autoComplete={"off"} onKeyPress={(ev) => {
                     console.log(`Pressed keyCode ${ev.key}`);
                     if (ev.key === 'Enter') {
                         setEditMode(false)
