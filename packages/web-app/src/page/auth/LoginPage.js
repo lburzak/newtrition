@@ -28,7 +28,7 @@ export const LoginPage = () => {
             const {username, password} = state
             client.login({username, password})
                 .catch(error => {
-                    if (error.response.status === 401) {
+                    if (error.response.status === 401 || error.response.status === 400) {
                         dispatch({type: 'credentialsDenied'})
                     } else {
                         console.error(error)
